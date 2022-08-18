@@ -1,6 +1,6 @@
 export const urlStore = {
     dev: {
-        MONGODB_URI : "mongodb+srv://manish:3HOW8D7xOXV20edF@cluster0.17vcdlq.mongodb.net/?retryWrites=true&w=majority",
+        MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
         JWT_SECRET : "anydemosecret",
         LOG_LEVEL : "debug"
     },
