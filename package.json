@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "sls offline start"
   },
-  "author": "",
+  "author": "******MANISH KUMAR PANDEY******",
   "license": "ISC",
   "devDependencies": {
     "@types/bluebird": "^3.5.36",
