@@ -58,3 +58,15 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  verifyMSALToken:
+    handler: services/auth/verifyLogin.verifyLogin
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: auth/api/verifyLogin
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
