@@ -40,7 +40,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: auth/api/role/{email}
+          path: api/auth/role/{email}
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -52,7 +52,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: misc/api/createOrUpdateRole
+          path: api/misc/createOrUpdateRole
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -64,7 +64,19 @@ functions:
     events: 
       - http:
           method: POST
-          path: auth/api/verifyLogin
+          path: api/auth/verifyLogin
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  getEmployeesForHierarchy:
+    handler: services/employee/getEmployeesForSource.getEmployeesForSource
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/{source}
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
