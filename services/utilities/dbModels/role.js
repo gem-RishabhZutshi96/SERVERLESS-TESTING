@@ -1,14 +1,21 @@
 import { Schema as _Schema,  model } from 'mongoose';
 var Schema = _Schema;
-const roleSchema = new Schema({
-  email: {
-    type: String,
+const Role = new Schema(
+  {
+    email: {
+      type: String,
+      unique: true,
+    },
+    role: {
+      type: String,
+    },
   },
-  role: {
-    type: String,
+  {
+    toJSON: {
+      transform: function(doc, ret, options) {
+        delete ret.__v;
+      },
+    },
   }
-},{
-    timestamps: true
-});
-export const RoleModel = model("rolemodel", roleSchema);
-
+);
+export const RoleModel = model('Role', Role);
