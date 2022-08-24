@@ -1,7 +1,7 @@
 import { makeDBConnection } from "../utilities/db/database";
 import {RoleModel} from "../utilities/dbModels/role";
 import { internalServer } from "../utilities/response/index";
-import { authorizer } from "../utilities/validateToken/authorizer";
+import { accessAllowed } from "../utilities/validateToken/authorizer";
 export const createOrUpdateRole = async(event) => {
     try{
       let userToken =null;
@@ -12,9 +12,9 @@ export const createOrUpdateRole = async(event) => {
       }
       let authQuery={
         token: userToken,
-        allowedFor:['management_su','gemini']
+        allowedFor:['management_su']
       };
-      let auth= await authorizer(authQuery);
+      let auth= await accessAllowed(authQuery);
       if(auth!=="allowed"){
         return auth;
       }
@@ -27,7 +27,7 @@ export const createOrUpdateRole = async(event) => {
       };
       await RoleModel.updateOne(filter, updateDoc, options);
       let response = {
-        statusCode:200,
+        success:true,
         email: event.body.email,
         role: event.body.role
       };
