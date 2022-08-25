@@ -16,10 +16,9 @@ export function badRequest(message, data) {
     return response;
 }
 
-export function forbiddenRequest(message, data) {
+export function forbiddenRequest(message) {
     let response = {
         message,
-        data,
         success: false
     };
     return response;
@@ -33,11 +32,10 @@ export function internalServer(message, data) {
     };
     return response;
 }
-export function failResponse(message, data) {
+export function failResponse(message) {
     let response = {
         success: false,
-        message,
-        data
+        message
     };
     return response;
 }
