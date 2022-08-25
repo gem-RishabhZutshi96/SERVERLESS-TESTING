@@ -18,9 +18,14 @@ export const accessAllowed = async (event) => {
 };
 export const accessDeniedToSource = async(event) => {
   try {
+    let source = null;
     const key =  urlStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
-    let source = event.eventObject.path.source || event.eventObject.pathParameters.source;
+    if(!event.eventObject.path.source){
+      source = event.eventObject.query.source;
+    } else {
+      source = event.eventObject.path.source || event.eventObject.pathParameters.source;
+    }
     let role = await getUserRole(decode.email);
     if ((event.deniedSources).includes(source)) {
       if((event.deniedRoles).includes(role)){
@@ -33,9 +38,14 @@ export const accessDeniedToSource = async(event) => {
 };
 export const accessAllowedToSource = async (event) => {
   try {
+    let source = null;
     const key =  urlStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
-    let source = event.eventObject.path.source || event.eventObject.pathParameters.source;
+    if(!event.eventObject.path.source){
+      source = event.eventObject.query.source;
+    } else {
+      source = event.eventObject.path.source || event.eventObject.pathParameters.source;
+    }
     let role = await getUserRole(decode.email);
     if (event.allowedSources.includes(source)) {
       if(event.allowedRoles.includes(role)){
