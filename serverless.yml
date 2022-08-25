@@ -102,3 +102,15 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  getEmployeeObjectForDirectoryById:
+    handler: services/employee/getEmployeeForDirectoryById.getEmployeeForDirectoryById
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/directory/{id}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
