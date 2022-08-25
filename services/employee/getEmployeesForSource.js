@@ -5,10 +5,7 @@ import { EmployeeModel } from  "../utilities/dbModels/employee";
 export const getEmployeesForSource = async(event) => {
     try{
       let userToken = null;
-      if (event.headers.Authorization && event.headers.Authorization.split(' ')[0] === 'Token' ||
-        event.headers.Authorization && event.headers.Authorization.split(' ')[0] === 'Bearer') {
-        userToken = event.headers.Authorization.split(' ')[1];
-      }
+      userToken = getUserToken(event);
       let authQuery={
         eventObject: event,
         token: userToken,
