@@ -2,14 +2,12 @@ import { makeDBConnection } from "../utilities/db/database";
 import {RoleModel} from "../utilities/dbModels/role";
 import { internalServer } from "../utilities/response/index";
 import { accessAllowed } from "../utilities/validateToken/authorizer";
+import { getUserToken } from "../utilities/validateToken/getUserToken";
 export const createOrUpdateRole = async(event) => {
     try{
       let userToken =null;
       await makeDBConnection();
-      if (event.headers.Authorization && event.headers.Authorization.split(' ')[0] === 'Token' ||
-        event.headers.Authorization && event.headers.Authorization.split(' ')[0] === 'Bearer') {
-        userToken = event.headers.Authorization.split(' ')[1];
-      }
+      userToken = getUserToken(event);
       let authQuery={
         token: userToken,
         allowedFor:['management_su']
