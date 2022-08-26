@@ -3,6 +3,7 @@ import { internalServer, successResponse, forbiddenRequest } from "../utilities/
 import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../utilities/dbModels/employee";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { resolveURL } from "../utilities/resolveURL/resolve";
 export const getEmployeeForDirectoryById = async(event) => {
     try{
       let userToken = null;
@@ -26,16 +27,7 @@ export const getEmployeeForDirectoryById = async(event) => {
 async function getEmployeeForDirectoryFromId(_id) {
     const employee= await EmployeeModel.findById(_id).lean();
     if (employee.Image && !employee.Image.startsWith('http')) {
-      employee.Image = resolve(urlStore[process.env.stage].domain, employee.Image);
+      employee.Image = resolveURL(urlStore[process.env.stage].domain, employee.Image);
     }
     return successResponse( 'Employee Fetched', { employee });
 };
-function resolve(from, to) {
-  const resolvedUrl = new URL(to, new URL(from, 'resolve://'));
-  if (resolvedUrl.protocol === 'resolve:') {
-    // `from` is a relative URL.
-    const { pathname, search, hash } = resolvedUrl;
-    return pathname + search + hash;
-  }
-  return resolvedUrl.toString();
-}
