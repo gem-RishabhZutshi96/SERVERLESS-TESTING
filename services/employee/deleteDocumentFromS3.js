@@ -6,7 +6,6 @@ import * as mongoose from 'mongoose';
 import { s3SignedUrlDocuments } from "../utilities/s3SignedUrl/s3SignedUrlDocuments";
 export const deleteDocumentFromS3 = async (event) => {
     try {
-        console.log(event);
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
