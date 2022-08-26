@@ -95,6 +95,13 @@ export const urlStore = {
                 'ClientTeam',
               ]
             }
+        },
+        s3Params: {
+          accessKeyId: 'AKIATR4FIY7IJPVT755G',
+          secretAccessKey: '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',
+          region: 'ap-south-1',
+          sowBucket:'gemini-docs',
+          signatureVersion:'v4'
         }
     },
     production: {
