@@ -158,3 +158,15 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  exportExcel:
+    handler: services/employee/exportExcelOfEmployees.exportExcelOfEmployees
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/excel
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
