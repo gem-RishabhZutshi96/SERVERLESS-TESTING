@@ -3,6 +3,7 @@ import { internalServer } from "../utilities/response/index";
 import { accessDeniedToSource } from "../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../utilities/dbModels/employee";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { resolveURL } from "../utilities/resolveURL/resolve";
 export const getEmployeeForDirectory = async(event) => {
     try{
       let userToken = null;
@@ -21,7 +22,6 @@ export const getEmployeeForDirectory = async(event) => {
         let sort = String(event.query.sort);
         let source = String(event.query.source);
         // let query = {pageNo,perPage,pattern,source,sort };
-        console.log({pageNo,perPage,pattern,source,sort });
         const response = await getEmployeeForDirectoryResponse({pageNo,perPage,pattern,source,sort});
         return response;
       } else {
@@ -60,11 +60,11 @@ async function getEmployeeForDirectoryResponse(query) {
       emp.Documents =
         emp.Documents &&
         emp.Documents.map(doc => {
-          // doc.path = resolve(urlStore[process.env.stage].domain, doc.path);
+          // doc.path = resolveURL(urlStore[process.env.stage].domain, doc.path);
           return doc;
         });
       if (emp.Image && !emp.Image.startsWith('http'))
-        emp.Image = resolve(urlStore[process.env.stage].domain, emp.Image);
+        emp.Image = resolveURL(urlStore[process.env.stage].domain, emp.Image);
     });
     return {
       data: {
@@ -74,13 +74,4 @@ async function getEmployeeForDirectoryResponse(query) {
       success: true,
       message: 'Employees fetched',
     };
-}
-function resolve(from, to) {
-  const resolvedUrl = new URL(to, new URL(from, 'resolve://'));
-  if (resolvedUrl.protocol === 'resolve:') {
-    // `from` is a relative URL.
-    const { pathname, search, hash } = resolvedUrl;
-    return pathname + search + hash;
-  }
-  return resolvedUrl.toString();
 }
