@@ -3,6 +3,7 @@ import { internalServer, badRequest, successResponse } from "../utilities/respon
 import { accessDeniedToSource } from "../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../utilities/dbModels/employee";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { resolveURL } from "../utilities/resolveURL/resolve";
 export const getEmployeesForSource = async(event) => {
     try{
       let userToken = null;
@@ -62,7 +63,7 @@ export const getEmployeesForSource = async(event) => {
 function getEmployeeResponseObject( emp, id, parentId) {
   let ImagePath;
   if (emp.Image && !emp.Image.startsWith('http')) {
-    ImagePath = resolve(urlStore[process.env.stage].domain, emp.Image);
+    ImagePath = resolveURL(urlStore[process.env.stage].domain, emp.Image);
   } else {
     ImagePath =
       emp.Image ||
@@ -89,13 +90,4 @@ function getEmployeeResponseObject( emp, id, parentId) {
     OnshoreClientTeam: emp.OnshoreClientTeam,
     OnshoreClientLead: emp.OnshoreClientLead,
   });
-}
-function resolve(from, to) {
-  const resolvedUrl = new URL(to, new URL(from, 'resolve://'));
-  if (resolvedUrl.protocol === 'resolve:') {
-    // `from` is a relative URL.
-    const { pathname, search, hash } = resolvedUrl;
-    return pathname + search + hash;
-  }
-  return resolvedUrl.toString();
 }
