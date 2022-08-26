@@ -82,7 +82,7 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
-  getEmployeeObjectForDirectory:
+  getEmployeesForDirectory:
     handler: services/employee/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
     events: 
@@ -102,13 +102,53 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
-  getEmployeeObjectForDirectoryById:
+  getEmployeesForDirectoryById:
     handler: services/employee/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
     events: 
       - http:
           method: GET
           path: api/employee/directory/{id}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  getS3SignedUrlForDocuments:
+    handler: services/employee/s3SignedUrlForDocuments.s3SignedUrlForDocuments
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/document/{id}
+          request:
+            parameters:
+              querystrings:
+                type: true
+                key: true
+                officialID: true
+                name: true
+                pimcoId: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  uploadDocumentUrlTODb:
+    handler: services/employee/documentS3Url.documentS3Url
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/documentS3Url/{id}
+          request:
+            parameters:
+              querystrings:
+                type: true
+                key: true
+                officialID: true
+                name: true
+                pimcoId: false
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
