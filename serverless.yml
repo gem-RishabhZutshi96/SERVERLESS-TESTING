@@ -141,14 +141,18 @@ functions:
       - http:
           method: POST
           path: api/employee/documentS3Url/{id}
-          request:
-            parameters:
-              querystrings:
-                type: true
-                key: true
-                officialID: true
-                name: true
-                pimcoId: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  deleteDocumentS3:
+    handler: services/employee/deleteDocumentFromS3.deleteDocumentFromS3
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/document/delete/{id}
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
