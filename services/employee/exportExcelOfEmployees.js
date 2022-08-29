@@ -2,9 +2,12 @@ import { internalServer, forbiddenRequest, successResponse } from "../utilities/
 import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../utilities/dbModels/employee";
-import { storagePath, dateFormat } from "../utilities/misc/utils";
-import * as fs from 'fs';
+import { dateFormat } from "../utilities/misc/utils";
 import * as json2xls from 'json2xls';
+import AWS from 'aws-sdk';
+import { urlStore } from "../utilities/config/config";
+import moment from 'moment';
+const s3 = new AWS.S3();
 export const exportExcelOfEmployees = async (event) => {
     try {
         let userToken = null;
@@ -15,9 +18,16 @@ export const exportExcelOfEmployees = async (event) => {
         };
         let auth = await accessAllowed(authQuery);
         if (auth !== "allowed") {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+            return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
-        const excelFilePath = await exportExcelDataOfEmployees('excels', `hierarchy-downloaded.xlsx`);
+        s3.config.update({
+            accessKeyId: urlStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: urlStore[process.env.stage].s3Params.secretAccessKey,
+            region: urlStore[process.env.stage].s3Params.region,
+            signatureVersion: urlStore[process.env.stage].s3Params.signatureVersion
+        });
+        let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+        const excelFilePath = await exportExcelDataOfEmployees('excels',  'excels' + '/' + timestamp + '--' +`hierarchy-downloaded.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         console.log(err);
@@ -26,20 +36,33 @@ export const exportExcelOfEmployees = async (event) => {
 };
 async function exportExcelDataOfEmployees(directory, fileName) {
     try {
-        const excelFileName = storagePath(directory, fileName);
+        //const excelFileName = storagePath(directory, fileName);
         const employees = await EmployeeModel.find().lean();
         const xls = json2xls(employees.map(emp => getEmployeeJSONForExcel(emp)));
-        // console.log("Excel File Name#########################",excelFileName, fs.existsSync(excelFileName));
-        if (!fs.existsSync(excelFileName)){
-            console.log("Creating Directory!!!!!!!!!!!!!!!!!!!!!!!!!");
-            console.log(storagePath(directory));
-            fs.mkdirSync(storagePath(directory), {recursive: true}, err => {
-                console.log(err);
-            });
-        }
-        console.log("Directory Created");
-        fs.writeFileSync(excelFileName, xls, 'binary');
-        return excelFileName;
+        const buffer = Buffer.from(xls, 'binary');
+        await uploadToS3({
+            Bucket: urlStore[process.env.stage].s3Params.sowBucket,
+            Key: fileName,
+            ContentType: 'application/vnd.ms-excel',
+            Body: buffer
+        });
+        let downloadURL = await getS3SignedUrl({
+            Bucket: urlStore[process.env.stage].s3Params.sowBucket,
+            Key: fileName,
+            Expires: 3600
+        });
+        return downloadURL;
+    //     console.log("Excel File Name#########################",excelFileName, fs.existsSync(excelFileName));
+    //     if (!fs.existsSync(excelFileName)){
+    //         console.log("Creating Directory!!!!!!!!!!!!!!!!!!!!!!!!!");
+    //         console.log(storagePath(directory));
+    //         fs.mkdirSync(storagePath(directory), {recursive: true}, err => {
+    //             console.log(err);
+    //         });
+    //     }
+    //     console.log("Directory Created");
+    //     fs.writeFileSync(excelFileName, xls, 'binary');
+    //     return excelFileName;
     } catch (e) {
         console.log('Error in exporting employees excel');
         console.log(e);
@@ -156,4 +179,26 @@ function getEmployeeJSONForExcel(emp) {
     return JSON.parse(
         JSON.stringify(data, (key, value) => (value == undefined ? '' : value))
     );
+}
+async function uploadToS3(s3Data) {
+    console.log("---- UPLODAING TO S3 ----",JSON.stringify(`${s3Data.Bucket} ${s3Data.Key}`, null, 2));
+    try {
+      return await s3.upload(s3Data).promise();
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+}
+async function getS3SignedUrl(params) {
+    console.log("---- GETTING SIGNED URL FROM S3 ----", JSON.stringify(params, null, 2));
+    try {
+      return s3.getSignedUrl("getObject", {
+        Bucket: params.Bucket,
+        Key: params.Key,
+        Expires: params.Expires,
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
 }
