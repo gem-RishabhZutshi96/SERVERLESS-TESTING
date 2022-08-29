@@ -114,12 +114,12 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
-  getS3SignedUrlForDocuments:
-    handler: services/employee/s3SignedUrlForDocuments.s3SignedUrlForDocuments
+  signedUrlForDocumentUpload:
+    handler: services/employee/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
     events: 
       - http:
-          method: GET
+          method: POST
           path: api/employee/document/{id}
           request:
             parameters:
@@ -165,6 +165,38 @@ functions:
       - http:
           method: GET
           path: api/employee/excel
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  signedUrlForDocumentView:
+    handler: services/employee/getSignedUrlForDocumentView.getSignedUrlForDocumentView
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/document/{id}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  signedUrlForImageUpload:
+    handler: services/employee/getSignedUrlForImageUpload.getSignedUrlForImageUpload
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/picture/{id}
+          request:
+            parameters:
+              querystrings:
+                type: true
+                key: true
+                officialID: true
+                name: true
+                pimcoId: false
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
