@@ -1,7 +1,7 @@
-import { internalServer, forbiddenRequest } from "../utilities/response/index";
+import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
 import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { s3SignedUrlDocuments } from "../utilities/s3SignedUrl/s3SignedUrlDocuments";
+import { s3SignedUrlForDocuments } from "../utilities/s3SignedUrl/s3SignedUrlForDocuments";
 export const getSignedUrlForImageUpload = async (event) => {
     try {
         let userToken = null;
@@ -14,9 +14,12 @@ export const getSignedUrlForImageUpload = async (event) => {
         if (auth !== "allowed") {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
-        const { type, key, officialID, name, pimcoId } = event.query;
+        if (!(event.body.type || event.body.key || event.body.officialID || event.body.name || event.body.pimcoId)) {
+            return badRequest("🤔🤔 Missing body parameters");
+        }
+        const { type, key, officialID, name, pimcoId } = event.body;
         // console.log({ type, key, officialID, name, pimcoId });
-        const response = await s3SignedUrlDocuments('getSignedUrlForImageUpload', { type, key, officialID, name, pimcoId });
+        const response = await s3SignedUrlForDocuments('getSignedUrlForImageUpload', { type, key, officialID, name, pimcoId });
         return response;
     } catch (err) {
         console.log(err);
