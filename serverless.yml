@@ -176,7 +176,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/document/{id}
+          path: api/employee/getSignedUrlForDocumentView
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -188,7 +188,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/picture/{id}
+          path: api/employee/getSignedUrlForImageUpload
           request:
             parameters:
               querystrings:
