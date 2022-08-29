@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { urlStore } from "../config/config";
 import moment from 'moment';
-export const s3SignedUrlDocuments = async(s3Case, data) => {
+export const s3SignedUrlForDocuments = async(s3Case, data) => {
     const s3 = new AWS.S3();
     const sowBucket = urlStore[process.env.stage].s3Params.sowBucket;
     s3.config.update({
