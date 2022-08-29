@@ -3,7 +3,7 @@ import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../utilities/dbModels/employee";
 import * as mongoose from 'mongoose';
-import { s3SignedUrlDocuments } from "../utilities/s3SignedUrl/s3SignedUrlDocuments";
+import { s3SignedUrlForDocuments } from "../utilities/s3SignedUrl/s3SignedUrlForDocuments";
 export const deleteDocumentFromS3 = async (event) => {
     try {
         let userToken = null;
@@ -22,7 +22,7 @@ export const deleteDocumentFromS3 = async (event) => {
         const employeeID = event.path.id;
         const { documentId } = event.body;
         const empObject = await getEmployeeObjectForS3DocumentDelete(documentId);
-        await s3SignedUrlDocuments('deleteDoc', empObject[0]);
+        await s3SignedUrlForDocuments('deleteDoc', empObject[0]);
         const finalResponse = await deleteEmployeeDocument( employeeID, documentId );
         // console.log("Deleted from S3", finalResponse);
         return finalResponse;
