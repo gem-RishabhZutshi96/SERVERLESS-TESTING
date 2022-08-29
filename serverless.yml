@@ -189,14 +189,18 @@ functions:
       - http:
           method: POST
           path: api/employee/getSignedUrlForImageUpload
-          request:
-            parameters:
-              querystrings:
-                type: true
-                key: true
-                officialID: true
-                name: true
-                pimcoId: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  documentImageUploadToDb:
+    handler: services/employee/documentImageUpload.documentImageUpload
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/picture/{id}
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
