@@ -1,8 +1,8 @@
 import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
 import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { s3SignedUrlDocuments } from "../utilities/s3SignedUrl/s3SignedUrlDocuments";
-export const getSignedUrlForImageUpload = async (event) => {
+import { s3SignedUrlForDocuments } from "../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+export const getSignedUrlForDocumentView = async (event) => {
     try {
         let userToken = null;
         userToken = getUserToken(event);
@@ -17,9 +17,8 @@ export const getSignedUrlForImageUpload = async (event) => {
         if (!event.body.key) {
             return badRequest("🤔🤔 Missing body parameters");
         }
-        const employeeID = event.path.id;
         const { key } = event.body;
-        const response = await s3SignedUrlDocuments('getSignedUrlForRetrieve', { key });
+        const response = await s3SignedUrlForDocuments('getSignedUrlForRetrieve', { key });
         return response;
     } catch (err) {
         console.log(err);
