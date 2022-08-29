@@ -1,6 +1,6 @@
 import { internalServer, badRequest } from "../utilities/response/index";
 import axios from 'axios';
-import { getUserRole } from "../utilities/getRole";
+import { getUserRole } from "../utilities/misc/getRole";
 import * as jwt from 'jsonwebtoken';
 import { urlStore } from '../utilities/config/config';
 export const verifyLogin = async(event) => {

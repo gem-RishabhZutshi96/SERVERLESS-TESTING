@@ -1,5 +1,5 @@
 import * as jwt from "jsonwebtoken";
-import { getUserRole } from "../getRole";
+import { getUserRole } from "../misc/getRole";
 import { urlStore } from "../config/config";
 export const accessAllowed = async (event) => {
   try {
