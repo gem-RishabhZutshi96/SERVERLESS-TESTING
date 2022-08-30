@@ -1,5 +1,5 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
+import { makeDBConnection } from "../db/database";
+import {RoleModel} from "../dbModels/role";
 export const getUserRole = async(email) => {
     let userRole = null;
     await makeDBConnection();
