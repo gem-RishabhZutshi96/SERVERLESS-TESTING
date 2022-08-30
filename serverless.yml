@@ -206,3 +206,15 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  updateEmployeeDetails:
+    handler: services/employee/updateEmployeeDetailsDb.updateEmployeeDetailsDb
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/employee/update/{id}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
