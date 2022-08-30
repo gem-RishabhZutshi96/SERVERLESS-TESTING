@@ -5,18 +5,16 @@ export const updateEmployee = async( _id, newEmployeeData ) => {
     }
     // check view and update
     if (newEmployeeData['view'] == 'gemini') {
-        newEmployeeData['OfficialParentID'] = newEmployeeData['HierarchyType']
+        newEmployeeData['OfficialParentID'] = newEmployeeData['HierarchyType'];
     }
     else if (newEmployeeData['view'] == 'team') {
-        newEmployeeData['ParentTeamID'] = newEmployeeData['HierarchyType']
+        newEmployeeData['ParentTeamID'] = newEmployeeData['HierarchyType'];
     }
     else if (newEmployeeData['view'] == 'service') {
-        newEmployeeData['ParentServiceManagerID'] = newEmployeeData['HierarchyType']
-
+        newEmployeeData['ParentServiceManagerID'] = newEmployeeData['HierarchyType'];
     }
     else if (newEmployeeData['view'] == 'project') {
-        newEmployeeData['ProjectWiseViewID'] = newEmployeeData['HierarchyType']
-
+        newEmployeeData['ProjectWiseViewID'] = newEmployeeData['HierarchyType'];
     }
     await EmployeeModel.updateOne({ _id }, { $set: newEmployeeData });
     return { success: true, data: { _id }, message: 'Employee updated' };
