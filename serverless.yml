@@ -94,7 +94,7 @@ functions:
               querystrings:
                 pageNo: true
                 perPage: true
-                pattern: true
+                pattern: false
                 source: true
                 sort: false
           response:
