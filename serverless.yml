@@ -25,19 +25,31 @@ plugins:
   - serverless-offline-lambda-invoke
   - serverless-plugin-tracing
   - serverless-bundle
+  - serverless-apigw-binary
+
+custom:
+  apigwBinary:
+    types:
+      - 'multipart/form-data'
 
 provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
+  memorySize: 128
   environment:
     stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
 
 functions:
   getRole:
     handler: services/auth/getRoleForUser.getRoleForUser
     timeout: 900
-    events: 
+    events:
       - http:
           method: GET
           path: api/auth/role/{email}
@@ -49,7 +61,7 @@ functions:
   createOrUpdateRole:
     handler: services/misc/createOrUpdateRole.createOrUpdateRole
     timeout: 900
-    events: 
+    events:
       - http:
           method: PUT
           path: api/misc/createOrUpdateRole
@@ -58,10 +70,11 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+
   verifyMSALToken:
     handler: services/auth/verifyLogin.verifyLogin
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/auth/verifyLogin
@@ -73,7 +86,7 @@ functions:
   getEmployeesForHierarchy:
     handler: services/employee/getEmployeesForSource.getEmployeesForSource
     timeout: 900
-    events: 
+    events:
       - http:
           method: GET
           path: api/employee/{source}
@@ -85,7 +98,7 @@ functions:
   getEmployeesForDirectory:
     handler: services/employee/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
-    events: 
+    events:
       - http:
           method: GET
           path: api/employee/directory
@@ -105,7 +118,7 @@ functions:
   getEmployeesForDirectoryById:
     handler: services/employee/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
-    events: 
+    events:
       - http:
           method: GET
           path: api/employee/directory/{id}
@@ -117,7 +130,7 @@ functions:
   signedUrlForDocumentUpload:
     handler: services/employee/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/document/{id}
@@ -137,7 +150,7 @@ functions:
   uploadDocumentUrlTODb:
     handler: services/employee/documentS3Url.documentS3Url
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/documentS3Url/{id}
@@ -149,7 +162,7 @@ functions:
   deleteDocumentS3:
     handler: services/employee/deleteDocumentFromS3.deleteDocumentFromS3
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/document/delete/{id}
@@ -161,7 +174,7 @@ functions:
   exportExcel:
     handler: services/employee/exportExcelOfEmployees.exportExcelOfEmployees
     timeout: 900
-    events: 
+    events:
       - http:
           method: GET
           path: api/employee/excel
@@ -173,7 +186,7 @@ functions:
   signedUrlForDocumentView:
     handler: services/employee/getSignedUrlForDocumentView.getSignedUrlForDocumentView
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/getSignedUrlForDocumentView
@@ -185,7 +198,7 @@ functions:
   signedUrlForImageUpload:
     handler: services/employee/getSignedUrlForImageUpload.getSignedUrlForImageUpload
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/getSignedUrlForImageUpload
@@ -197,7 +210,7 @@ functions:
   documentImageUploadToDb:
     handler: services/employee/documentImageUpload.documentImageUpload
     timeout: 900
-    events: 
+    events:
       - http:
           method: POST
           path: api/employee/picture/{id}
@@ -209,10 +222,22 @@ functions:
   updateEmployeeDetails:
     handler: services/employee/updateEmployeeDetailsDb.updateEmployeeDetailsDb
     timeout: 900
-    events: 
+    events:
       - http:
           method: PUT
           path: api/employee/update/{id}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  uploadExcel:
+    handler: services/misc/uploadExcel.uploadExcel
+    # timeout: 900
+    events:
+      - http:
+          method: POST
+          path: misc/api/uploadExcel
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
