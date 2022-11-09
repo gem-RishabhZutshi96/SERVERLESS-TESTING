@@ -70,6 +70,18 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  deleteRoles:
+    handler: services/misc/deleteRoles.deleteRoles
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/misc/deleteRole
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
   verifyMSALToken:
     handler: services/auth/verifyLogin.verifyLogin
     timeout: 900
