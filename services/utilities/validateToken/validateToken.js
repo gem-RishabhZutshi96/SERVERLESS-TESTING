@@ -1,13 +1,13 @@
 import JWT from "jsonwebtoken";
 import { urlStore } from "../config/config";
 const key = urlStore[process.env.stage].JWT_SECRET;
-export const main = async (event) => {
+export const validateToken = (event) => {
     try {
-        if (!event.authorizationToken) {
+        let userToken = event.headers.Authorization ? event.headers.Authorization.split(' ')[1] : null;
+        if (!userToken) {
             return "Unauthorised";
         } else {
-            let token = event.authorizationToken;
-            let decode = JWT.verify(token, key);
+            let decode = JWT.verify(userToken, key);
             return decode;
         }
     } catch (err) {
