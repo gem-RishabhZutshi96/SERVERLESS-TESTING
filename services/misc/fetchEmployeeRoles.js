@@ -7,12 +7,12 @@ export const fetchEmployeeRoles = async(event) => {
       await makeDBConnection();
       let auth = validateToken(event);
       if(auth.email){
-        const roleObj = await RoleModel.find();
         // Added a check to filter out logged in user role from resultant array....
-        const indexOfObject = roleObj.findIndex(object => {
-          return object.email === auth.email.toLowerCase();
-        });
-        roleObj.splice(indexOfObject, 1);
+        const roleObj = await RoleModel.find({email : {$nin : [auth.email]}});
+        // const indexOfObject = roleObj.findIndex(object => {
+        //   return object.email === auth.email.toLowerCase();
+        // });
+        // roleObj.splice(indexOfObject, 1);
         if(roleObj.length < 1){
           return {
             success: false,
