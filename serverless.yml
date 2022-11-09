@@ -58,6 +58,18 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  fetchEmployeeRoles:
+    handler: services/misc/fetchEmployeeRoles.fetchEmployeeRoles
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/misc/fetch/employeeRoles
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
   verifyMSALToken:
     handler: services/auth/verifyLogin.verifyLogin
     timeout: 900
