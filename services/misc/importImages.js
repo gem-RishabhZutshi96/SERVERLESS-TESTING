@@ -4,7 +4,8 @@ import { internalServer } from "../utilities/response/index";
 import { accessAllowed } from "../utilities/validateToken/authorizer";
 import { getUserToken } from "../utilities/validateToken/getUserToken";
 import { urlStore } from "../utilities/config/config";
-export const createOrUpdateRole = async(event) => {
+import axios from 'axios';
+export const importImages = async(event) => {
     try{
       let userToken =null;
       await makeDBConnection();
@@ -18,7 +19,7 @@ export const createOrUpdateRole = async(event) => {
         return auth;
       }
       const data = (await axios.get(`${urlStore[process.env.stage].misapi.fetchImages}`)).data.Result;
-      let bulkUpdate = EmployeeModel.collection.initializeOrderedBulkOp();
+      EmployeeModel.collection.initializeOrderedBulkOp();
       data.forEach(async d => {
         let dataObject = await EmployeeModel.findOne({
           officialID: { $regex: d.EmployeeCode, $options: 'i' },
@@ -49,6 +50,6 @@ export const createOrUpdateRole = async(event) => {
       };
       return response;
     } catch(err) {
-      throw internalServer(`Error in DB `, err);
+      throw internalServer(`Error in fetching images from MIS `, err);
     }
 };
