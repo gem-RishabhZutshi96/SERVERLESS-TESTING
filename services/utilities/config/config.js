@@ -104,7 +104,11 @@ export const urlStore = {
           region: 'ap-south-1',
           sowBucket:'gemini-docs',
           signatureVersion:'v4'
-        }
+        },
+        misapi: {
+          fetchImages: `https://misapi.geminisolutions.com/api/Pimco/GeminiUserProfileData`,
+          authentication: `https://misapi.geminisolutions.com/api/Authenticate/Authenticate`,
+        },
     },
     production: {
     },
