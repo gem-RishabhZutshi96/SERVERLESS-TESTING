@@ -46,6 +46,18 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+  importImages:
+    handler: services/misc/importImages.importImages
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/misc/importImages
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
   createOrUpdateRole:
     handler: services/misc/createOrUpdateRole.createOrUpdateRole
     timeout: 900
