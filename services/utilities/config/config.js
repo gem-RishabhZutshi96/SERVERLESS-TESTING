@@ -96,7 +96,40 @@ export const urlStore = {
                 'MobileNumber',
                 'ClientTeam',
               ]
-            }
+            },
+            ec: {
+              id: "officialID",
+              parentId: "ECViewID",
+              searchFields: [
+                "Name",
+                "Role",
+                "ClientEmail",
+                "MobileNumber",
+                "ClientTeam",
+              ],
+            },
+            hrbp: {
+              id: "officialID",
+              parentId: "HRBPViewID",
+              searchFields: [
+                "Name",
+                "Role",
+                "ClientEmail",
+                "MobileNumber",
+                "ClientTeam",
+              ],
+            },
+            dc: {
+              id: "officialID",
+              parentId: "DCViewID",
+              searchFields: [
+                "Name",
+                "Role",
+                "ClientEmail",
+                "MobileNumber",
+                "ClientTeam",
+              ],
+            },
         },
         s3Params: {
           accessKeyId: 'AKIATR4FIY7IJPVT755G',
