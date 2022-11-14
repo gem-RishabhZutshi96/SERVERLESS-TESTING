@@ -41,10 +41,11 @@ functions:
       - http:
           method: GET
           path: api/employee/{source}
+          cors: true
+          integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          
+              Access-Control-Allow-Origin: "'*'"      
   getEmployeesForDirectory:
     handler: apis/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
@@ -52,6 +53,8 @@ functions:
       - http:
           method: GET
           path: api/employee/directory
+          cors: true
+          integration: lambda
           request:
             parameters:
               querystrings:
@@ -62,8 +65,7 @@ functions:
                 sort: false
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          
+              Access-Control-Allow-Origin: "'*'"      
   getEmployeesForDirectoryById:
     handler: apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
@@ -71,6 +73,8 @@ functions:
       - http:
           method: GET
           path: api/employee/directory/{id}
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -81,6 +85,8 @@ functions:
       - http:
           method: POST
           path: api/employee/document/{id}
+          cors: true
+          integration: lambda
           request:
             parameters:
               querystrings:
@@ -92,8 +98,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          cors: true
-          integration: lambda
   uploadDocumentUrlTODb:
     handler: apis/documentS3Url.documentS3Url
     timeout: 900
@@ -101,6 +105,8 @@ functions:
       - http:
           method: POST
           path: api/employee/documentS3Url/{id}
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -111,6 +117,8 @@ functions:
       - http:
           method: POST
           path: api/employee/document/delete/{id}
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -121,6 +129,8 @@ functions:
       - http:
           method: GET
           path: api/employee/excel
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"        
@@ -131,6 +141,8 @@ functions:
       - http:
           method: POST
           path: api/employee/getSignedUrlForDocumentView
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"        
@@ -141,6 +153,8 @@ functions:
       - http:
           method: POST
           path: api/employee/getSignedUrlForImageUpload
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"      
@@ -151,6 +165,8 @@ functions:
       - http:
           method: POST
           path: api/employee/picture/{id}
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"      
@@ -161,6 +177,8 @@ functions:
       - http:
           method: PUT
           path: api/employee/update/{id}
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
