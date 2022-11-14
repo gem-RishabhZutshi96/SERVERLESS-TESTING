@@ -20,3 +20,14 @@ export const main = (event) => {
         };
     }
 };
+const generatePolicy = (effect, action, resource) => {
+    let policy = {};
+    policy.Version = "2012-10-17";
+    policy.Statement = [];
+    let statementObject = {};
+    statementObject.Effect = effect;
+    statementObject.Action = action;
+    statementObject.Resource = resource;
+    policy.Statement.push(statementObject);
+    return policy;
+};

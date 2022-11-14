@@ -27,8 +27,15 @@ provider:
   environment: ${self:custom.common.serverlessConfiguration.environment}
 
 functions:
+  authorizerFunc:
+    handler: auth/generatePolicy.main
+    timeout: 900
+    cors: true
+    events:
+      - http:
+        integration: lambda
   getEmployeesForHierarchy:
-    handler: employee/apis/getEmployeesForSource.getEmployeesForSource
+    handler: apis/getEmployeesForSource.getEmployeesForSource
     timeout: 900
     events: 
       - http:
@@ -37,10 +44,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   getEmployeesForDirectory:
-    handler: employee/apis/getEmployeeForDirectory.getEmployeeForDirectory
+    handler: apis/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
     events: 
       - http:
@@ -57,10 +65,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   getEmployeesForDirectoryById:
-    handler: employee/apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
+    handler: apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
     events: 
       - http:
@@ -69,10 +78,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   signedUrlForDocumentUpload:
-    handler: employee/apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
+    handler: apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
     events: 
       - http:
@@ -92,7 +102,7 @@ functions:
           cors: true
           integration: lambda
   uploadDocumentUrlTODb:
-    handler: employee/apis/documentS3Url.documentS3Url
+    handler: apis/documentS3Url.documentS3Url
     timeout: 900
     events: 
       - http:
@@ -101,10 +111,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   deleteDocumentS3:
-    handler: employee/apis/deleteDocumentFromS3.deleteDocumentFromS3
+    handler: apis/deleteDocumentFromS3.deleteDocumentFromS3
     timeout: 900
     events: 
       - http:
@@ -113,10 +124,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   exportExcel:
-    handler: employee/apis/exportExcelOfEmployees.exportExcelOfEmployees
+    handler: apis/exportExcelOfEmployees.exportExcelOfEmployees
     timeout: 900
     events: 
       - http:
@@ -125,10 +137,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   signedUrlForDocumentView:
-    handler: employee/apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
+    handler: apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
     timeout: 900
     events: 
       - http:
@@ -137,10 +150,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   signedUrlForImageUpload:
-    handler: employee/apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
+    handler: apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
     timeout: 900
     events: 
       - http:
@@ -149,10 +163,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   documentImageUploadToDb:
-    handler: employee/apis/documentImageUpload.documentImageUpload
+    handler: apis/documentImageUpload.documentImageUpload
     timeout: 900
     events: 
       - http:
@@ -161,10 +176,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
   updateEmployeeDetails:
-    handler: employee/apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
+    handler: apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
     timeout: 900
     events: 
       - http:
@@ -173,5 +189,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+          authorizer: authorizerFunc
           cors: true
           integration: lambda

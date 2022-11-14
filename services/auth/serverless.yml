@@ -25,22 +25,28 @@ provider:
   stage: ${self:custom.common.serverlessConfiguration.stage}
   region: ${self:custom.common.serverlessConfiguration.region}
   environment: ${self:custom.common.serverlessConfiguration.environment}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
 
 functions:
   authorizerFunc:
-    handler: auth/generatePolicy.main
+    handler: authPolicy/generatePolicy.main
     timeout: 900
     cors: true
     events:
       - http:
-          integration: lambda
+        integration: lambda
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
   getRole:
-    handler: auth/apis/getRoleForUser.getRoleForUser
+    handler: apis/getRoleForUser.getRoleForUser
     timeout: 900
     events: 
       - http:
@@ -52,7 +58,7 @@ functions:
           cors: true
           integration: lambda
   verifyMSALToken:
-    handler: auth/apis/verifyLogin.verifyLogin
+    handler: apis/verifyLogin.verifyLogin
     timeout: 900
     events: 
       - http:
