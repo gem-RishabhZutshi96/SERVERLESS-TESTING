@@ -4,8 +4,10 @@ import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { resolveURL } from "../../utilities/resolveURL/resolve";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const getEmployeeForDirectoryById = async(event) => {
     try{
+      devLogger("getEmployeeForDirectoryById", event, "event");
       let userToken = null;
       userToken = getUserToken(event);
       let authQuery={
@@ -20,8 +22,8 @@ export const getEmployeeForDirectoryById = async(event) => {
       const response = await getEmployeeForDirectoryFromId( employeeID );
       return response;
     } catch(err){
-        console.log(err);
-        throw internalServer(`Error in DB`, err);
+      errorLogger("getEmployeeForDirectoryById", err, "Error db call");
+      throw internalServer(`Error in DB`, err);
     }
 };
 async function getEmployeeForDirectoryFromId(_id) {

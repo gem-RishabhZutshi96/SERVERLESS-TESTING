@@ -2,8 +2,10 @@ import { makeDBConnection } from "../../utilities/db/database";
 import {RoleModel} from "../../utilities/dbModels/role";
 import { internalServer } from "../../utilities/response/index";
 import {validateToken} from "../../utilities/validateToken/validateToken";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const fetchEmployeeRoles = async(event) => {
     try{
+      devLogger("fetchEmployeeRoles", event, "event");
       await makeDBConnection();
       let auth = validateToken(event);
       if(auth.email){
@@ -26,7 +28,7 @@ export const fetchEmployeeRoles = async(event) => {
         };
       } else return auth;
     } catch(err) {
-      console.log(err);
+      errorLogger("fetchEmployeeRoles", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };

@@ -2,8 +2,10 @@ import { internalServer, forbiddenRequest } from "../../utilities/response/index
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const getSignedUrlForDocumentUpload = async (event) => {
     try {
+        devLogger("getSignedUrlForDocumentUpload", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -19,7 +21,7 @@ export const getSignedUrlForDocumentUpload = async (event) => {
         const response = await s3SignedUrlForDocuments('getSignedUrlForUpload', { type, key, officialID, name, pimcoId });
         return response;
     } catch (err) {
-        console.log(err);
+        errorLogger("getSignedUrlForDocumentUpload", err, "Error db call");
         throw internalServer(`Error in DB `, err);
     }
 };

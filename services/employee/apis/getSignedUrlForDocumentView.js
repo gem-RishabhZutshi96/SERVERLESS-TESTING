@@ -2,8 +2,10 @@ import { internalServer, forbiddenRequest, badRequest } from "../../utilities/re
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const getSignedUrlForDocumentView = async (event) => {
     try {
+        devLogger("getSignedUrlForDocumentView", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -21,7 +23,7 @@ export const getSignedUrlForDocumentView = async (event) => {
         const response = await s3SignedUrlForDocuments('getSignedUrlForRetrieve', { key });
         return response;
     } catch (err) {
-        console.log(err);
+        errorLogger("getSignedUrlForDocumentView", err, "Error db call");
         throw internalServer(`Error in DB`, err);
     }
 };

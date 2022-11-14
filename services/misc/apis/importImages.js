@@ -4,9 +4,11 @@ import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { urlStore } from "../../utilities/config/config";
+import { devLogger, errorLogger } from "../utils/log-helper";
 import axios from 'axios';
 export const importImages = async(event) => {
-    try{
+    try {
+      devLogger("importImages", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -50,6 +52,7 @@ export const importImages = async(event) => {
       };
       return response;
     } catch(err) {
+      errorLogger("importImages", err, "Error db call");
       throw internalServer(`Error in fetching images from MIS `, err);
     }
 };

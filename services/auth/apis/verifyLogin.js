@@ -3,16 +3,19 @@ import axios from 'axios';
 import { getUserRole } from "../../utilities/misc/getRole";
 import * as jwt from 'jsonwebtoken';
 import { urlStore } from '../../utilities/config/config';
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const verifyLogin = async(event) => {
-    try{
-        if(!(event.body.accessToken || event.body.email)){
-            return badRequest("🤔🤔 Missing body parameters");
-        } else {
-            const { accessToken, email } = event.body;
-            const response = await verifyUser(accessToken, email);
-            return response;
-        }
+    try {
+      devLogger("verifyLogin", event, "event");
+      if(!(event.body.accessToken || event.body.email)){
+        return badRequest("🤔🤔 Missing body parameters");
+      } else {
+        const { accessToken, email } = event.body;
+        const response = await verifyUser(accessToken, email);
+        return response;
+      }
     } catch(err) {
+      errorLogger("verifyLogin", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
