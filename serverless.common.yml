@@ -1,0 +1,5 @@
+serverlessConfiguration:
+  stage: ${opt:stage,'dev'}
+  environment:
+    stage: dev
+  region: us-east-1

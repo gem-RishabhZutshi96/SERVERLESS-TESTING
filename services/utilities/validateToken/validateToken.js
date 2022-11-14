@@ -8,9 +8,15 @@ export const validateToken = (event) => {
             return "Unauthorised";
         } else {
             let decode = JWT.verify(userToken, key);
-            return decode;
+            return {
+                principalId: decode.user,
+                policyDocument: generatePolicy("Allow", "execute-api:Invoke", "*"),
+            };
         }
     } catch (err) {
-        return err;
+        return {
+            principalId: "12345",
+            policyDocument: generatePolicy("Deny", "execute-api:Invoke", "*"),
+        };
     }
 };

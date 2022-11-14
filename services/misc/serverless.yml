@@ -1,0 +1,78 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+#
+# Happy Coding!
+
+service: auth
+frameworkVersion: '3'
+
+custom:
+  common: ${file(../../serverless.common.yml)}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-offline-lambda-invoke
+  - serverless-plugin-tracing
+  - serverless-bundle
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${self:custom.common.serverlessConfiguration.stage}
+  region: ${self:custom.common.serverlessConfiguration.region}
+  environment: ${self:custom.common.serverlessConfiguration.environment}
+
+functions:
+  importImages:
+    handler: services/misc/importImages.importImages
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/misc/importImages
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  createOrUpdateRole:
+    handler: services/misc/createOrUpdateRole.createOrUpdateRole
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/misc/createOrUpdateRole
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  fetchEmployeeRoles:
+    handler: services/misc/fetchEmployeeRoles.fetchEmployeeRoles
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/misc/fetch/employeeRoles
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  deleteRoles:
+    handler: services/misc/deleteRoles.deleteRoles
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/misc/deleteRole
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  
