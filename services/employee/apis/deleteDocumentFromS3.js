@@ -1,9 +1,9 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { EmployeeModel } from "../utilities/dbModels/employee";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
 import * as mongoose from 'mongoose';
-import { s3SignedUrlForDocuments } from "../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
 export const deleteDocumentFromS3 = async (event) => {
     try {
         let userToken = null;

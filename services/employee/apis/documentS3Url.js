@@ -1,9 +1,9 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { EmployeeModel } from "../utilities/dbModels/employee";
-import { resolveURL } from "../utilities/resolveURL/resolve";
-import { urlStore } from "../utilities/config/config";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
+import { resolveURL } from "../../utilities/resolveURL/resolve";
+import { urlStore } from "../../utilities/config/config";
 export const documentS3Url = async (event) => {
     try {
         let userToken = null;

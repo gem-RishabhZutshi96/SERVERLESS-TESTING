@@ -1,7 +1,7 @@
-import { internalServer, forbiddenRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { updateEmployee } from "../utilities/misc/updateEmployee";
+import { internalServer, forbiddenRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { updateEmployee } from "../../utilities/misc/updateEmployee";
 export const updateEmployeeDetailsDb = async (event) => {
     try {
         let userToken = null;

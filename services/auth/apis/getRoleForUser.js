@@ -1,7 +1,7 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
+import { makeDBConnection } from "../../utilities/db/database";
+import { RoleModel } from "../../utilities/dbModels/role";
 export const getRoleForUser = async(event) => {
-    console.log("🔎🔎 Fetching role for user 🔍🔍");
+    ("🔎Fetching role for user");
     let userRole = null;
     await makeDBConnection();
     const roleObj = await RoleModel.findOne({'email': {'$regex': `^${event.path.email}$`, $options: 'i'}});

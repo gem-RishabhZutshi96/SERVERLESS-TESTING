@@ -1,9 +1,9 @@
-import { urlStore } from "../utilities/config/config";
-import { internalServer, badRequest } from "../utilities/response/index";
-import { accessDeniedToSource } from "../utilities/validateToken/authorizer";
-import { EmployeeModel } from  "../utilities/dbModels/employee";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { resolveURL } from "../utilities/resolveURL/resolve";
+import { urlStore } from "../../utilities/config/config";
+import { internalServer, badRequest } from "../../utilities/response/index";
+import { accessDeniedToSource } from "../../utilities/validateToken/authorizer";
+import { EmployeeModel } from  "../../utilities/dbModels/employee";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { resolveURL } from "../../utilities/resolveURL/resolve";
 export const getEmployeesForSource = async(event) => {
     try{
       let userToken = null;

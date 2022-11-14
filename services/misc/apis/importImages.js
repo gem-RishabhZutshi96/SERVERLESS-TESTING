@@ -1,9 +1,9 @@
-import { makeDBConnection } from "../utilities/db/database";
-import { EmployeeModel } from "../utilities/dbModels/employee";
-import { internalServer } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { urlStore } from "../utilities/config/config";
+import { makeDBConnection } from "../../utilities/db/database";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
+import { internalServer } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { urlStore } from "../../utilities/config/config";
 import axios from 'axios';
 export const importImages = async(event) => {
     try{

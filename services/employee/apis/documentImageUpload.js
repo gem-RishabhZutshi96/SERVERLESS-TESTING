@@ -1,7 +1,7 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { updateEmployee } from "../utilities/misc/updateEmployee";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { updateEmployee } from "../../utilities/misc/updateEmployee";
 export const documentImageUpload = async (event) => {
     try {
         let userToken = null;

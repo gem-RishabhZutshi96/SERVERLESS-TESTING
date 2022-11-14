@@ -1,8 +1,8 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
-import { internalServer } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { makeDBConnection } from "../../utilities/db/database";
+import {RoleModel} from "../../utilities/dbModels/role";
+import { internalServer } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
 export const deleteRoles = async(event) => {
     try{
       let userToken =null;

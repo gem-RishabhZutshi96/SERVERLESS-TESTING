@@ -1,9 +1,9 @@
-import { urlStore } from "../utilities/config/config";
-import { internalServer, successResponse, forbiddenRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { EmployeeModel } from  "../utilities/dbModels/employee";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { resolveURL } from "../utilities/resolveURL/resolve";
+import { urlStore } from "../../utilities/config/config";
+import { internalServer, successResponse, forbiddenRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { EmployeeModel } from  "../../utilities/dbModels/employee";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { resolveURL } from "../../utilities/resolveURL/resolve";
 export const getEmployeeForDirectoryById = async(event) => {
     try{
       let userToken = null;

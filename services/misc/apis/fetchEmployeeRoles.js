@@ -1,7 +1,7 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
-import { internalServer } from "../utilities/response/index";
-import {validateToken} from "../utilities/validateToken/validateToken";
+import { makeDBConnection } from "../../utilities/db/database";
+import {RoleModel} from "../../utilities/dbModels/role";
+import { internalServer } from "../../utilities/response/index";
+import {validateToken} from "../../utilities/validateToken/validateToken";
 export const fetchEmployeeRoles = async(event) => {
     try{
       await makeDBConnection();

@@ -1,8 +1,8 @@
-import { internalServer, badRequest } from "../utilities/response/index";
+import { internalServer, badRequest } from "../../utilities/response/index";
 import axios from 'axios';
-import { getUserRole } from "../utilities/misc/getRole";
+import { getUserRole } from "../../utilities/misc/getRole";
 import * as jwt from 'jsonwebtoken';
-import { urlStore } from '../utilities/config/config';
+import { urlStore } from '../../utilities/config/config';
 export const verifyLogin = async(event) => {
     try{
         if(!(event.body.accessToken || event.body.email)){
