@@ -28,7 +28,7 @@ provider:
 
 functions:
   importImages:
-    handler: services/misc/importImages.importImages
+    handler: misc/apis/importImages.importImages
     timeout: 900
     events: 
       - http:
@@ -40,7 +40,7 @@ functions:
           cors: true
           integration: lambda
   createOrUpdateRole:
-    handler: services/misc/createOrUpdateRole.createOrUpdateRole
+    handler: misc/apis/createOrUpdateRole.createOrUpdateRole
     timeout: 900
     events: 
       - http:
@@ -52,7 +52,7 @@ functions:
           cors: true
           integration: lambda
   fetchEmployeeRoles:
-    handler: services/misc/fetchEmployeeRoles.fetchEmployeeRoles
+    handler: misc/apis/fetchEmployeeRoles.fetchEmployeeRoles
     timeout: 900
     events: 
       - http:
@@ -64,7 +64,7 @@ functions:
           cors: true
           integration: lambda
   deleteRoles:
-    handler: services/misc/deleteRoles.deleteRoles
+    handler: misc/apis/deleteRoles.deleteRoles
     timeout: 900
     events: 
       - http:

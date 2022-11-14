@@ -40,7 +40,7 @@ functions:
           - "lambda:InvokeFunction"
         Resource: "*"
   getRole:
-    handler: services/auth/getRoleForUser.getRoleForUser
+    handler: auth/apis/getRoleForUser.getRoleForUser
     timeout: 900
     events: 
       - http:
@@ -52,7 +52,7 @@ functions:
           cors: true
           integration: lambda
   verifyMSALToken:
-    handler: services/auth/verifyLogin.verifyLogin
+    handler: auth/apis/verifyLogin.verifyLogin
     timeout: 900
     events: 
       - http:

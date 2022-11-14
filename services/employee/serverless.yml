@@ -28,7 +28,7 @@ provider:
 
 functions:
   getEmployeesForHierarchy:
-    handler: services/employee/getEmployeesForSource.getEmployeesForSource
+    handler: employee/apis/getEmployeesForSource.getEmployeesForSource
     timeout: 900
     events: 
       - http:
@@ -40,7 +40,7 @@ functions:
           cors: true
           integration: lambda
   getEmployeesForDirectory:
-    handler: services/employee/getEmployeeForDirectory.getEmployeeForDirectory
+    handler: employee/apis/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
     events: 
       - http:
@@ -60,7 +60,7 @@ functions:
           cors: true
           integration: lambda
   getEmployeesForDirectoryById:
-    handler: services/employee/getEmployeeForDirectoryById.getEmployeeForDirectoryById
+    handler: employee/apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
     events: 
       - http:
@@ -72,7 +72,7 @@ functions:
           cors: true
           integration: lambda
   signedUrlForDocumentUpload:
-    handler: services/employee/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
+    handler: employee/apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
     events: 
       - http:
@@ -92,7 +92,7 @@ functions:
           cors: true
           integration: lambda
   uploadDocumentUrlTODb:
-    handler: services/employee/documentS3Url.documentS3Url
+    handler: employee/apis/documentS3Url.documentS3Url
     timeout: 900
     events: 
       - http:
@@ -104,7 +104,7 @@ functions:
           cors: true
           integration: lambda
   deleteDocumentS3:
-    handler: services/employee/deleteDocumentFromS3.deleteDocumentFromS3
+    handler: employee/apis/deleteDocumentFromS3.deleteDocumentFromS3
     timeout: 900
     events: 
       - http:
@@ -116,7 +116,7 @@ functions:
           cors: true
           integration: lambda
   exportExcel:
-    handler: services/employee/exportExcelOfEmployees.exportExcelOfEmployees
+    handler: employee/apis/exportExcelOfEmployees.exportExcelOfEmployees
     timeout: 900
     events: 
       - http:
@@ -128,7 +128,7 @@ functions:
           cors: true
           integration: lambda
   signedUrlForDocumentView:
-    handler: services/employee/getSignedUrlForDocumentView.getSignedUrlForDocumentView
+    handler: employee/apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
     timeout: 900
     events: 
       - http:
@@ -140,7 +140,7 @@ functions:
           cors: true
           integration: lambda
   signedUrlForImageUpload:
-    handler: services/employee/getSignedUrlForImageUpload.getSignedUrlForImageUpload
+    handler: employee/apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
     timeout: 900
     events: 
       - http:
@@ -152,7 +152,7 @@ functions:
           cors: true
           integration: lambda
   documentImageUploadToDb:
-    handler: services/employee/documentImageUpload.documentImageUpload
+    handler: employee/apis/documentImageUpload.documentImageUpload
     timeout: 900
     events: 
       - http:
@@ -164,7 +164,7 @@ functions:
           cors: true
           integration: lambda
   updateEmployeeDetails:
-    handler: services/employee/updateEmployeeDetailsDb.updateEmployeeDetailsDb
+    handler: employee/apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
     timeout: 900
     events: 
       - http:
