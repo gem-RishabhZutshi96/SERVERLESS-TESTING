@@ -11,7 +11,7 @@ export const getRoleForUser = async(event) => {
       if (!roleObj) {
         userRole = "gemini";
       } else {
-        infoLogger()
+        infoLogger("roleObj", roleObj, "Success");
         userRole = roleObj.role;
       }
       let response = {
