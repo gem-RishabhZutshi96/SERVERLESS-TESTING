@@ -1,15 +1,17 @@
-import { internalServer, forbiddenRequest, successResponse } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { EmployeeModel } from "../utilities/dbModels/employee";
-import { dateFormat } from "../utilities/misc/utils";
+import { internalServer, forbiddenRequest, successResponse } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
+import { dateFormat } from "../../utilities/misc/utils";
+import { devLogger, errorLogger } from "../utils/log-helper";
 import * as json2xls from 'json2xls';
 import AWS from 'aws-sdk';
-import { urlStore } from "../utilities/config/config";
+import { urlStore } from "../../utilities/config/config";
 import moment from 'moment';
 const s3 = new AWS.S3();
 export const exportExcelOfEmployees = async (event) => {
     try {
+        devLogger("exportExcelOfEmployees", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -30,7 +32,7 @@ export const exportExcelOfEmployees = async (event) => {
         const excelFilePath = await exportExcelDataOfEmployees('excels',  'excels' + '/' + timestamp + '--' +`hierarchy-downloaded.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
-        console.log(err);
+        errorLogger("exportExcelOfEmployees", err, "Error db call");
         throw internalServer(`Error in DB `, err);
     }
 };

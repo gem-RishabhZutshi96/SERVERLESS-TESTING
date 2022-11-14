@@ -1,11 +1,13 @@
-import { urlStore } from "../utilities/config/config";
-import { internalServer, badRequest } from "../utilities/response/index";
-import { accessDeniedToSource } from "../utilities/validateToken/authorizer";
-import { EmployeeModel } from  "../utilities/dbModels/employee";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { resolveURL } from "../utilities/resolveURL/resolve";
+import { urlStore } from "../../utilities/config/config";
+import { successResponse, internalServer, badRequest } from "../../utilities/response/index";
+import { accessDeniedToSource } from "../../utilities/validateToken/authorizer";
+import { EmployeeModel } from  "../../utilities/dbModels/employee";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { resolveURL } from "../../utilities/resolveURL/resolve";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const getEmployeesForSource = async(event) => {
     try{
+      devLogger("getEmployeesForSource", event, "event");
       let userToken = null;
       userToken = getUserToken(event);
       let authQuery={
@@ -51,12 +53,12 @@ export const getEmployeesForSource = async(event) => {
           return getEmployeeResponseObject(empObj, id, parentId);
         });
         const root = getEmployeeResponseObject(rootData.toObject(), id, parentId);
-        return { Result: { employees, root } };
+        return successResponse("Data Fetched Successfully",{ Result: { employees, root } });
       } else {
         return "❌❌User is not authorized to access this resource";
       }
     } catch(err) {
-      console.log(err);
+      errorLogger("getEmployeesForSource", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };

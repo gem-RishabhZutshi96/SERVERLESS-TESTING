@@ -1,9 +1,11 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { updateEmployee } from "../utilities/misc/updateEmployee";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { updateEmployee } from "../../utilities/misc/updateEmployee";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const documentImageUpload = async (event) => {
     try {
+        devLogger("documentImageUpload", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -24,7 +26,7 @@ export const documentImageUpload = async (event) => {
         });
         return response;
     } catch (err) {
-        console.log(err);
+        errorLogger("documentImageUpload", err, "Error db call");
         throw internalServer(`Error in DB`, err);
     }
 };

@@ -1,10 +1,12 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
-import { internalServer } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { makeDBConnection } from "../../utilities/db/database";
+import {RoleModel} from "../../utilities/dbModels/role";
+import { internalServer } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const deleteRoles = async(event) => {
     try{
+      devLogger("deleteRoles", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -34,6 +36,7 @@ export const deleteRoles = async(event) => {
         };
       }
     } catch(err) {
+      errorLogger("deleteRoles", err, "Error db call");
       throw internalServer(`Error in deleting the roles `, err);
     }
 };

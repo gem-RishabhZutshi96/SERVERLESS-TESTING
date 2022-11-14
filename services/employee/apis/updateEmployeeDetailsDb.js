@@ -1,9 +1,11 @@
-import { internalServer, forbiddenRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { updateEmployee } from "../utilities/misc/updateEmployee";
+import { internalServer, forbiddenRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { updateEmployee } from "../../utilities/misc/updateEmployee";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const updateEmployeeDetailsDb = async (event) => {
     try {
+        devLogger("updateEmployeeDetailsDb", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -19,7 +21,7 @@ export const updateEmployeeDetailsDb = async (event) => {
         const response = await updateEmployee(employeeID, newEmployeeData);
         return response;
     } catch (err) {
-        console.log(err);
+        errorLogger("updateEmployeeDetailsDb", err, "Error db call");
         throw internalServer(`Error in DB`, err);
     }
 };

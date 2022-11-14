@@ -1,11 +1,13 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { EmployeeModel } from "../utilities/dbModels/employee";
-import { resolveURL } from "../utilities/resolveURL/resolve";
-import { urlStore } from "../utilities/config/config";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
+import { resolveURL } from "../../utilities/resolveURL/resolve";
+import { urlStore } from "../../utilities/config/config";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const documentS3Url = async (event) => {
     try {
+        devLogger("documentS3Url", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -28,7 +30,7 @@ export const documentS3Url = async (event) => {
         });
         return response;
     } catch (err) {
-        console.log(err);
+        errorLogger("documentS3Url", err, "Error db call");
         throw internalServer(`Error in DB `, err);
     }
 };

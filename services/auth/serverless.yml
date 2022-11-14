@@ -1,0 +1,59 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+#
+# Happy Coding!
+
+service: auth
+frameworkVersion: '3'
+
+custom:
+  common: ${file(../../serverless.common.yml)}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-offline-lambda-invoke
+  - serverless-plugin-tracing
+  - serverless-bundle
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${self:custom.common.serverlessConfiguration.stage}
+  region: ${self:custom.common.serverlessConfiguration.region}
+  environment: ${self:custom.common.serverlessConfiguration.environment}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+      
+functions:
+  getRole:
+    handler: apis/getRoleForUser.getRoleForUser
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/auth/role/{email}
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda
+  verifyMSALToken:
+    handler: apis/verifyLogin.verifyLogin
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/auth/verifyLogin
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          cors: true
+          integration: lambda

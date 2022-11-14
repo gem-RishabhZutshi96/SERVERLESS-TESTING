@@ -1,10 +1,12 @@
-import { makeDBConnection } from "../utilities/db/database";
-import {RoleModel} from "../utilities/dbModels/role";
-import { internalServer } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
+import { makeDBConnection } from "../../utilities/db/database";
+import {RoleModel} from "../../utilities/dbModels/role";
+import { internalServer } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { devLogger, errorLogger } from "../utils/log-helper";
 export const createOrUpdateRole = async(event) => {
     try{
+      devLogger("createOrUpdateRole", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -31,6 +33,7 @@ export const createOrUpdateRole = async(event) => {
       };
       return response;
     } catch(err) {
+      errorLogger("createOrUpdateRole", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };

@@ -1,0 +1,185 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+#
+# Happy Coding!
+
+service: employee
+frameworkVersion: '3'
+
+custom:
+  common: ${file(../../serverless.common.yml)}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-offline-lambda-invoke
+  - serverless-plugin-tracing
+  - serverless-bundle
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${self:custom.common.serverlessConfiguration.stage}
+  region: ${self:custom.common.serverlessConfiguration.region}
+  environment: ${self:custom.common.serverlessConfiguration.environment}
+
+functions:
+  authorizerFunc:
+    handler: auth/generatePolicy.main
+    timeout: 900
+    cors: true
+    events:
+      - http:
+        integration: lambda
+  getEmployeesForHierarchy:
+    handler: apis/getEmployeesForSource.getEmployeesForSource
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/{source}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"      
+  getEmployeesForDirectory:
+    handler: apis/getEmployeeForDirectory.getEmployeeForDirectory
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/directory
+          cors: true
+          integration: lambda
+          request:
+            parameters:
+              querystrings:
+                pageNo: true
+                perPage: true
+                pattern: false
+                source: true
+                sort: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"      
+  getEmployeesForDirectoryById:
+    handler: apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/directory/{id}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+  signedUrlForDocumentUpload:
+    handler: apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/document/{id}
+          cors: true
+          integration: lambda
+          request:
+            parameters:
+              querystrings:
+                type: true
+                key: true
+                officialID: true
+                name: true
+                pimcoId: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+  uploadDocumentUrlTODb:
+    handler: apis/documentS3Url.documentS3Url
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/documentS3Url/{id}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+  deleteDocumentS3:
+    handler: apis/deleteDocumentFromS3.deleteDocumentFromS3
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/document/delete/{id}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+  exportExcel:
+    handler: apis/exportExcelOfEmployees.exportExcelOfEmployees
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/employee/excel
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"        
+  signedUrlForDocumentView:
+    handler: apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/getSignedUrlForDocumentView
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"        
+  signedUrlForImageUpload:
+    handler: apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/getSignedUrlForImageUpload
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"      
+  documentImageUploadToDb:
+    handler: apis/documentImageUpload.documentImageUpload
+    timeout: 900
+    events: 
+      - http:
+          method: POST
+          path: api/employee/picture/{id}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"      
+  updateEmployeeDetails:
+    handler: apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/employee/update/{id}
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          

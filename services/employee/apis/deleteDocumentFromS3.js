@@ -1,11 +1,13 @@
-import { internalServer, forbiddenRequest, badRequest } from "../utilities/response/index";
-import { accessAllowed } from "../utilities/validateToken/authorizer";
-import { getUserToken } from "../utilities/validateToken/getUserToken";
-import { EmployeeModel } from "../utilities/dbModels/employee";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { accessAllowed } from "../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { EmployeeModel } from "../../utilities/dbModels/employee";
+import { devLogger, errorLogger } from "../utils/log-helper";
 import * as mongoose from 'mongoose';
-import { s3SignedUrlForDocuments } from "../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
 export const deleteDocumentFromS3 = async (event) => {
     try {
+        devLogger("deleteDocumentFromS3", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -27,7 +29,7 @@ export const deleteDocumentFromS3 = async (event) => {
         // console.log("Deleted from S3", finalResponse);
         return finalResponse;
     } catch (err) {
-        console.log(err);
+        errorLogger("deleteDocumentFromS3", err, "Error db call");
         throw internalServer(`Error in DB `, err);
     }
 };
