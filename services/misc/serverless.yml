@@ -34,6 +34,8 @@ functions:
       - http:
           method: GET
           path: api/misc/importImages
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
@@ -44,6 +46,8 @@ functions:
       - http:
           method: PUT
           path: api/misc/createOrUpdateRole
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"       
@@ -54,6 +58,8 @@ functions:
       - http:
           method: GET
           path: api/misc/fetch/employeeRoles
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"        
@@ -64,6 +70,8 @@ functions:
       - http:
           method: POST
           path: api/misc/deleteRole
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'" 
