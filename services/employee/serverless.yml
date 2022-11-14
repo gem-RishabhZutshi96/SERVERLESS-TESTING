@@ -44,9 +44,7 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+          
   getEmployeesForDirectory:
     handler: apis/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900
@@ -65,9 +63,7 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+          
   getEmployeesForDirectoryById:
     handler: apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
@@ -78,9 +74,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
   signedUrlForDocumentUpload:
     handler: apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
@@ -111,9 +104,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
   deleteDocumentS3:
     handler: apis/deleteDocumentFromS3.deleteDocumentFromS3
     timeout: 900
@@ -124,9 +114,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
   exportExcel:
     handler: apis/exportExcelOfEmployees.exportExcelOfEmployees
     timeout: 900
@@ -136,10 +123,7 @@ functions:
           path: api/employee/excel
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"        
   signedUrlForDocumentView:
     handler: apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
     timeout: 900
@@ -149,10 +133,7 @@ functions:
           path: api/employee/getSignedUrlForDocumentView
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"        
   signedUrlForImageUpload:
     handler: apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
     timeout: 900
@@ -162,10 +143,7 @@ functions:
           path: api/employee/getSignedUrlForImageUpload
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"      
   documentImageUploadToDb:
     handler: apis/documentImageUpload.documentImageUpload
     timeout: 900
@@ -175,10 +153,7 @@ functions:
           path: api/employee/picture/{id}
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"      
   updateEmployeeDetails:
     handler: apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
     timeout: 900
@@ -189,6 +164,4 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+          

@@ -27,13 +27,6 @@ provider:
   environment: ${self:custom.common.serverlessConfiguration.environment}
 
 functions:
-  authorizerFunc:
-    handler: auth/generatePolicy.main
-    timeout: 900
-    cors: true
-    events:
-      - http:
-        integration: lambda
   importImages:
     handler: apis/importImages.importImages
     timeout: 900
@@ -44,9 +37,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
   createOrUpdateRole:
     handler: apis/createOrUpdateRole.createOrUpdateRole
     timeout: 900
@@ -56,10 +46,7 @@ functions:
           path: api/misc/createOrUpdateRole
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"       
   fetchEmployeeRoles:
     handler: apis/fetchEmployeeRoles.fetchEmployeeRoles
     timeout: 900
@@ -69,10 +56,7 @@ functions:
           path: api/misc/fetch/employeeRoles
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
+              Access-Control-Allow-Origin: "'*'"        
   deleteRoles:
     handler: apis/deleteRoles.deleteRoles
     timeout: 900
@@ -82,8 +66,4 @@ functions:
           path: api/misc/deleteRole
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
-  
+              Access-Control-Allow-Origin: "'*'" 

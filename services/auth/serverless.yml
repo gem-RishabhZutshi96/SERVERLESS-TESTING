@@ -31,20 +31,8 @@ provider:
         - xray:PutTraceSegments
         - xray:PutTelemetryRecords
       Resource: "*"
-
+      
 functions:
-  authorizerFunc:
-    handler: authPolicy/generatePolicy.main
-    timeout: 900
-    cors: true
-    events:
-      - http:
-        integration: lambda
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "lambda:InvokeFunction"
-        Resource: "*"
   getRole:
     handler: apis/getRoleForUser.getRoleForUser
     timeout: 900
