@@ -48,7 +48,7 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  getEmployeesForHierarchy:
+  getEmployeesForSource:
     handler: apis/getEmployeesForSource.getEmployeesForSource
     timeout: 900
     events: 
@@ -73,6 +73,7 @@ functions:
       - http:
           method: GET
           path: api/employee/directory
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           request:
@@ -86,6 +87,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"      
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   getEmployeesForDirectoryById:
     handler: apis/getEmployeeForDirectoryById.getEmployeeForDirectoryById
     timeout: 900
@@ -93,11 +99,17 @@ functions:
       - http:
           method: GET
           path: api/employee/directory/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   signedUrlForDocumentUpload:
     handler: apis/getSignedUrlForDocumentUpload.getSignedUrlForDocumentUpload
     timeout: 900
@@ -105,6 +117,7 @@ functions:
       - http:
           method: POST
           path: api/employee/document/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           request:
@@ -118,6 +131,11 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   uploadDocumentUrlTODb:
     handler: apis/documentS3Url.documentS3Url
     timeout: 900
@@ -125,11 +143,17 @@ functions:
       - http:
           method: POST
           path: api/employee/documentS3Url/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   deleteDocumentS3:
     handler: apis/deleteDocumentFromS3.deleteDocumentFromS3
     timeout: 900
@@ -137,11 +161,17 @@ functions:
       - http:
           method: POST
           path: api/employee/document/delete/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   exportExcel:
     handler: apis/exportExcelOfEmployees.exportExcelOfEmployees
     timeout: 900
@@ -149,11 +179,17 @@ functions:
       - http:
           method: GET
           path: api/employee/excel
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"        
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"         
   signedUrlForDocumentView:
     handler: apis/getSignedUrlForDocumentView.getSignedUrlForDocumentView
     timeout: 900
@@ -161,11 +197,17 @@ functions:
       - http:
           method: POST
           path: api/employee/getSignedUrlForDocumentView
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"        
+              Access-Control-Allow-Origin: "'*'" 
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"        
   signedUrlForImageUpload:
     handler: apis/getSignedUrlForImageUpload.getSignedUrlForImageUpload
     timeout: 900
@@ -173,11 +215,17 @@ functions:
       - http:
           method: POST
           path: api/employee/getSignedUrlForImageUpload
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"      
+              Access-Control-Allow-Origin: "'*'"    
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"   
   documentImageUploadToDb:
     handler: apis/documentImageUpload.documentImageUpload
     timeout: 900
@@ -185,11 +233,17 @@ functions:
       - http:
           method: POST
           path: api/employee/picture/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"      
+              Access-Control-Allow-Origin: "'*'"    
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"   
   updateEmployeeDetails:
     handler: apis/updateEmployeeDetailsDb.updateEmployeeDetailsDb
     timeout: 900
@@ -197,9 +251,15 @@ functions:
       - http:
           method: PUT
           path: api/employee/update/{id}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
           
