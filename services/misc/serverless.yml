@@ -16,6 +16,7 @@ package:
 plugins:
   - serverless-offline
   - serverless-offline-lambda-invoke
+  - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-bundle
 
@@ -25,8 +26,28 @@ provider:
   stage: ${self:custom.common.serverlessConfiguration.stage}
   region: ${self:custom.common.serverlessConfiguration.region}
   environment: ${self:custom.common.serverlessConfiguration.environment}
-
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
 functions:
+  authorizerFunc:
+    handler: auth/generatePolicy.main
+    timeout: 30
+    cors: true
+    events:
+      - http:
+        integration: lambda
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   importImages:
     handler: apis/importImages.importImages
     timeout: 900
@@ -34,11 +55,17 @@ functions:
       - http:
           method: GET
           path: api/misc/importImages
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   createOrUpdateRole:
     handler: apis/createOrUpdateRole.createOrUpdateRole
     timeout: 900
@@ -46,11 +73,17 @@ functions:
       - http:
           method: PUT
           path: api/misc/createOrUpdateRole
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"       
+              Access-Control-Allow-Origin: "'*'" 
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"       
   fetchEmployeeRoles:
     handler: apis/fetchEmployeeRoles.fetchEmployeeRoles
     timeout: 900
@@ -58,11 +91,17 @@ functions:
       - http:
           method: GET
           path: api/misc/fetch/employeeRoles
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"        
+              Access-Control-Allow-Origin: "'*'"  
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"       
   deleteRoles:
     handler: apis/deleteRoles.deleteRoles
     timeout: 900
@@ -70,8 +109,14 @@ functions:
       - http:
           method: POST
           path: api/misc/deleteRole
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'" 
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
