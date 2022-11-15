@@ -67,7 +67,7 @@ async function sendMicrosoftAuthenticationRequest(token) {
       };
 };
 
-function generateToken(email) {
+async function generateToken(email) {
     const today = new Date();
     const exp = new Date(today);
     exp.setDate(today.getDate() + 60);
