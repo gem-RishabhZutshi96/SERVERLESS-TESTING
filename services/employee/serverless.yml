@@ -16,6 +16,7 @@ package:
 plugins:
   - serverless-offline
   - serverless-offline-lambda-invoke
+  - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-bundle
 
@@ -25,15 +26,28 @@ provider:
   stage: ${self:custom.common.serverlessConfiguration.stage}
   region: ${self:custom.common.serverlessConfiguration.region}
   environment: ${self:custom.common.serverlessConfiguration.environment}
-
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
 functions:
   authorizerFunc:
     handler: auth/generatePolicy.main
-    timeout: 900
+    timeout: 30
     cors: true
     events:
       - http:
         integration: lambda
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   getEmployeesForHierarchy:
     handler: apis/getEmployeesForSource.getEmployeesForSource
     timeout: 900
@@ -41,11 +55,17 @@ functions:
       - http:
           method: GET
           path: api/employee/{source}
+          authorizer: authorizerFunc
           cors: true
           integration: lambda
           response:
             headers:
-              Access-Control-Allow-Origin: "'*'"      
+              Access-Control-Allow-Origin: "'*'"     
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   getEmployeesForDirectory:
     handler: apis/getEmployeeForDirectory.getEmployeeForDirectory
     timeout: 900

@@ -3,7 +3,7 @@ import { urlStore } from "../config/config";
 const key = urlStore[process.env.stage].JWT_SECRET;
 export const main = (event) => {
     try {
-        let userToken = event.headers.Authorization ? event.headers.Authorization.split(' ')[1] : null;
+        let userToken = event.authorizationToken ? event.authorizationToken.split(' ')[1] : null;
         if (!userToken) {
             return "Unauthorised";
         } else {
@@ -29,5 +29,6 @@ const generatePolicy = (effect, action, resource) => {
     statementObject.Action = action;
     statementObject.Resource = resource;
     policy.Statement.push(statementObject);
+    console.log(policy);
     return policy;
 };
