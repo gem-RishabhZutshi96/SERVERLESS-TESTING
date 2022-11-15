@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",
     "json2xls": "^0.1.2",
+    "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-offline": "^9.1.7"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.1",
+    "serverless-apigw-binary": "^0.4.4",
     "serverless-bundle": "^5.4.0",
     "serverless-offline-lambda-invoke": "0.0.6",
     "serverless-plugin-tracing": "^2.0.0",

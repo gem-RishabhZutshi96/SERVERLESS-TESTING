@@ -16,6 +16,7 @@ package:
 plugins:
   - serverless-offline
   - serverless-offline-lambda-invoke
+  - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-bundle
 
@@ -25,14 +26,28 @@ provider:
   stage: ${self:custom.common.serverlessConfiguration.stage}
   region: ${self:custom.common.serverlessConfiguration.region}
   environment: ${self:custom.common.serverlessConfiguration.environment}
+  tracing:
+    apiGateway: true
+    lambda: true
   iamRoleStatements:
     - Effect: Allow
       Action:
         - xray:PutTraceSegments
         - xray:PutTelemetryRecords
       Resource: "*"
-      
 functions:
+  authorizerFunc:
+    handler: authPolicy/generatePolicy.main
+    timeout: 30
+    cors: true
+    events:
+      - http:
+        integration: lambda
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   getRole:
     handler: apis/getRoleForUser.getRoleForUser
     timeout: 900
@@ -40,11 +55,17 @@ functions:
       - http:
           method: GET
           path: api/auth/role/{email}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-          cors: true
-          integration: lambda
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
   verifyMSALToken:
     handler: apis/verifyLogin.verifyLogin
     timeout: 900
