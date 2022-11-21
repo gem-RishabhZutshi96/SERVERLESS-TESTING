@@ -1,13 +1,17 @@
 import { makeDBConnection } from "../../utilities/db/database";
 import {RoleModel} from "../../utilities/dbModels/role";
 import { internalServer } from "../../utilities/response/index";
-import {validateToken} from "../../utilities/validateToken/validateToken";
+import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
+import { urlStore } from "../../utilities/config/config";
+import * as jwt from "jsonwebtoken";
 export const fetchEmployeeRoles = async(event) => {
     try{
       devLogger("fetchEmployeeRoles", event, "event");
       await makeDBConnection();
-      let auth = validateToken(event);
+      let userToken = getUserToken(event);
+      const key =  urlStore[process.env.stage].JWT_SECRET;
+      let auth = jwt.verify(userToken, key);
       if(auth.email){
         // Added a check to filter out logged in user role from resultant array....
         const roleObj = await RoleModel.find({email : {$nin : [auth.email]}});

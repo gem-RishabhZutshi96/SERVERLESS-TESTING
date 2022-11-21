@@ -29,6 +29,5 @@ const generatePolicy = (effect, action, resource) => {
     statementObject.Action = action;
     statementObject.Resource = resource;
     policy.Statement.push(statementObject);
-    console.log(policy);
     return policy;
 };

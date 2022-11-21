@@ -29,7 +29,7 @@ export const verifyLogin = async(event) => {
 async function verifyUser(token, msalMail) {
     const { email, success } = await sendMicrosoftAuthenticationRequest(token);
     if (success && (email === msalMail)) {
-      const token = generateToken(email);
+      const token = await generateToken(email);
       const role = await getUserRole(email);
       return {
         statusCode:200,
