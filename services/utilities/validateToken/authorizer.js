@@ -22,7 +22,7 @@ export const accessDeniedToSource = async(event) => {
     const key =  urlStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
     if(!event.eventObject.path.source){
-      source = event.eventObject.pathParameters.source;
+      source = event.eventObject.query.source;
     } else {
       source = event.eventObject.path.source || event.eventObject.pathParameters.source;
     }
