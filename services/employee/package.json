@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",
+    "bluebird": "^3.7.2",
     "json2xls": "^0.1.2"
   },
   "dependencies": {

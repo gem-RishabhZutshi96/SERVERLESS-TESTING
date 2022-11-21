@@ -250,7 +250,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/employee/update/{id}
+          path: api/employee/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda

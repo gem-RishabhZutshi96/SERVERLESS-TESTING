@@ -50,12 +50,7 @@ async function getEmployeeForDirectoryResponse(query) {
       }));
     }
     const [employees, count] = await Promise.all([
-      EmployeeModel
-        .find(findQuery)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      EmployeeModel.find(findQuery).sort(sort).skip(skip).limit(limit).lean(),
       EmployeeModel.countDocuments(findQuery),
     ]);
     employees.forEach(emp => {

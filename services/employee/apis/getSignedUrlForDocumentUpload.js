@@ -16,7 +16,7 @@ export const getSignedUrlForDocumentUpload = async (event) => {
         if (auth !== "allowed") {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
-        const { type, key, officialID, name, pimcoId } = event.query;
+        const { type, key, officialID, name, pimcoId } = event.query || event.queryStringParameters;
         // console.log({ type, key, officialID, name, pimcoId });
         const response = await s3SignedUrlForDocuments('getSignedUrlForUpload', { type, key, officialID, name, pimcoId });
         return response;
