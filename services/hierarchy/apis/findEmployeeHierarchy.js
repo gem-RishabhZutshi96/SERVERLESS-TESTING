@@ -15,23 +15,26 @@ export const findEmployeeHierarchy = async(event) => {
         let session = driver.session({ database });
         if(!empName){
           const result = await session.run(`
-          MATCH (N1:EMPLOYEE)-[:${relation}]->(N2:EMPLOYEE)
-          RETURN N1, N2
-        `);
+          MATCH p=(N1:EMPLOYEE)-[:${relation}*]->(N2:EMPLOYEE)
+          WITH COLLECT(p) AS ps
+          CALL apoc.convert.toTree(ps) yield value
+          RETURN value;`);
         let response = {
           success: true,
           message: "Nodes fetched successfully",
-          data: result.records.map(i => i.get('N1').properties)
+          data: result.records.map(i => i.get('value'))
         };
         return response;
         } else {
           const result = await session.run(`
-          MATCH (N1)-[:${relation}]->(N2:EMPLOYEE {Name:"${empName}"})
-          RETURN N1`);
+          MATCH p=(N1)-[:${relation}*]->(N2:EMPLOYEE {Name:"${empName}*"})
+          WITH COLLECT(p) AS ps
+          CALL apoc.convert.toTree(ps) yield value
+          RETURN value;`);
           let response = {
             success: true,
             message: "Nodes fetched successfully",
-            data: result.records.map(i => i.get('N1').properties)
+            data: result.records.map(i => i.get('value'))
           };
           return response;
         }
