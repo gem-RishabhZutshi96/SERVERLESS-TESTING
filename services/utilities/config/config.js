@@ -2,6 +2,12 @@ import * as path from 'path';
 export const urlStore = {
     dev: {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
+        NEO4J: {
+          URL: "bolt://localhost:7687",
+          db_username: "neo4j",
+          db_password: "neo4j",
+          database: "neo4j",
+        },
         rootDirectory: path.join(__dirname, '..', '..'),
         JWT_SECRET : "anydemosecret",
         LOG_LEVEL : "debug",
