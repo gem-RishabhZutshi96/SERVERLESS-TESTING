@@ -2,6 +2,24 @@ import * as path from 'path';
 export const urlStore = {
     dev: {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
+        sourceViews: {
+          gemini: {
+            id: "",
+            relation: RL_Gemini,
+          },
+          ec: {
+            id: "",
+            relation: RL_EC,
+          },
+          dc: {
+            id: "",
+            relation: RL_DC,
+          },
+          pimco: {
+            id: "",
+            relation: RL_Pimco,
+          }
+        },
         NEO4J: {
           URL: "bolt://localhost:7687",
           db_username: "neo4j",
