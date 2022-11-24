@@ -48,13 +48,13 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  findAllNodes:
-    handler: apis/findAllNodes.findAllNodes
+  findEmployeeHierarchy:
+    handler: apis/findEmployeeHierarchy.findEmployeeHierarchy
     timeout: 900
     events: 
       - http:
           method: GET
-          path: api/heirarchy/nodes
+          path: api/hierarchy/{source}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -66,16 +66,3 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*" 
-  findEmployeeHierarchy:
-    handler: apis/findEmployeeHierarchy.findEmployeeHierarchy
-    timeout: 900
-    events: 
-      - http:
-          method: POST
-          path: api/hierarchy
-          authorizer: authorizerFunc
-          cors: true
-          integration: lambda
-          response:
-            headers:
-              Access-Control-Allow-Origin: "'*'"
