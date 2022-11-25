@@ -5,19 +5,19 @@ export const urlStore = {
         sourceViews: {
           gemini: {
             id: "",
-            relation: RL_Gemini,
+            relation: "RL_Gemini",
           },
           ec: {
             id: "",
-            relation: RL_EC,
+            relation: "RL_EC",
           },
           dc: {
             id: "",
-            relation: RL_DC,
+            relation: "RL_DC",
           },
           pimco: {
             id: "",
-            relation: RL_Pimco,
+            relation: "RL_Pimco",
           }
         },
         NEO4J: {
