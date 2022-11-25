@@ -4,15 +4,15 @@ export const urlStore = {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
         sourceViews: {
           gemini: {
-            id: "",
+            id: "GSI N 001",
             relation: "RL_Gemini",
           },
           ec: {
-            id: "",
+            id: "GSI N 002",
             relation: "RL_EC",
           },
           dc: {
-            id: "",
+            id: "GSI G 818",
             relation: "RL_DC",
           },
           pimco: {
