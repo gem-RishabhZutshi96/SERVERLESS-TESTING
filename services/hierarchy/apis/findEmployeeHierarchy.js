@@ -28,7 +28,6 @@ export const findEmployeeHierarchy = async(event) => {
       }
     } catch(err) {
       errorLogger("findEmployeeHierarchy", err, "Error db call");
-      console.log(err);
       throw internalServer(`Error in DB `, err);
   }
 };
