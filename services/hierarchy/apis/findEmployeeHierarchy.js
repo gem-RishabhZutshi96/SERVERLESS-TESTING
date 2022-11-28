@@ -13,13 +13,13 @@ export const findEmployeeHierarchy = async(event) => {
         let session = driver.session({ database });
         let view = urlStore[process.env.stage].sourceViews[`${source}`];
         const result = await session.run(`
-          MATCH p=(N1:EMPLOYEE {officialID:"${view.rootId}"})<-[:${view.relation}*]-()
+          MATCH p=(:EMPLOYEE {officialID:"${view.rootId}"})<-[:${view.relation}*]-()
           WITH COLLECT(p) AS ps
           CALL apoc.convert.toTree(ps) yield value
           RETURN apoc.convert.toJson(value);`
         );
         const regex = generateRegex(view.relation);
-        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(regex,"Children");
+        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(regex,"children");
         let response = {
           success: true,
           message: "Hierarchy fetched successfully",
