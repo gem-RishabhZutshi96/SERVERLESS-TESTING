@@ -13,14 +13,16 @@ export const findEmployeeHierarchy = async(event) => {
         let session = driver.session({ database });
         let view = urlStore[process.env.stage].sourceViews[`${source}`];
         const result = await session.run(`
-          MATCH p=(N1:EMPLOYEE {officialID:"${view.id}"})<-[:${view.relation}*]-(N2:EMPLOYEE)
+          MATCH p=(N1:EMPLOYEE {officialID:"${view.rootId}"})<-[:${view.relation}*]-()
           WITH COLLECT(p) AS ps
           CALL apoc.convert.toTree(ps) yield value
-          RETURN apoc.convert.toJson(value);`);
+          RETURN apoc.convert.toJson(value);`
+        );
+        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(/rl_gemini/g,"Children");
         let response = {
           success: true,
           message: "Hierarchy fetched successfully",
-          data: result.records.map(i => i.get('value'))
+          data: JSON.parse(resp)
         };
         return response;
       } else {
