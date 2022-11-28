@@ -18,7 +18,8 @@ export const findEmployeeHierarchy = async(event) => {
           CALL apoc.convert.toTree(ps) yield value
           RETURN apoc.convert.toJson(value);`
         );
-        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(/rl_gemini/g,"Children");
+        const regex = generateRegex(view.relation);
+        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(regex,"Children");
         let response = {
           success: true,
           message: "Hierarchy fetched successfully",
@@ -33,3 +34,6 @@ export const findEmployeeHierarchy = async(event) => {
       throw internalServer(`Error in DB `, err);
   }
 };
+function generateRegex(str) {
+  return new RegExp(`${str}`,"ig");
+}
