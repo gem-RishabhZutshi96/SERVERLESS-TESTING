@@ -1,4 +1,4 @@
-import { makeDBConnection } from "../../utilities/db/database";
+import { makeDBConnection } from "../../utilities/db/mongo";
 import { RoleModel } from "../../utilities/dbModels/role";
 import { devLogger, errorLogger,infoLogger } from "../utils/log-helper";
 import { internalServer } from "../../utilities/response";

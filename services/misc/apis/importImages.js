@@ -1,4 +1,4 @@
-import { makeDBConnection } from "../../utilities/db/database";
+import { makeDBConnection } from "../../utilities/db/mongo";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
 import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";

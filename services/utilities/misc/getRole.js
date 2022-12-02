@@ -1,4 +1,4 @@
-import { makeDBConnection } from "../db/database";
+import { makeDBConnection } from "../db/mongo";
 import {RoleModel} from "../dbModels/role";
 export const getUserRole = async(email) => {
     let userRole = null;

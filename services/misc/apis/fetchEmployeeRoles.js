@@ -1,4 +1,4 @@
-import { makeDBConnection } from "../../utilities/db/database";
+import { makeDBConnection } from "../../utilities/db/mongo";
 import {RoleModel} from "../../utilities/dbModels/role";
 import { internalServer } from "../../utilities/response/index";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
