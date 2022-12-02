@@ -1,6 +1,6 @@
 import JWT from "jsonwebtoken";
-import { urlStore } from "../config/config";
-const key = urlStore[process.env.stage].JWT_SECRET;
+import { dataStore } from "../config/config";
+const key = dataStore[process.env.stage].JWT_SECRET;
 export const main = async (event) => {
     try {
         let userToken = event.authorizationToken ? event.authorizationToken.split(' ')[1] : null;
