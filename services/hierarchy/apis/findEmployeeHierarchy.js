@@ -1,4 +1,4 @@
-import { makeNeo4jDBConnection } from "../../utilities/db/neo4jdatabase";
+import { makeNeo4jDBConnection } from "../../utilities/db/neo4j";
 import { badRequest } from "../../utilities/response/index";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import { internalServer } from "../../utilities/response";
