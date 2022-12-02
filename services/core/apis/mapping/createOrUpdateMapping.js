@@ -1,12 +1,12 @@
-import { makeDBConnection } from "../../utilities/db/mongo";
-import {RoleModel} from "../../utilities/dbModels/role";
+import { makeDBConnection } from "../mongo../../utilities/db/mongo";
+import { empRoleMapModel } from "../../../utilities/dbModels/empRoleMap";
 import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
-import { devLogger, errorLogger } from "../utils/log-helper";
-export const createOrUpdateProject = async(event) => {
+import { devLogger, errorLogger } from "../../utils/log-helper";
+export const createOrUpdateMapping = async(event) => {
     try{
-      devLogger("createOrUpdateRole", event, "event");
+      devLogger("createOrUpdateMapping", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -18,14 +18,14 @@ export const createOrUpdateProject = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      const filter = { email: event.body.email };
+      const filter = { email: event.path.email };
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-          role: event.body.role
+          roleId: event.body.roleId
         },
       };
-      await RoleModel.updateOne(filter, updateDoc, options);
+      await empRoleMapModel.updateOne(filter, updateDoc, options);
       let response = {
         success:true,
         email: event.body.email,
@@ -33,7 +33,7 @@ export const createOrUpdateProject = async(event) => {
       };
       return response;
     } catch(err) {
-      errorLogger("createOrUpdateProject", err, "Error db call");
+      errorLogger("createOrUpdateMapping", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
