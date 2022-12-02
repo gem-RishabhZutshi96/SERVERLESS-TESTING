@@ -48,3 +48,237 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  saveDataEmpMasterDB:
+    handler: apis/saveDataEmpMasterDB.saveDataEmpMasterDB
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/emp/save
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  createOrUpdateProject:
+    handler: apis/team/createOrUpdateProject.createOrUpdateProject
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/core/team/createOrUpdate
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  fetchAllTeams:
+    handler: apis/team/fetchAllTeams.fetchAllTeams
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/team/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  deleteTeam:
+    handler: apis/team/deleteTeam.deleteTeam
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/team/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  createOrUpdateProject:
+    handler: apis/project/createOrUpdateProject.createOrUpdateProject
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/core/project/createOrUpdate
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  fetchAllProjects:
+    handler: apis/project/fetchAllProjects.fetchAllProjects
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/project/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  deleteProject:
+    handler: apis/project/deleteProject.deleteProject
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/project/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  createOrUpdateView:
+    handler: apis/view/createOrUpdateView.createOrUpdateView
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/core/view/createOrUpdate
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  fetchAllViews:
+    handler: apis/view/fetchAllViews.fetchAllViews
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/view/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  deleteView:
+    handler: apis/view/deleteView.deleteView
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/view/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  createOrUpdateMapping:
+    handler: apis/mapping/createOrUpdateMapping.createOrUpdateMapping
+    timeout: 900
+    events: 
+      - http:
+          method: PUT
+          path: api/core/mapping/createOrUpdate
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  fetchAllMappings:
+    handler: apis/mapping/fetchAllMappings.fetchAllMappings
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/mapping/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  deleteMapping:
+    handler: apis/mapping/deleteMapping.deleteMapping
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/mapping/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
