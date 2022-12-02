@@ -270,7 +270,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/mapping/delete/{id}
+          path: api/core/mapping/delete/{email}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
