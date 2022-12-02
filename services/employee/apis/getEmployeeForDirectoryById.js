@@ -1,4 +1,4 @@
-import { urlStore } from "../../utilities/config/config";
+import { dataStore } from "../../utilities/config/commonData";
 import { internalServer, successResponse, forbiddenRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
@@ -29,7 +29,7 @@ export const getEmployeeForDirectoryById = async(event) => {
 async function getEmployeeForDirectoryFromId(_id) {
     const employee= await EmployeeModel.findById(_id).lean();
     if (employee.Image && !employee.Image.startsWith('http')) {
-      employee.Image = resolveURL(urlStore[process.env.stage].domain, employee.Image);
+      employee.Image = resolveURL(dataStore[process.env.stage].domain, employee.Image);
     }
     return successResponse( 'Employee Fetched', { employee });
 };

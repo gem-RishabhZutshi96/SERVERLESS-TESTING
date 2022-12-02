@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
-    urlStore
-} from "../../utilities/config/config";
+    dataStore
+} from "../../utilities/config/commonData";
 import {
     internalServer
   } from '../../utilities/response/index';
@@ -9,7 +9,7 @@ import {
     errorLogger,
     devLogger
   } from '../utils/log-helper';
-const url = urlStore[process.env.stage].misApi.uri;
+const url = dataStore[process.env.stage].misApi.uri;
 export const getDataService = async () => {
     try{
       devLogger('Mis API Hit', "", 'event');

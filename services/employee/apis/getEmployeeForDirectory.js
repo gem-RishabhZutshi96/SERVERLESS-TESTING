@@ -1,4 +1,4 @@
-import { urlStore } from "../../utilities/config/config";
+import { dataStore } from "../../utilities/config/commonData";
 import { internalServer } from "../../utilities/response/index";
 import { accessDeniedToSource } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
@@ -36,7 +36,7 @@ export const getEmployeeForDirectory = async(event) => {
 };
 async function getEmployeeForDirectoryResponse(query) {
     console.log(`👍👍Find employees for ${query.source} directory`);
-    const { id, parentId, searchFields } = urlStore[process.env.stage].sourceIds[query.source];
+    const { id, parentId, searchFields } = dataStore[process.env.stage].sourceIds[query.source];
     const limit = +query.perPage;
     const skip = (+query.pageNo - 1) * limit;
     const findQuery = {
@@ -57,11 +57,11 @@ async function getEmployeeForDirectoryResponse(query) {
       emp.Documents =
         emp.Documents &&
         emp.Documents.map(doc => {
-          // doc.path = resolveURL(urlStore[process.env.stage].domain, doc.path);
+          // doc.path = resolveURL(dataStore[process.env.stage].domain, doc.path);
           return doc;
         });
       if (emp.Image && !emp.Image.startsWith('http'))
-        emp.Image = resolveURL(urlStore[process.env.stage].domain, emp.Image);
+        emp.Image = resolveURL(dataStore[process.env.stage].domain, emp.Image);
     });
     return {
       data: {

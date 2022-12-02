@@ -3,14 +3,14 @@ import {RoleModel} from "../../utilities/dbModels/role";
 import { internalServer } from "../../utilities/response/index";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
-import { urlStore } from "../../utilities/config/config";
+import { dataStore } from "../../utilities/config/commonData";
 import * as jwt from "jsonwebtoken";
 export const fetchEmployeeRoles = async(event) => {
     try{
       devLogger("fetchEmployeeRoles", event, "event");
       await makeDBConnection();
       let userToken = getUserToken(event);
-      const key =  urlStore[process.env.stage].JWT_SECRET;
+      const key =  dataStore[process.env.stage].JWT_SECRET;
       let auth = jwt.verify(userToken, key);
       if(auth.email){
         // Added a check to filter out logged in user role from resultant array....

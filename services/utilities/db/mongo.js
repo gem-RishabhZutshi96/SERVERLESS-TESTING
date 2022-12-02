@@ -1,10 +1,10 @@
 import { connect } from 'mongoose';
 let connection = null;
-import { urlStore } from '../../utilities/config/config';
+import { dataStore } from '../../utilities/config/commonData';
 export async function makeDBConnection() {
     try {
       if (!connection) {
-        connection = await connect(urlStore[process.env.stage].MONGODB_URI, {
+        connection = await connect(dataStore[process.env.stage].MONGODB_URI, {
           useNewUrlParser: true,
           useUnifiedTopology: true,
           useFindAndModify: false
