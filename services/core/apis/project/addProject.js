@@ -1,10 +1,11 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { projectModel } from "../../../utilities/dbModels/project";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, badRequest, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-export const createOrUpdateProject = async(event) => {
+import cryptoRandomString from 'crypto-random-string';
+export const addProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
       let userToken =null;
@@ -18,21 +19,17 @@ export const createOrUpdateProject = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      const filter = { projectId: event.body.projectId };
-      const options = { upsert: true };
-      const updateDoc = {
-        $set: {
+      if(!(event.body.name || event.body.description)){
+        return badRequest("🤔🤔 Missing body parameters");
+      } else {
+        const docToInsert = { 
           name: event.body.name,
-          description: event.body.description
-        },
-      };
-      await projectModel.updateOne(filter, updateDoc, options);
-      let response = {
-        success:true,
-        name: event.body.name,
-        projectId: event.body.projectId
-      };
-      return response;
+          description: event.body.description,
+          projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+        };
+        await projectModel.create(docToInsert);
+        return successResponse('Project Added Successfully');
+      }
     } catch(err) {
       errorLogger("createOrUpdateProject", err, "Error db call");
       throw internalServer(`Error in DB `, err);
