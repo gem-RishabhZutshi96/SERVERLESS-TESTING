@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { projectModel } from "../../../utilities/dbModels/project";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -21,19 +21,13 @@ export const deleteRole = async(event) => {
       const roleId = event.path.id;
       const obj = await projectModel.remove({ roleId: { $eq: roleId } });
       if (obj.deletedCount >= 1) {
-        return {
-          data: {
-            "deletedCount": obj.deletedCount,
-            "email": email
-          },
-          success: true,
-          message: 'Role Deleted Successfully',
-        };
+        return successResponse('Role Deleted Successfully',
+        {
+          "deletedCount": obj.deletedCount,
+          "roleId": roleId
+        });
       } else {
-        return {
-          success: false,
-          message: `Role Not Found`,
-        };
+        return failResponse(`Role Not Found`);
       }
     } catch(err) {
       errorLogger("deleteRole", err, "Error db call");
