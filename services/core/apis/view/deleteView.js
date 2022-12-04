@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { viewModel } from "../../../utilities/dbModels/view";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -21,19 +21,14 @@ export const deleteView = async(event) => {
       const viewId = event.path.id;
       const obj = await viewModel.remove({ viewId: { $eq: viewId } });
       if (obj.deletedCount >= 1) {
-        return {
-          data: {
+        return successResponse("View Deleted Successfully",
+          {
             "deletedCount": obj.deletedCount,
-            "email": email
-          },
-          success: true,
-          message: 'View Deleted Successfully',
-        };
+            "viewId": viewId
+          }
+        );
       } else {
-        return {
-          success: false,
-          message: `View Not Found`,
-        };
+        return failResponse(`View Not Found`);
       }
     } catch(err) {
       errorLogger("deleteView", err, "Error db call");
