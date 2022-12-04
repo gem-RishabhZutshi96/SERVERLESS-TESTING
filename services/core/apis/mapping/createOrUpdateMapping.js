@@ -27,9 +27,9 @@ export const createOrUpdateMapping = async(event) => {
       };
       await empRoleMapModel.updateOne(filter, updateDoc, options);
       let response = {
-        success:true,
+        success: true,
         email: event.body.email,
-        role: event.body.role
+        roleId: event.body.roleId
       };
       return response;
     } catch(err) {
