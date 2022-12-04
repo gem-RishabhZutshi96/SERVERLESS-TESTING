@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { projectModel } from "../../../utilities/dbModels/project";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, failResponse, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -21,19 +21,14 @@ export const deleteProject = async(event) => {
       const projectId = event.path.id;
       const obj = await projectModel.remove({ projectId: { $eq: projectId } });
       if (obj.deletedCount >= 1) {
-        return {
-          data: {
+        return successResponse('Project Deleted Successfully',
+          {
             "deletedCount": obj.deletedCount,
-            "email": email
-          },
-          success: true,
-          message: 'Project Deleted Successfully',
-        };
+            "projectId": projectId
+          }
+        );
       } else {
-        return {
-          success: false,
-          message: `Project Not Found`,
-        };
+        return failResponse(`Project Not Found`);
       }
     } catch(err) {
       errorLogger("deleteProject", err, "Error db call");
