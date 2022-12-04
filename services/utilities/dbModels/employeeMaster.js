@@ -2,36 +2,36 @@ import { Schema as _Schema,  model } from 'mongoose';
 var Schema = _Schema;
 const employeeMaster = new Schema(
   {
-    officialEmail: {
+    EmailId: {
       type: String,
       unique: true,
     },
-    officialID: {
-        type: String,
-        unique: true,
-      },
-    empName: {
-        type: String,
+    EmployeeCode: {
+      type: String,
+      unique: true,
     },
-    department: {
-        type: String,
-    },
-    designation: {
-        type: String,
-    },
-    reportingManager: {
-        type: String,
-    },
-    reportingManagerID: {
-        type: String
-    },
-    location: {
+    EmployeeName: {
       type: String,
     },
-    imagePath: {
-        type: String,
+    Department: {
+      type: String,
     },
-    mobile: {
+    Designation: {
+      type: String,
+    },
+    ReportingManager: {
+      type: String,
+    },
+    ReportingManagerId: {
+      type: String,
+    },
+    Location: {
+      type: String,
+    },
+    ImagePath: {
+      type: String,
+    },
+    MobileNumber: {
       type: String,
     },
   },
