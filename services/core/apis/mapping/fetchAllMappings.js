@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { empRoleMapModel } from "../../../utilities/dbModels/empRoleMap";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, successResponse, failResponse } from "../../../utilities/response/index";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { dataStore } from "../../../utilities/config/commonData";
@@ -15,16 +15,9 @@ export const fetchAllMappings = async(event) => {
       if(auth.email){
         const obj = await empRoleMapModel.find();
         if(obj.length < 1){
-          return {
-            success: false,
-            message: 'Mappings Not Found',
-          };
+          return failResponse('Mappings Not Found');
         }
-        return {
-          data: obj,
-          success: true,
-          message: 'Mappings Fetched Successfully',
-        };
+        return successResponse('Mappings Fetched Successfully', obj);
       } else return auth;
     } catch(err) {
       errorLogger("fetchAllMappings", err, "Error db call");
