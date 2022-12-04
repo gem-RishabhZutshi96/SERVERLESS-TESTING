@@ -27,7 +27,7 @@ export const addView = async(event) => {
           roleId: 'V_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
         await viewModel.create(docToInsert);
-        return successResponse('Role Added Successfully');
+        return successResponse('View Added Successfully');
       }
     } catch(err) {
       errorLogger("addView", err, "Error db call");
