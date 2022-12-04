@@ -1,13 +1,13 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
-import { projectModel } from "../../../utilities/dbModels/project";
+import { roleMasterModel } from "../../../utilities/dbModels/roleMaster";
 import { internalServer, badRequest, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-export const addProject = async(event) => {
+export const addRole = async(event) => {
     try{
-      devLogger("createOrUpdateProject", event, "event");
+      devLogger("addRole", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -25,13 +25,13 @@ export const addProject = async(event) => {
         const docToInsert = { 
           name: event.body.name,
           description: event.body.description,
-          projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          roleId: 'R_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
-        await projectModel.create(docToInsert);
-        return successResponse('Project Added Successfully');
+        await roleMasterModel.create(docToInsert);
+        return successResponse('Role Added Successfully');
       }
     } catch(err) {
-      errorLogger("createOrUpdateProject", err, "Error db call");
+      errorLogger("addRole", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
