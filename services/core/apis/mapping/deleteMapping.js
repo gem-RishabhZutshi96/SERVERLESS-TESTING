@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { empRoleMapModel } from "../../../utilities/dbModels/empRoleMap";
-import { internalServer } from "../../../utilities/response/index";
+import { internalServer, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -21,19 +21,13 @@ export const deleteMapping = async(event) => {
       const email = event.path.email;
       const obj = await empRoleMapModel.remove({ email: { $eq: email } });
       if (obj.deletedCount >= 1) {
-        return {
-          data: {
-            "deletedCount": obj.deletedCount,
-            "email": email
-          },
-          success: true,
-          message: 'Mapping Deleted Successfully',
-        };
+        return successResponse('Mapping Deleted Successfully',
+        {
+          "deletedCount": obj.deletedCount,
+          "email": email
+        });
       } else {
-        return {
-          success: false,
-          message: `No mapping exists for this user : ${email}`,
-        };
+        return failResponse(`No mapping exists for this user : ${email}`);
       }
     } catch(err) {
       errorLogger("deleteMapping", err, "Error db call");
