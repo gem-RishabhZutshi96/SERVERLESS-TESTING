@@ -20,8 +20,8 @@ export const syncEmpMasterWithMIS = async(event) => {
       }
       let misData = await getDataService();
       let createArray = [], updateArray = [], deleteArray = [];
-      misData.Result.array.forEach(emp => {
-        let element = employeeMasterModel.find({
+      misData.Result.array.forEach(async emp => {
+        let element = await employeeMasterModel.find({
           'officialEmail': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
         });
         if(!element){
@@ -62,6 +62,7 @@ export const syncEmpMasterWithMIS = async(event) => {
             });
           } 
       });
+      let empMasterData = await employeeMasterModel.find();
 
     } catch(err) {
       errorLogger("syncEmpMasterWithMIS", err, "Error db call");
