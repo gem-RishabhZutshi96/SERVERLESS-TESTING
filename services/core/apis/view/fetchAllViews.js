@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { viewModel } from "../../../utilities/dbModels/view";
-import { internalServer } from "../../../utilities/response/index";
+import { failResponse, internalServer, successResponse } from "../../../utilities/response/index";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 export const fetchAllViews = async(event) => {
     try{
@@ -8,16 +8,9 @@ export const fetchAllViews = async(event) => {
         await makeDBConnection();
         const obj = await viewModel.find();
         if(obj.length < 1){
-            return {
-                success: false,
-                message: 'Views Not Found',
-            };
+            return failResponse('Views Not Found');
         } 
-        return {
-        data: obj,
-        success: true,
-        message: 'Views Fetched Successfully',
-        };
+        return successResponse('Views Fetched Successfully', obj);
     } catch(err) {
       errorLogger("fetchAllViews", err, "Error db call");
       throw internalServer(`Error in DB `, err);
