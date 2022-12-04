@@ -4,9 +4,9 @@ import { internalServer } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-export const deleteProject = async(event) => {
+export const deleteRole = async(event) => {
     try{
-      devLogger("deleteProject", event, "event");
+      devLogger("deleteRole", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -18,8 +18,8 @@ export const deleteProject = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      const projectId = event.path.id;
-      const obj = await projectModel.remove({ projectId: { $eq: projectId } });
+      const roleId = event.path.id;
+      const obj = await projectModel.remove({ roleId: { $eq: roleId } });
       if (obj.deletedCount >= 1) {
         return {
           data: {
@@ -27,16 +27,16 @@ export const deleteProject = async(event) => {
             "email": email
           },
           success: true,
-          message: 'Project Deleted Successfully',
+          message: 'Role Deleted Successfully',
         };
       } else {
         return {
           success: false,
-          message: `Project Not Found`,
+          message: `Role Not Found`,
         };
       }
     } catch(err) {
-      errorLogger("deleteProject", err, "Error db call");
-      throw internalServer(`Error in deleting the mapping `, err);
+      errorLogger("deleteRole", err, "Error db call");
+      throw internalServer(`Error in deleting the role `, err);
     }
 };
