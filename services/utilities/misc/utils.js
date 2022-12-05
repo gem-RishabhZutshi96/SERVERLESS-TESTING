@@ -1,4 +1,4 @@
-import { dataStore } from "../config/config";
+import { dataStore } from "../config/commonData";
 import * as path from 'path';
 export const storagePath = (...relative) => {
     return path.join(dataStore[process.env.stage].rootDirectory, 'storage', ...relative);
