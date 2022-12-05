@@ -3,7 +3,8 @@ import { employeeMasterModel } from "../../../utilities/dbModels/employeeMaster"
 import { internalServer, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
-import { devLogger, errorLogger, infoLogger } from "../../utils/log-helper";
+import { devLogger, errorLogger } from "../../utils/log-helper";
+import {getDataService} from "../../externalCall/getDataService";
 export const syncEmpMasterWithMIS = async(event) => {
     try{
       devLogger("syncEmpMasterWithMIS", event, "event");
@@ -38,8 +39,8 @@ export const syncEmpMasterWithMIS = async(event) => {
             "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
           });
         } else if(element &&
-                  (emp.EmployeeCode != element.EmployeeCode || 
-                  emp.EmployeeName != element.EmployeeName || 
+                  (emp.EmployeeCode != element.EmployeeCode ||
+                  emp.EmployeeName != element.EmployeeName ||
                   emp.Department != element.Department ||
                   emp.Designation != element.Designation ||
                   emp.ReportingManager != element.ReportingManager ||
