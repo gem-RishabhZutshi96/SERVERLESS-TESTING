@@ -4,6 +4,7 @@ import { teamModel } from "../../utilities/dbModels/team";
 import * as json2xls from 'json2xls';
 import { errorLogger } from "./log-helper";
 import { dataStore } from "../../utilities/config/commonData";
+import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const exportExcelDataEmpMaster = async (fileName) => {
     try {
