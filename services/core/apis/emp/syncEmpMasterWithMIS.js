@@ -32,7 +32,7 @@ export const syncEmpMasterWithMIS = async(event) => {
             "Department": emp["Department"] ? emp["Department"] : "",
             "Designation": emp["Designation"] ? emp["Designation"] : "",
             "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
-            "ReportingManagerId": emp["ReportingManagerId"] ? emp["ReportingManagerId"] : "",
+            "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
             "Location": emp["Location"] ? emp["Location"] : "",
             "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
             "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
@@ -43,7 +43,7 @@ export const syncEmpMasterWithMIS = async(event) => {
                   emp.Department != element.Department ||
                   emp.Designation != element.Designation ||
                   emp.ReportingManager != element.ReportingManager ||
-                  emp.ReportingManagerId != element.ReportingManagerId ||
+                  emp.ManagerCode != element.ManagerCode ||
                   emp.Location != element.Location ||
                   emp.ImagePath != element.ImagePath ||
                   emp.MobileNumber != element.MobileNumber))
@@ -55,7 +55,7 @@ export const syncEmpMasterWithMIS = async(event) => {
                 "Department": emp["Department"] ? emp["Department"] : "",
                 "Designation": emp["Designation"] ? emp["Designation"] : "",
                 "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
-                "ReportingManagerId": emp["ReportingManagerId"] ? emp["ReportingManagerId"] : "",
+                "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
                 "Location": emp["Location"] ? emp["Location"] : "",
                 "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
                 "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
@@ -85,7 +85,7 @@ export const syncEmpMasterWithMIS = async(event) => {
               Department: emp.Department,
               Designation: emp.Designation,
               ReportingManager: emp.ReportingManager,
-              ReportingManagerId: emp.ReportingManagerId,
+              ManagerCode: emp.ManagerCode,
               Location: emp.Location,
               ImagePath: emp.ImagePath,
               MobileNumber: emp.MobileNumber,

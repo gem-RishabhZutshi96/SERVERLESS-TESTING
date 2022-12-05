@@ -83,7 +83,7 @@ function getEmpMasterJSON(emp) {
         'Department': emp.Department,
         'Designation': emp.Designation,
         'Reporting Manager': emp.ReportingManager,
-        'Reporting Manager Id': emp.ReportingManagerId,
+        'Reporting Manager Id': emp.ManagerCode,
         'Location': emp.Location,
         'ImagePath': emp.ImagePath,
     };
