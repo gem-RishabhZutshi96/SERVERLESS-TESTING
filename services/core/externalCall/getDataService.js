@@ -14,7 +14,7 @@ export const getDataService = async () => {
     try{
       devLogger('Mis API Hit', "", 'event');
       let result = await axios.get(url);
-      return result.data; 
+      return result.data;
     } catch(err) {
         errorLogger('Mis API Hit', err, 'Error in Getting Data from MIS');
         throw internalServer(`Error in MIS API`, err);
