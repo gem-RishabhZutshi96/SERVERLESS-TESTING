@@ -48,13 +48,13 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  saveDataEmpMasterDB:
-    handler: apis/saveDataEmpMasterDB.saveDataEmpMasterDB
+  syncEmpMasterWithMIS:
+    handler: apis/emp/syncEmpMasterWithMIS.syncEmpMasterWithMIS
     timeout: 900
     events: 
       - http:
           method: GET
-          path: api/core/emp/save
+          path: api/core/emp/sync
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -120,13 +120,13 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  addProject:
-    handler: apis/project/addProject.addProject
+  createOrUpdateProject:
+    handler: apis/project/createOrUpdateProject.createOrUpdateProject
     timeout: 900
     events: 
       - http:
-          method: POST
-          path: api/core/project/add
+          method: PUT
+          path: api/core/project/createOrUpdate
           authorizer: authorizerFunc
           cors: true
           integration: lambda
