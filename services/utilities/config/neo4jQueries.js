@@ -1,4 +1,4 @@
-import { dataStore } from "../config/config";
+import { dataStore } from "../config/commonData";
 export const neo4jQueries = {
     returnAllNodes : `   
         MATCH (N)
