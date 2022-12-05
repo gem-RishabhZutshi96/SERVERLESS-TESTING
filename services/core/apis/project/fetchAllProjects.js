@@ -9,7 +9,7 @@ export const fetchAllProjects = async(event) => {
         const obj = await projectModel.find();
         if(obj.length < 1){
             return failResponse('Projects Not Found');
-        } 
+        }
         return successResponse('Projects Fetched Successfully', obj);
     } catch(err) {
       errorLogger("fetchAllProjects", err, "Error db call");
