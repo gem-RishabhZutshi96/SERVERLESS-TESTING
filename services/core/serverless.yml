@@ -138,6 +138,24 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  exportExcelTeamMaster:
+    handler: apis/team/exportExcelTeamMaster.exportExcelTeamMaster
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/team/export
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   createOrUpdateProject:
     handler: apis/project/createOrUpdateProject.createOrUpdateProject
     timeout: 900
@@ -181,6 +199,24 @@ functions:
       - http:
           method: GET
           path: api/core/project/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  exportExcelProjectMaster:
+    handler: apis/project/exportExcelProjectMaster.exportExcelProjectMaster
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: api/core/project/export
           authorizer: authorizerFunc
           cors: true
           integration: lambda
