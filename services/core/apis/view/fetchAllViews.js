@@ -9,7 +9,7 @@ export const fetchAllViews = async(event) => {
         const obj = await viewModel.find();
         if(obj.length < 1){
             return failResponse('Views Not Found');
-        } 
+        }
         return successResponse('Views Fetched Successfully', obj);
     } catch(err) {
       errorLogger("fetchAllViews", err, "Error db call");
