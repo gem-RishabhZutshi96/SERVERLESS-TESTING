@@ -22,7 +22,7 @@ const employeeMaster = new Schema(
     ReportingManager: {
       type: String,
     },
-    ReportingManagerId: {
+    ManagerCode: {
       type: String,
     },
     Location: {
