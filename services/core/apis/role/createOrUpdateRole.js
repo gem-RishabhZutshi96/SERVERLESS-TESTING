@@ -5,9 +5,9 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-export const addRole = async(event) => {
+export const createOrUpdateRole = async(event) => {
     try{
-      devLogger("addRole", event, "event");
+      devLogger("createOrUpdateRole", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -19,7 +19,22 @@ export const addRole = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      if(!(event.body.name || event.body.description)){
+      if(event.body.roleId){
+        let result = await roleMasterModel.findOneAndUpdate(
+          {
+            roleId: event.body.roleId
+          },
+          event.body,
+          {
+            upsert: false
+          }
+        );
+        if(result){
+            return successResponse('Role Updated Successfully');
+        } else{
+            return failResponse('No info found to updated');
+        }
+      } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
         const docToInsert = { 
@@ -31,7 +46,7 @@ export const addRole = async(event) => {
         return successResponse('Role Added Successfully');
       }
     } catch(err) {
-      errorLogger("addRole", err, "Error db call");
+      errorLogger("createOrUpdateRole", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
