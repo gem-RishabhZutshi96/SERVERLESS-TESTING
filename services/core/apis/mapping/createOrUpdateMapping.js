@@ -1,8 +1,8 @@
-import { makeDBConnection } from "../mongo../../utilities/db/mongo";
+import { makeDBConnection } from "../../../utilities/db/mongo";
 import { empRoleMapModel } from "../../../utilities/dbModels/empRoleMap";
-import { internalServer } from "../../utilities/response/index";
-import { accessAllowed } from "../../utilities/validateToken/authorizer";
-import { getUserToken } from "../../utilities/validateToken/getUserToken";
+import { internalServer } from "../../../utilities/response/index";
+import { accessAllowed } from "../../../utilities/validateToken/authorizer";
+import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 export const createOrUpdateMapping = async(event) => {
     try{
