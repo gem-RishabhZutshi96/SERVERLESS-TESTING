@@ -19,7 +19,22 @@ export const addProject = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      if(!(event.body.name || event.body.description)){
+      if(event.body.projectId){
+        let result = await projectModel.findOneAndUpdate(
+          {
+              projectId: event.body.projectId
+          },
+          event.body,
+          {
+              upsert: false
+          }
+        );
+        if(result){
+            return successResponse('Project Updated Successfully');
+        } else{
+            return failResponse('No info found to updated');
+        }
+      } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
         const docToInsert = { 
