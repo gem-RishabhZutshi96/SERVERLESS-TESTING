@@ -1,12 +1,12 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { viewModel } from "../../../utilities/dbModels/view";
-import { internalServer, successResponse, badRequest } from "../../../utilities/response/index";
+import { internalServer, successResponse, badRequest, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-export const addView = async(event) => {
+export const createOrUpdateView = async(event) => {
     try{
-      devLogger("addView", event, "event");
+      devLogger("createOrUpdateView", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -18,7 +18,22 @@ export const addView = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      if(!(event.body.name || event.body.description)){
+      if(event.body.viewId){
+        let result = await viewModel.findOneAndUpdate(
+          {
+            viewId: event.body.viewId
+          },
+          event.body,
+          {
+            upsert: false
+          }
+        );
+        if(result){
+            return successResponse('Team Updated Successfully');
+        } else{
+            return failResponse('No info found to updated');
+        }
+      } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
         const docToInsert = { 
@@ -30,7 +45,7 @@ export const addView = async(event) => {
         return successResponse('View Added Successfully');
       }
     } catch(err) {
-      errorLogger("addView", err, "Error db call");
+      errorLogger("createOrUpdateView", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
