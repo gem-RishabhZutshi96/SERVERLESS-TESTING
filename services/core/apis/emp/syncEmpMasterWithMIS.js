@@ -3,7 +3,7 @@ import { employeeMasterModel } from "../../../utilities/dbModels/employeeMaster"
 import { internalServer, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
-import { devLogger, errorLogger } from "../../utils/log-helper";
+import { devLogger, errorLogger, infoLogger } from "../../utils/log-helper";
 export const syncEmpMasterWithMIS = async(event) => {
     try{
       devLogger("syncEmpMasterWithMIS", event, "event");
@@ -20,7 +20,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       }
       let misData = await getDataService();
       let createArray = [], updateArray = [], deleteArray = [];
-      misData.Result.array.forEach(async emp => {
+      misData.Result.forEach(async emp => {
         let element = await employeeMasterModel.find({
           'officialEmail': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
         });
@@ -62,8 +62,43 @@ export const syncEmpMasterWithMIS = async(event) => {
             });
           } 
       });
-      let empMasterData = await employeeMasterModel.find();
-
+      await employeeMasterModel.find().lean().forEach((document) => {
+        let obj = misData.Result.find(data => data.EmailId == document.EmailId);
+        if(!obj){
+          deleteArray.push({
+            "EmailId": document.EmailId
+          });
+        }
+      });
+      if(createArray.length >= 1){
+        createArray.forEach(async emp =>{
+          await employeeMasterModel.create(emp);
+        })
+      } else if(updateArray.length >= 1){
+        updateArray.forEach(async emp =>{
+          const filter = { EmailId: emp.EmailId };
+          const options = { upsert: false };
+          const updateDoc = {
+            $set: {
+              EmployeeCode: emp.EmployeeCode,
+              EmployeeName: emp.EmployeeName,
+              Department: emp.Department,
+              Designation: emp.Designation,
+              ReportingManager: emp.ReportingManager,
+              ReportingManagerId: emp.ReportingManagerId,
+              Location: emp.Location,
+              ImagePath: emp.ImagePath,
+              MobileNumber: emp.MobileNumber,
+            },
+          };
+          await employeeMasterModel.findOneAndUpdate(filter, updateDoc, options);
+        })
+      } else if(deleteArray.length >= 1){
+        deleteArray.forEach(async emp =>{
+          await employeeMasterModel.remove({ EmailId: { $eq: emp.EmailId } })
+        })
+      }
+      return successResponse('Employee Master Table and Neo4J DB Synced Successfully with MIS');
     } catch(err) {
       errorLogger("syncEmpMasterWithMIS", err, "Error db call");
       throw internalServer(`Error in DB `, err);
