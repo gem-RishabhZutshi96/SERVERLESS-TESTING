@@ -4,14 +4,13 @@ const projectsMaster = new Schema(
   {
     name: {
       type: String,
-      unique: true,
     },
     projectId: {
       type: String,
       unique: true,
     },
     description: {
-        type: String,
+      type: String,
     }
 
   },
