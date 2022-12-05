@@ -1,13 +1,13 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { teamModel } from "../../../utilities/dbModels/team";
-import { internalServer, badRequest, successResponse } from "../../../utilities/response/index";
+import { internalServer, badRequest, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-export const addTeam = async(event) => {
+export const createOrUpdateTeam = async(event) => {
     try{
-      devLogger("addTeam", event, "event");
+      devLogger("createOrUpdateTeam", event, "event");
       let userToken =null;
       await makeDBConnection();
       userToken = getUserToken(event);
@@ -19,7 +19,22 @@ export const addTeam = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      if(!(event.body.name || event.body.description)){
+      if(event.body.teamId){
+        let result = await teamModel.findOneAndUpdate(
+          {
+              teamId: event.body.teamId
+          },
+          event.body,
+          {
+              upsert: false
+          }
+        );
+        if(result){
+            return successResponse('Team Updated Successfully');
+        } else{
+            return failResponse('No info found to updated');
+        }
+      } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
         const docToInsert = { 
@@ -31,7 +46,7 @@ export const addTeam = async(event) => {
         return successResponse('Team Added Successfully');
       }
     } catch(err) {
-      errorLogger("addTeam", err, "Error db call");
+      errorLogger("createOrUpdateTeam", err, "Error db call");
       throw internalServer(`Error in DB `, err);
     }
 };
