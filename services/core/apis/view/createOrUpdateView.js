@@ -4,6 +4,7 @@ import { internalServer, successResponse, badRequest, failResponse } from "../..
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
+import cryptoRandomString from 'crypto-random-string';
 export const createOrUpdateView = async(event) => {
     try{
       devLogger("createOrUpdateView", event, "event");
