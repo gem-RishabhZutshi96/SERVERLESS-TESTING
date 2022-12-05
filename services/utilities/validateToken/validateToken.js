@@ -1,5 +1,5 @@
 import JWT from "jsonwebtoken";
-import { dataStore } from "../config/config";
+import { dataStore } from "../config/commonData";
 const key = dataStore[process.env.stage].JWT_SECRET;
 export const main = async (event) => {
     try {

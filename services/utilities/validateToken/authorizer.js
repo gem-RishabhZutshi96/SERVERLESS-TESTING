@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import { getUserRole } from "../misc/getRole";
-import { dataStore } from "../config/config";
+import { dataStore } from "../config/commonData";
 export const accessAllowed = async (event) => {
   try {
     const key =  dataStore[process.env.stage].JWT_SECRET;
