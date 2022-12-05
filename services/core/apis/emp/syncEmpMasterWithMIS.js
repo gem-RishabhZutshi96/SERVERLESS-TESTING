@@ -20,7 +20,9 @@ export const syncEmpMasterWithMIS = async(event) => {
         return auth;
       }
       let misData = await getDataService();
-      let createArray = [], updateArray = [], deleteArray = [];
+      let createArray = [];
+      let updateArray = [];
+      let deleteArray = [];
       misData.Result.forEach(async emp => {
         let element = await employeeMasterModel.find({
           'officialEmail': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
@@ -61,7 +63,7 @@ export const syncEmpMasterWithMIS = async(event) => {
                 "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
                 "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
             });
-          } 
+          }
       });
       await employeeMasterModel.find().lean().forEach((document) => {
         let obj = misData.Result.find(data => data.EmailId == document.EmailId);
@@ -72,11 +74,11 @@ export const syncEmpMasterWithMIS = async(event) => {
         }
       });
       if(createArray.length >= 1){
-        createArray.forEach(async emp =>{
+        createArray.forEach(async emp => {
           await employeeMasterModel.create(emp);
-        })
+        });
       } else if(updateArray.length >= 1){
-        updateArray.forEach(async emp =>{
+        updateArray.forEach(async emp => {
           const filter = { EmailId: emp.EmailId };
           const options = { upsert: false };
           const updateDoc = {
@@ -93,11 +95,11 @@ export const syncEmpMasterWithMIS = async(event) => {
             },
           };
           await employeeMasterModel.findOneAndUpdate(filter, updateDoc, options);
-        })
+        });
       } else if(deleteArray.length >= 1){
-        deleteArray.forEach(async emp =>{
-          await employeeMasterModel.remove({ EmailId: { $eq: emp.EmailId } })
-        })
+        deleteArray.forEach(async emp => {
+          await employeeMasterModel.remove({ EmailId: { $eq: emp.EmailId } });
+        });
       }
       return successResponse('Employee Master Table and Neo4J DB Synced Successfully with MIS');
     } catch(err) {
