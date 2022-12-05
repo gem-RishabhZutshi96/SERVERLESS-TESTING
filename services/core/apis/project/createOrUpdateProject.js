@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { projectModel } from "../../../utilities/dbModels/project";
-import { internalServer, badRequest, successResponse } from "../../../utilities/response/index";
+import { internalServer, badRequest, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -37,7 +37,7 @@ export const addProject = async(event) => {
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const docToInsert = { 
+        const docToInsert = {
           name: event.body.name,
           description: event.body.description,
           projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
