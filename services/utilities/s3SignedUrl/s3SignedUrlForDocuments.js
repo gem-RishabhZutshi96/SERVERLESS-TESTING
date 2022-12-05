@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { dataStore } from "../config/config";
+import { dataStore } from "../config/commonData";
 import moment from 'moment';
 export const s3SignedUrlForDocuments = async(s3Case, data) => {
     const s3 = new AWS.S3();
