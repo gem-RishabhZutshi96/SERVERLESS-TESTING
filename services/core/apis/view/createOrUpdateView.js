@@ -37,7 +37,7 @@ export const createOrUpdateView = async(event) => {
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const docToInsert = { 
+        const docToInsert = {
           name: event.body.name,
           description: event.body.description,
           roleId: 'V_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
