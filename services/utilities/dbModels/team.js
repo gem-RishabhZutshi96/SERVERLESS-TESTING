@@ -4,14 +4,13 @@ const teamsMaster = new Schema(
   {
     name: {
       type: String,
-      unique: true,
     },
     teamId: {
       type: String,
       unique: true,
     },
     description: {
-        type: String,
+      type: String,
     }
 
   },
