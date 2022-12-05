@@ -54,17 +54,6 @@ async function exportExcelDataOfEmployees(directory, fileName) {
             Expires: 3600
         });
         return downloadURL;
-    //     console.log("Excel File Name#########################",excelFileName, fs.existsSync(excelFileName));
-    //     if (!fs.existsSync(excelFileName)){
-    //         console.log("Creating Directory!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //         console.log(storagePath(directory));
-    //         fs.mkdirSync(storagePath(directory), {recursive: true}, err => {
-    //             console.log(err);
-    //         });
-    //     }
-    //     console.log("Directory Created");
-    //     fs.writeFileSync(excelFileName, xls, 'binary');
-    //     return excelFileName;
     } catch (e) {
         console.log('Error in exporting employees excel');
         console.log(e);
