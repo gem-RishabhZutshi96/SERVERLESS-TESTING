@@ -54,7 +54,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/auth/role/{email}
+          path: auth/role/{email}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -72,7 +72,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/auth/verifyLogin
+          path: auth/verifyLogin
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
