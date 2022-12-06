@@ -54,7 +54,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/employee/{source}
+          path: employee/{source}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -72,7 +72,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/employee/directory
+          path: employee/directory
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -98,7 +98,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/employee/directory/{id}
+          path: employee/directory/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -116,7 +116,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/document/{id}
+          path: employee/document/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -142,7 +142,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/documentS3Url/{id}
+          path: employee/documentS3Url/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -160,7 +160,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/document/delete/{id}
+          path: employee/document/delete/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -178,7 +178,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/employee/excel
+          path: employee/excel
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -196,7 +196,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/getSignedUrlForDocumentView
+          path: employee/getSignedUrlForDocumentView
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -214,7 +214,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/getSignedUrlForImageUpload
+          path: employee/getSignedUrlForImageUpload
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -232,7 +232,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/employee/picture/{id}
+          path: employee/picture/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -250,7 +250,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/employee/{id}
+          path: employee/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
