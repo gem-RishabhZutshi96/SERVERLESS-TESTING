@@ -1,10 +1,12 @@
 import {
     makeNeo4jDBConnection
 } from "../../../utilities/db/neo4j";
+import { parameterStore } from "../../../utilities/config/commonData";
 import cryptoRandomString from 'crypto-random-string';
-export const addTeamNeo4j = async (event) => {
+import { internalServer, successResponse } from "../../../utilities/response";
+export const createOrUpdateTeamNeo4j = async (event) => {
     try {
-      devLogger("addTeamNeo4j", event, "event");
+      devLogger("createOrUpdateTeamNeo4j", event, "event");
       const { database } = parameterStore[process.env.stage].NEO4J;
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
@@ -12,24 +14,21 @@ export const addTeamNeo4j = async (event) => {
         `OPTIONAL MATCH (n:${event.label} {${event.filter}:"${event.node.id}"})
         RETURN n IS NOT NULL AS Predicate`);
       if(!exist){
-        const createNode = await session.run(`
+        await session.run(`
           CREATE
           (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
+        return successResponse('Node Created Successfully');
       } else {
-        return {
-          statusCode: "[404]",
-          message: "Tax Saving Options Data Not Found",
-          data: result,
-        };
+        await session.run(`
+          MERGE
+          (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+        `);
+        return successResponse('Node Updated Successfully');
       }
     } catch (err) {
-      errorLogger(
-        "addTeamNeo4j",
-        err,
-        "Error in DB aggregate query for collection -> TaxSavingOption"
-      );
-      throw internalServer(`Error in Fetching Tax Saving Options Data `, err);
+      errorLogger("createOrUpdateTeamNeo4j:::", err);
+      throw internalServer(`Error in Creating or Updating Node::::`, err);
     }
 };
 
@@ -42,37 +41,9 @@ export const deleteTeamNeo4j = async (event) => {
     const deleteNode = await session.run(
       `MATCH (n:${event.label} {teamId:"${event.node.id}"})
       DETACH DELETE n`);
+      return successResponse('Node Updated Successfully');
   } catch (err) {
-    errorLogger(
-      "deleteTeamNeo4j",
-      err,
-      "Error in DB aggregate query for collection -> TaxSavingOption"
-    );
-    throw internalServer(`Error in Fetching Tax Saving Options Data `, err);
-  }
-};
-
-export const updateTeamNeo4j = async (event) => {
-  try {
-    devLogger("getData", event, "event");
-    const { database } = parameterStore[process.env.stage].NEO4J;
-    let driver = await makeNeo4jDBConnection();
-    let session = driver.session({ database });
-    const exist = await session.run(
-      `OPTIONAL MATCH (n:${event.label} {${event.filter}:"${event.node.id}"})
-      RETURN n IS NOT NULL AS Predicate`);
-    if(exist){
-      const createNode = await session.run(`
-        CREATE
-        (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
-      `);
-    } 
-  } catch (err) {
-    errorLogger(
-      "getData",
-      err,
-      "Error in DB aggregate query for collection -> TaxSavingOption"
-    );
-    throw internalServer(`Error in Fetching Tax Saving Options Data `, err);
+    errorLogger("deleteTeamNeo4j::::", err);
+    throw internalServer(`Error in Deleting Node::::`, err);
   }
 };
