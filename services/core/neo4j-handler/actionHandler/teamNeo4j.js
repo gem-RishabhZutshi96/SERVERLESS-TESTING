@@ -11,18 +11,18 @@ export const createOrUpdateTeamNeo4j = async (event) => {
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
       const exist = await session.run(
-        `OPTIONAL MATCH (n:${event.label} {${event.filter}:"${event.node.id}"})
+        `OPTIONAL MATCH (n:TEAM {teamId:"${event.node.id}"})
         RETURN n IS NOT NULL AS Predicate`);
       if(!exist){
         await session.run(`
           CREATE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'base64'})}:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
           MERGE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'base64'})}:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
         return successResponse('Node Updated Successfully');
       }
@@ -39,7 +39,7 @@ export const deleteTeamNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     const deleteNode = await session.run(
-      `MATCH (n:${event.label} {teamId:"${event.node.id}"})
+      `MATCH (n:TEAM {teamId:"${event.node.id}"})
       DETACH DELETE n`);
       return successResponse('Node Updated Successfully');
   } catch (err) {
