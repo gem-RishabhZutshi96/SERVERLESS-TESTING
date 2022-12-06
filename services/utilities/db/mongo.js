@@ -9,8 +9,8 @@ export async function makeDBConnection() {
           useUnifiedTopology: true,
           useFindAndModify: false
         });
+        console.log("✌✌✌✌ Database loaded and connected sucessfully");
       }
-      console.log("✌✌✌✌ Database loaded and connected sucessfully");
       return connection;
     } catch (err) {
       console.log("Error in makeDbConnection", err);
