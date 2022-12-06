@@ -6,7 +6,7 @@ import { dateFormat } from "../../utilities/misc/utils";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import * as json2xls from 'json2xls';
 import AWS from 'aws-sdk';
-import { dataStore } from "../../utilities/config/commonData";
+import { parameterStore } from "../../utilities/config/commonData";
 import moment from 'moment';
 const s3 = new AWS.S3();
 export const exportExcelOfEmployees = async (event) => {
@@ -23,10 +23,10 @@ export const exportExcelOfEmployees = async (event) => {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
         s3.config.update({
-            accessKeyId: dataStore[process.env.stage].s3Params.accessKeyId,
-            secretAccessKey: dataStore[process.env.stage].s3Params.secretAccessKey,
-            region: dataStore[process.env.stage].s3Params.region,
-            signatureVersion: dataStore[process.env.stage].s3Params.signatureVersion
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
         const excelFilePath = await exportExcelDataOfEmployees('excels',  'excels' + '/' + timestamp + '--' +`hierarchy-downloaded.xlsx`);
@@ -43,13 +43,13 @@ async function exportExcelDataOfEmployees(directory, fileName) {
         const xls = json2xls(employees.map(emp => getEmployeeJSONForExcel(emp)));
         const buffer = Buffer.from(xls, 'binary');
         await uploadToS3({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             Expires: 3600
         });

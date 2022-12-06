@@ -1,7 +1,7 @@
-import { dataStore } from "../config/commonData";
+import { parameterStore } from "../config/commonData";
 import * as path from 'path';
 export const storagePath = (...relative) => {
-    return path.join(dataStore[process.env.stage].rootDirectory, 'storage', ...relative);
+    return path.join(parameterStore[process.env.stage].rootDirectory, 'storage', ...relative);
 };
 export const dateFormat = (date, format, separator) => {
     if (isDate(date)) {

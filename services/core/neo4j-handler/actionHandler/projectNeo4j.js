@@ -5,7 +5,7 @@ import cryptoRandomString from 'crypto-random-string';
 export const addProjectNeo4j = async (event) => {
     try {
       devLogger("addProjectNeo4j", event, "event");
-      const { database } = dataStore[process.env.stage].NEO4J;
+      const { database } = parameterStore[process.env.stage].NEO4J;
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
       const exist = await session.run(
@@ -36,7 +36,7 @@ export const addProjectNeo4j = async (event) => {
 export const deleteProjectNeo4j = async (event) => {
   try {
     devLogger("deleteProjectNeo4j", event, "event");
-    const { database } = dataStore[process.env.stage].NEO4J;
+    const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     const deleteNode = await session.run(
@@ -55,7 +55,7 @@ export const deleteProjectNeo4j = async (event) => {
 export const updateProjectNeo4j = async (event) => {
   try {
     devLogger("getData", event, "event");
-    const { database } = dataStore[process.env.stage].NEO4J;
+    const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     const exist = await session.run(

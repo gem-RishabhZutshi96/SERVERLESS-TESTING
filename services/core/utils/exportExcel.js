@@ -3,7 +3,7 @@ import { projectModel } from "../../utilities/dbModels/project";
 import { teamModel } from "../../utilities/dbModels/team";
 import * as json2xls from 'json2xls';
 import { errorLogger } from "./log-helper";
-import { dataStore } from "../../utilities/config/commonData";
+import { parameterStore } from "../../utilities/config/commonData";
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const exportExcelDataEmpMaster = async (fileName) => {
@@ -12,13 +12,13 @@ export const exportExcelDataEmpMaster = async (fileName) => {
         const xls = json2xls(employees.map(emp => getEmpMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         await uploadToS3({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             Expires: 3600
         });
@@ -36,13 +36,13 @@ export const exportExcelDataProjectMaster = async (fileName) => {
         const xls = json2xls(employees.map(emp => getProjectMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         await uploadToS3({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             Expires: 3600
         });
@@ -60,13 +60,13 @@ export const exportExcelDataTeamMaster = async (fileName) => {
         const xls = json2xls(employees.map(emp => getTeamMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         await uploadToS3({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: dataStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
             Expires: 3600
         });

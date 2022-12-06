@@ -2,7 +2,7 @@ import { internalServer, forbiddenRequest, successResponse } from "../../../util
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import AWS from 'aws-sdk';
-import { dataStore } from "../../../utilities/config/commonData";
+import { parameterStore } from "../../../utilities/config/commonData";
 import moment from 'moment';
 import { devLogger, errorLogger } from "../../utils/log-helper";
 const s3 = new AWS.S3();
@@ -21,10 +21,10 @@ export const exportExcelProjectMaster = async (event) => {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
         s3.config.update({
-            accessKeyId: dataStore[process.env.stage].s3Params.accessKeyId,
-            secretAccessKey: dataStore[process.env.stage].s3Params.secretAccessKey,
-            region: dataStore[process.env.stage].s3Params.region,
-            signatureVersion: dataStore[process.env.stage].s3Params.signatureVersion
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
         const excelFilePath = await exportExcelDataProjectMaster('excels' + '/' + timestamp + '--' +`ProjectMasterTable.xlsx`);
