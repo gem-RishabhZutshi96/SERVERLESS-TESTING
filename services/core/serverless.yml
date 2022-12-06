@@ -54,7 +54,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/emp/sync
+          path: core/emp/sync
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -72,7 +72,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/emp/export
+          path: core/emp/export
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -90,7 +90,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/core/team/createOrUpdate
+          path: core/team/createOrUpdate
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -108,7 +108,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/team/fetch
+          path: core/team/fetch
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -126,7 +126,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/team/delete/{id}
+          path: core/team/delete/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -144,7 +144,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/team/export
+          path: core/team/export
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -162,7 +162,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/core/project/createOrUpdate
+          path: core/project/createOrUpdate
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -180,7 +180,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/project/fetch
+          path: core/project/fetch
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -198,7 +198,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/project/delete/{id}
+          path: core/project/delete/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -216,7 +216,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/project/export
+          path: core/project/export
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -234,7 +234,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/core/view/createOrUpdate
+          path: core/view/createOrUpdate
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -252,7 +252,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/view/fetch
+          path: core/view/fetch
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -270,7 +270,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/view/delete/{id}
+          path: core/view/delete/{id}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -288,7 +288,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/core/mapping/createOrUpdate
+          path: core/mapping/createOrUpdate
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -306,7 +306,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/mapping/fetch
+          path: core/mapping/fetch
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -324,7 +324,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/core/mapping/delete/{email}
+          path: core/mapping/delete/{email}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
