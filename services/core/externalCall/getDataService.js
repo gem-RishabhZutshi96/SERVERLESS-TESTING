@@ -9,7 +9,7 @@ import {
     errorLogger,
     devLogger
   } from '../utils/log-helper';
-const url = parameterStore[process.env.stage].misApi.uri;
+const url = parameterStore[process.env.stage].misapi.uri;
 export const getDataService = async () => {
     try{
       devLogger('Mis API Hit', "", 'event');
