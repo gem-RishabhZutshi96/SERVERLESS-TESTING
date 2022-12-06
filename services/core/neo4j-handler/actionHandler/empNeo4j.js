@@ -11,18 +11,18 @@ export const createOrUpdateEmpNeo4j = async (event) => {
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
       const exist = await session.run(
-        `OPTIONAL MATCH (n:${event.label} {${event.filter}:"${event.node.id}"})
+        `OPTIONAL MATCH (n:EMPLOYEE {EmployeeCode:"${event.node.EmployeeCode}"})
         RETURN n IS NOT NULL AS Predicate`);
       if(!exist) {
         await session.run(`
           CREATE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{EmpId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'base64'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}, ImagePath:"${event.node.ImagePath}"})
         `);
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
           MERGE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:${event.label}{EmpId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'base64'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}, ImagePath:"${event.node.ImagePath}"})
         `);
         return successResponse('Node Updated Successfully');
       }
@@ -39,7 +39,7 @@ export const deleteEmpNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     const deleteNode = await session.run(
-      `MATCH (n:${event.label} {EmpId:"${event.node.id}"})
+      `MATCH (n:EMPLOYEE {EmployeeCode:"${event.node.EmployeeCode}"})
       DETACH DELETE n`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
