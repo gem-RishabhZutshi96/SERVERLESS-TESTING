@@ -13,7 +13,7 @@ const employeeMaster = new Schema(
     EmployeeName: {
       type: String,
     },
-    Department: {
+    DepartmentName: {
       type: String,
     },
     Designation: {
