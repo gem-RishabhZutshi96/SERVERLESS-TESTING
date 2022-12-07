@@ -4,6 +4,7 @@ import {
 import { parameterStore } from "../../../utilities/config/commonData";
 import cryptoRandomString from 'crypto-random-string';
 import { internalServer, successResponse } from "../../../utilities/response";
+import { devLogger, errorLogger } from "../../utils/log-helper";
 export const createOrUpdateTeamNeo4j = async (event) => {
     try {
       devLogger("createOrUpdateTeamNeo4j", event, "event");
@@ -38,7 +39,7 @@ export const deleteTeamNeo4j = async (event) => {
     const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
-    const deleteNode = await session.run(
+    await session.run(
       `MATCH (n:TEAM {teamId:"${event.node.id}"})
       DETACH DELETE n`);
       return successResponse('Node Updated Successfully');
