@@ -5,12 +5,12 @@ import {
 import {
     createOrUpdateEmpNeo4j,
     deleteEmpNeo4j
-} from "./actionHandler/empNeo4j"
-import { 
+} from "./actionHandler/empNeo4j";
+import {
     createOrUpdateProjectNeo4j,
     deleteProjectNeo4j
 } from "./actionHandler/projectNeo4j";
-import { 
+import {
     createOrUpdateTeamNeo4j,
     deleteTeamNeo4j
 } from "./actionHandler/teamNeo4j";
