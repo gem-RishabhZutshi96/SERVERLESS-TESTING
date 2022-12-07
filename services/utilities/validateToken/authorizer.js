@@ -1,9 +1,9 @@
 import * as jwt from "jsonwebtoken";
 import { getUserRole } from "../misc/getRole";
-import { urlStore } from "../config/config";
+import { parameterStore } from "../config/commonData";
 export const accessAllowed = async (event) => {
   try {
-    const key =  urlStore[process.env.stage].JWT_SECRET;
+    const key =  parameterStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
     let allowedFor = event.allowedFor;
     let userRole = await getUserRole(decode.email);
@@ -19,7 +19,7 @@ export const accessAllowed = async (event) => {
 export const accessDeniedToSource = async(event) => {
   try {
     let source = null;
-    const key =  urlStore[process.env.stage].JWT_SECRET;
+    const key =  parameterStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
     if(!event.eventObject.path.source){
       source = event.eventObject.query.source;
@@ -39,7 +39,7 @@ export const accessDeniedToSource = async(event) => {
 export const accessAllowedToSource = async (event) => {
   try {
     let source = null;
-    const key =  urlStore[process.env.stage].JWT_SECRET;
+    const key =  parameterStore[process.env.stage].JWT_SECRET;
     let decode = jwt.verify(event.token, key);
     if(!event.eventObject.path.source){
       source = event.eventObject.query.source;

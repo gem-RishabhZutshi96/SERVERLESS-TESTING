@@ -2,7 +2,7 @@ import { internalServer, badRequest } from "../../utilities/response/index";
 import axios from 'axios';
 import { getUserRole } from "../../utilities/misc/getRole";
 import * as jwt from 'jsonwebtoken';
-import { urlStore } from '../../utilities/config/config';
+import { parameterStore } from '../../utilities/config/commonData';
 import { devLogger, errorLogger } from "../utils/log-helper";
 export const verifyLogin = async(event) => {
     try {
@@ -49,7 +49,7 @@ async function verifyUser(token, msalMail) {
 async function sendMicrosoftAuthenticationRequest(token) {
     const msalReqObj = {
       method: 'get',
-      url: urlStore[process.env.stage].msalServiceUrl,
+      url: parameterStore[process.env.stage].msalServiceUrl,
       headers: { 'Authorization': token }
     };
     let res = await axios(msalReqObj);
@@ -76,6 +76,6 @@ async function generateToken(email) {
         email: email,
         exp: exp.getTime() / 1000,
       },
-      urlStore[process.env.stage].JWT_SECRET
+      parameterStore[process.env.stage].JWT_SECRET
     );
   }

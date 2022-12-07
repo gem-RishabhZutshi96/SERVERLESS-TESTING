@@ -1,14 +1,14 @@
 import AWS from 'aws-sdk';
-import { urlStore } from "../config/config";
+import { parameterStore } from "../config/commonData";
 import moment from 'moment';
 export const s3SignedUrlForDocuments = async(s3Case, data) => {
     const s3 = new AWS.S3();
-    const sowBucket = urlStore[process.env.stage].s3Params.sowBucket;
+    const sowBucket = parameterStore[process.env.stage].s3Params.sowBucket;
     s3.config.update({
-        accessKeyId: urlStore[process.env.stage].s3Params.accessKeyId,
-        secretAccessKey: urlStore[process.env.stage].s3Params.secretAccessKey,
-        region: urlStore[process.env.stage].s3Params.region,
-        signatureVersion: urlStore[process.env.stage].s3Params.signatureVersion
+        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+        region: parameterStore[process.env.stage].s3Params.region,
+        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
     });
     switch (s3Case) {
         case 'getSignedUrlForUpload': {

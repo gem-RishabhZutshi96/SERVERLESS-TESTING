@@ -1,5 +1,5 @@
 import * as path from 'path';
-export const urlStore = {
+export const dataStore = {
     dev: {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
         sourceViews: {

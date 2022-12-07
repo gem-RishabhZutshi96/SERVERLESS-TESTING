@@ -1,9 +1,9 @@
-import { makeDBConnection } from "../../utilities/db/database";
+import { makeDBConnection } from "../../utilities/db/mongo";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
 import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
-import { urlStore } from "../../utilities/config/config";
+import { parameterStore } from "../../utilities/config/commonData";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import axios from 'axios';
 export const importImages = async(event) => {
@@ -20,7 +20,7 @@ export const importImages = async(event) => {
       if(auth!=="allowed"){
         return auth;
       }
-      const data = (await axios.get(`${urlStore[process.env.stage].misapi.fetchImages}`)).data.Result;
+      const data = (await axios.get(`${parameterStore[process.env.stage].misapi.fetchImages}`)).data.Result;
       EmployeeModel.collection.initializeOrderedBulkOp();
       data.forEach(async d => {
         let dataObject = await EmployeeModel.findOne({

@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",
     "json2xls": "^0.1.2",
-    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-iam-roles-per-function": "^3.2.0",
     "serverless-offline": "^9.1.7"
   },
   "dependencies": {

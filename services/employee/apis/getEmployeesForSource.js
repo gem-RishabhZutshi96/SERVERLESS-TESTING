@@ -1,4 +1,4 @@
-import { urlStore } from "../../utilities/config/config";
+import { parameterStore } from "../../utilities/config/commonData";
 import { successResponse, internalServer, badRequest } from "../../utilities/response/index";
 import { accessDeniedToSource } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
@@ -20,7 +20,7 @@ export const getEmployeesForSource = async(event) => {
       const auth = await accessDeniedToSource(authQuery);
       if(auth!=="denied"){
         console.log(`👍👍Find employees for ${ source } hierarchy`);
-        const { id, parentId } = urlStore[process.env.stage].sourceIds[source];
+        const { id, parentId } = parameterStore[process.env.stage].sourceIds[source];
         const findQueries = {
           employees: {
             [id]: { $exists: true, $ne: null },
@@ -65,7 +65,7 @@ export const getEmployeesForSource = async(event) => {
 function getEmployeeResponseObject( emp, id, parentId) {
   let ImagePath;
   if (emp.Image && !emp.Image.startsWith('http')) {
-    ImagePath = resolveURL(urlStore[process.env.stage].domain, emp.Image);
+    ImagePath = resolveURL(parameterStore[process.env.stage].domain, emp.Image);
   } else {
     ImagePath =
       emp.Image ||

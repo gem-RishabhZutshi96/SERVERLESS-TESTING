@@ -3,7 +3,7 @@ import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
 import { resolveURL } from "../../utilities/resolveURL/resolve";
-import { urlStore } from "../../utilities/config/config";
+import { parameterStore } from "../../utilities/config/commonData";
 import { devLogger, errorLogger } from "../utils/log-helper";
 export const documentS3Url = async (event) => {
     try {
@@ -41,7 +41,7 @@ async function addDocumentToEmployee(_id, document) {
         { new: true }
     ).select('Documents').lean();
     const { _id: documentId, key, path, type, } = (updatedEmployee.Documents).pop();
-    const resolvedPath = resolveURL(urlStore[process.env.stage].domain, path);
+    const resolvedPath = resolveURL(parameterStore[process.env.stage].domain, path);
     return {
         success: true,
         data: {

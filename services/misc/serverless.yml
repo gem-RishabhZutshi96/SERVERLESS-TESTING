@@ -54,7 +54,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/misc/importImages
+          path: misc/importImages
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -72,7 +72,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: api/misc/createOrUpdateRole
+          path: misc/createOrUpdateRole
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -90,7 +90,7 @@ functions:
     events: 
       - http:
           method: GET
-          path: api/misc/fetch/employeeRoles
+          path: misc/fetch/employeeRoles
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -108,7 +108,7 @@ functions:
     events: 
       - http:
           method: POST
-          path: api/misc/deleteRole
+          path: misc/deleteRole
           authorizer: authorizerFunc
           cors: true
           integration: lambda
