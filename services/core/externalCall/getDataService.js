@@ -1,14 +1,7 @@
 import axios from 'axios';
-import {
-    parameterStore
-} from "../../utilities/config/commonData";
-import {
-    internalServer
-  } from '../../utilities/response/index';
-import {
-    errorLogger,
-    devLogger
-  } from '../utils/log-helper';
+import { parameterStore } from "../../utilities/config/commonData";
+import { internalServer } from '../../utilities/response/index';
+import { errorLogger, devLogger } from '../utils/log-helper';
 const url = parameterStore[process.env.stage].misapi.uri;
 export const getDataService = async () => {
     try{
