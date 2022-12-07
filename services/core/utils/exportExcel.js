@@ -8,9 +8,15 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const exportExcelDataEmpMaster = async (fileName) => {
     try {
-        const employees = await employeeMasterModel.find().lean();
+        const employees = await employeeMasterModel.find();
         const xls = json2xls(employees.map(emp => getEmpMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
+        s3.config.update({
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+        });
         await uploadToS3({
             Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
@@ -32,9 +38,15 @@ export const exportExcelDataEmpMaster = async (fileName) => {
 
 export const exportExcelDataProjectMaster = async (fileName) => {
     try {
-        const employees = await projectModel.find().lean();
+        const employees = await projectModel.find();
         const xls = json2xls(employees.map(emp => getProjectMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
+        s3.config.update({
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+        });
         await uploadToS3({
             Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
@@ -56,9 +68,15 @@ export const exportExcelDataProjectMaster = async (fileName) => {
 
 export const exportExcelDataTeamMaster = async (fileName) => {
     try {
-        const employees = await teamModel.find().lean();
+        const employees = await teamModel.find();
         const xls = json2xls(employees.map(emp => getTeamMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
+        s3.config.update({
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+        });
         await uploadToS3({
             Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
             Key: fileName,
@@ -83,17 +101,14 @@ function getEmpMasterJSON(emp) {
         'Email Id': emp.EmailId,
         'Employee Code': emp.EmployeeCode,
         'Employee Name': emp.EmployeeName,
-        'Department': emp.Department,
+        'Department Name': emp.DepartmentName,
         'Designation': emp.Designation,
         'Reporting Manager': emp.ReportingManager,
         'Reporting Manager Id': emp.ManagerCode,
         'Location': emp.Location,
         'ImagePath': emp.ImagePath,
+        'Mobile Number': emp.MobileNumber,
     };
-    emp.MobileNumber &&
-        emp.MobileNumber.forEach((m, i) => {
-            data[`Mobile ${i + 1}`] = m;
-        });
     return JSON.parse(
         JSON.stringify(data, (key, value) => (value == undefined ? '' : value))
     );
