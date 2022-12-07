@@ -5,6 +5,12 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import {getDataService} from "../../externalCall/getDataService";
+import { main } from "../../neo4j-handler/index";
+import { parameterStore } from "../../../utilities/config/commonData";
+import moment from 'moment';
+import cryptoRandomString from 'crypto-random-string';
+import AWS from 'aws-sdk';
+const s3 = new AWS.S3();
 export const syncEmpMasterWithMIS = async(event) => {
   try{
     devLogger("syncEmpMasterWithMIS", event, "event");
@@ -23,6 +29,7 @@ export const syncEmpMasterWithMIS = async(event) => {
     let createArray = [];
     let updateArray = [];
     let deleteArray = [];
+    let createNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
         'EmailId': {'$regex': `^${emp.Email}$`, $options: 'i'}
@@ -77,9 +84,53 @@ export const syncEmpMasterWithMIS = async(event) => {
     if(createArray.length >= 1){
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
+        // await main({
+        //   actionType: 'createOrUpdateEmpNeo4j',
+        //   node: {
+        //     'EmployeeCode': emp.EmployeeCode,
+        //     'EmployeeName': emp.EmployeeName,
+        //     'Designation': emp.Designation,
+        //     'ImagePath': emp.ImagePath
+        //   }
+        // });
+        createNode.push({
+          nodeId: cryptoRandomString({length: 5, type: 'base64'}),
+          EmployeeCode: emp.EmployeeCode,
+          EmployeeName: emp.EmployeeName,
+          Designation: emp.Designation,
+          ImagePath: emp.ImagePath,
+          ManagerCode: emp.ManagerCode
+        });
         await bulk.insert(emp);
       });
-      const dbUpdatesRes = await bulk.execute();
+      var buf = Buffer.from(JSON.stringify(createNode));
+      let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+      const fileName = `json/${timestamp}--createNode.json`;
+      var data = {
+        Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+        Key: fileName,
+        ContentType: 'application/json',
+        Body: buf
+      };
+      s3.config.update({
+        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+        region: parameterStore[process.env.stage].s3Params.region,
+        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+      });
+      console.log("---- UPLODAING TO S3 ----");
+      await s3.upload(data).promise();
+      console.log("---- GETTING SIGNED URL FROM S3 ----");
+      let downloadURL = s3.getSignedUrl("getObject",{
+        Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+        Key: fileName,
+        Expires: 3600
+      });
+      await main({
+        actionType: 'createOrUpdateEmpNeo4j',
+        createUrl: downloadURL
+      });
+      await bulk.execute();
     }
     if(updateArray.length >= 1){
       updateArray.forEach(async emp => {
