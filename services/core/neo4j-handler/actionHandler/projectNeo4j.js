@@ -3,8 +3,8 @@ import {
 } from "../../../utilities/db/neo4j";
 import cryptoRandomString from 'crypto-random-string';
 import { parameterStore } from "../../../utilities/config/commonData";
-import cryptoRandomString from 'crypto-random-string';
 import { internalServer, successResponse } from "../../../utilities/response";
+import { devLogger, errorLogger } from "../../utils/log-helper";
 export const createOrUpdateProjectNeo4j = async (event) => {
     try {
       devLogger("createOrUpdateProjectNeo4j", event, "event");
@@ -15,7 +15,7 @@ export const createOrUpdateProjectNeo4j = async (event) => {
         `OPTIONAL MATCH (n:PROJECT {projectId:"${event.node.id}"})
         RETURN n IS NOT NULL AS Predicate`);
       if(!exist) {
-        const createNode = await session.run(`
+        await session.run(`
           CREATE
           (${cryptoRandomString({length: 5, type: 'base64'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
@@ -39,7 +39,7 @@ export const deleteProjectNeo4j = async (event) => {
     const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
-    const deleteNode = await session.run(
+    await session.run(
       `MATCH (n:PROJECT {projectId:"${event.node.id}"})
       DETACH DELETE n
     `);
