@@ -10,6 +10,6 @@ export const getDataService = async () => {
       return result.data;
     } catch(err) {
         errorLogger('Mis API Hit', err, 'Error in Getting Data from MIS');
-        throw internalServer(`Error in MIS API`, err);
+        return internalServer(`Error in MIS API`);
     }
 };
