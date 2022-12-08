@@ -30,23 +30,23 @@ export const createOrUpdateView = async(event) => {
           }
         );
         if(result){
-            return successResponse('Team Updated Successfully');
+            return successResponse('View Updated Successfully');
         } else{
             return failResponse('No info found to updated');
         }
-      } else if(!(event.body.name || event.body.description)){
+      } else if(!(event.body.name || event.body.relationName)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
         const docToInsert = {
           name: event.body.name,
-          description: event.body.description,
-          roleId: 'V_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          relationName: event.body.relationName,
+          viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
         await viewModel.create(docToInsert);
-        return successResponse('View Added Successfully');
+        return successResponse('View Added Successfully', docToInsert);
       }
     } catch(err) {
       errorLogger("createOrUpdateView", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
