@@ -31,7 +31,7 @@ export const documentS3Url = async (event) => {
         return response;
     } catch (err) {
         errorLogger("documentS3Url", err, "Error db call");
-        throw internalServer(`Error in DB `, err);
+        return internalServer(`Error in DB `);
     }
 };
 async function addDocumentToEmployee(_id, document) {
