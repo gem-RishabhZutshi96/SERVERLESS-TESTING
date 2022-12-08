@@ -30,7 +30,7 @@ export const deleteDocumentFromS3 = async (event) => {
         return finalResponse;
     } catch (err) {
         errorLogger("deleteDocumentFromS3", err, "Error db call");
-        throw internalServer(`Error in DB `, err);
+        return internalServer(`Error in DB `);
     }
 };
 async function getEmployeeObjectForS3DocumentDelete(_id) {
