@@ -33,7 +33,7 @@ export const exportExcelOfEmployees = async (event) => {
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelOfEmployees", err, "Error db call");
-        throw internalServer(`Error in DB `, err);
+        return internalServer(`Error in DB `);
     }
 };
 async function exportExcelDataOfEmployees(directory, fileName) {
