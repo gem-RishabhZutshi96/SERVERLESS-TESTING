@@ -43,10 +43,10 @@ export const createOrUpdateTeam = async(event) => {
           teamId: 'T_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
         await teamModel.create(docToInsert);
-        return successResponse('Team Added Successfully');
+        return successResponse('Team Added Successfully', docToInsert);
       }
     } catch(err) {
       errorLogger("createOrUpdateTeam", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
