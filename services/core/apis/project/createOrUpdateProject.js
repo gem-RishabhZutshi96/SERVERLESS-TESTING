@@ -5,7 +5,7 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-export const addProject = async(event) => {
+export const createOrUpdateProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
       let userToken =null;
@@ -43,10 +43,10 @@ export const addProject = async(event) => {
           projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
         await projectModel.create(docToInsert);
-        return successResponse('Project Added Successfully');
+        return successResponse('Project Added Successfully', docToInsert);
       }
     } catch(err) {
       errorLogger("createOrUpdateProject", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
