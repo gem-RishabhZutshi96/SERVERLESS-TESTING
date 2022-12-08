@@ -53,6 +53,6 @@ export const importImages = async(event) => {
       return response;
     } catch(err) {
       errorLogger("importImages", err, "Error db call");
-      throw internalServer(`Error in fetching images from MIS `, err);
+      return internalServer(`Error in fetching images from MIS `);
     }
 };
