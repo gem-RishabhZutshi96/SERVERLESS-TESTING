@@ -43,10 +43,10 @@ export const createOrUpdateRole = async(event) => {
           roleId: 'R_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
         await roleMasterModel.create(docToInsert);
-        return successResponse('Role Added Successfully');
+        return successResponse('Role Added Successfully', docToInsert);
       }
     } catch(err) {
       errorLogger("createOrUpdateRole", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
