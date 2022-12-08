@@ -31,7 +31,7 @@ export const getEmployeeForDirectory = async(event) => {
       }
     } catch(err) {
       errorLogger("getEmployeeForDirectory", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
 async function getEmployeeForDirectoryResponse(query) {
