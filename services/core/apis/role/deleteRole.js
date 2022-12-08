@@ -31,6 +31,6 @@ export const deleteRole = async(event) => {
       }
     } catch(err) {
       errorLogger("deleteRole", err, "Error db call");
-      throw internalServer(`Error in deleting the role `, err);
+      return internalServer(`Error in deleting the role `);
     }
 };
