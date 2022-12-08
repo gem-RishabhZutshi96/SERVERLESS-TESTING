@@ -59,7 +59,7 @@ export const getEmployeesForSource = async(event) => {
       }
     } catch(err) {
       errorLogger("getEmployeesForSource", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };
 function getEmployeeResponseObject( emp, id, parentId) {
