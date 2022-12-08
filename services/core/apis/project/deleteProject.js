@@ -32,6 +32,6 @@ export const deleteProject = async(event) => {
       }
     } catch(err) {
       errorLogger("deleteProject", err, "Error db call");
-      throw internalServer(`Error in deleting the mapping `, err);
+      return internalServer(`Error in deleting the mapping `);
     }
 };
