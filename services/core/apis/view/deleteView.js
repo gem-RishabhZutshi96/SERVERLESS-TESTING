@@ -32,6 +32,6 @@ export const deleteView = async(event) => {
       }
     } catch(err) {
       errorLogger("deleteView", err, "Error db call");
-      throw internalServer(`Error in deleting the view `, err);
+      return internalServer(`Error in deleting the view `);
     }
 };
