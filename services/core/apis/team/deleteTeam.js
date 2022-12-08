@@ -28,6 +28,6 @@ export const deleteTeam = async(event) => {
       } else return failResponse(`Team Not Found`);
     } catch(err) {
       errorLogger("deleteTeam", err, "Error db call");
-      throw internalServer(`Error in deleting the mapping `, err);
+      return internalServer(`Error in deleting the mapping `);
     }
 };
