@@ -22,6 +22,6 @@ export const getRoleForUser = async(event) => {
       return response;
     } catch(err) {
       errorLogger("getRoleForUser", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
   }
 };
