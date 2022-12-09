@@ -31,7 +31,8 @@ export const createOrUpdateEmpNeo4j = async (event) => {
         CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
         UNWIND value as nodes
         FOREACH (emp in nodes.createNode |
-          CREATE (a:EMPLOYEE{EmployeeCode:emp.EmployeeCode,
+          CREATE (a:EMPLOYEE{nodeId:emp.nodeId,
+          EmployeeCode:emp.EmployeeCode,
           EmployeeName:emp.EmployeeName, 
           Designation:emp.Designation, 
           ImagePath:emp.ImagePath,
