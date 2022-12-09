@@ -4,11 +4,13 @@ import { internalServer, badRequest, successResponse, failResponse } from "../..
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
+import { main } from "../../neo4j-handler/index";
 import cryptoRandomString from 'crypto-random-string';
 export const createOrUpdateProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
       let userToken =null;
+      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -20,13 +22,21 @@ export const createOrUpdateProject = async(event) => {
         return auth;
       }
       if(event.body.projectId){
+        neo4jUpdate = await main({
+          actionType: 'createOrUpdateProjectNeo4j',
+          node: {
+            'id': event.body.projectId,
+            'name': event.body.name,
+            'description': event.body.description
+          }
+        });
         let result = await projectModel.findOneAndUpdate(
           {
-              projectId: event.body.projectId
+            projectId: event.body.projectId
           },
           event.body,
           {
-              upsert: false
+            upsert: false
           }
         );
         if(result){
@@ -42,6 +52,14 @@ export const createOrUpdateProject = async(event) => {
           description: event.body.description,
           projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
+        neo4jUpdate = await main({
+          actionType: 'createOrUpdateProjectNeo4j',
+          node: {
+            'id': docToInsert.projectId,
+            'name': event.body.name,
+            'description': event.body.description
+          }
+        });
         await projectModel.create(docToInsert);
         return successResponse('Project Added Successfully', docToInsert);
       }
