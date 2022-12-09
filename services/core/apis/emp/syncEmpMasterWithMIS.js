@@ -52,6 +52,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "Location": emp["Location"] ? emp["Location"] : "",
           "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
           "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
+          "Experience": emp["Experience"] ?emp["Experience"] : "",
         });
       } else if(element.length >= 1 &&
                 (emp.EmployeeCode != element.EmployeeCode ||
@@ -62,7 +63,8 @@ export const syncEmpMasterWithMIS = async(event) => {
                 emp.ManagerCode != element.ManagerCode ||
                 emp.Location != element.Location ||
                 emp.ImagePath != element.ImagePath ||
-                emp.MobileNumber != element.MobileNumber))
+                emp.MobileNumber != element.MobileNumber ||
+                emp.Experience != emp.Experience))
           {
             updateArray.push({
               "EmailId": emp["Email"] ? emp["Email"] : "",
@@ -75,6 +77,7 @@ export const syncEmpMasterWithMIS = async(event) => {
               "Location": emp["Location"] ? emp["Location"] : "",
               "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
               "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
+              "Experience": emp["Experience"] ? emp["Experience"] : "",
           });
         }
     });
@@ -117,6 +120,7 @@ export const syncEmpMasterWithMIS = async(event) => {
             Location: emp.Location,
             ImagePath: emp.ImagePath,
             MobileNumber: emp.MobileNumber,
+            Experience: emp.Experience,
           },
         };
         updateNode.push({
