@@ -64,7 +64,7 @@ export const syncEmpMasterWithMIS = async(event) => {
                 emp.Location != element.Location ||
                 emp.ImagePath != element.ImagePath ||
                 emp.MobileNumber != element.MobileNumber ||
-                emp.Experience != emp.Experience))
+                emp.Experience != element.Experience))
           {
             updateArray.push({
               "EmailId": emp["Email"] ? emp["Email"] : "",
