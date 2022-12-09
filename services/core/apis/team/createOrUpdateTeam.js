@@ -5,10 +5,12 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
+import { main } from "../../neo4j-handler/index";
 export const createOrUpdateTeam = async(event) => {
     try{
       devLogger("createOrUpdateTeam", event, "event");
       let userToken =null;
+      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -20,6 +22,14 @@ export const createOrUpdateTeam = async(event) => {
         return auth;
       }
       if(event.body.teamId){
+        neo4jUpdate = await main({
+          actionType: 'createOrUpdateTeamNeo4j',
+          node: {
+            'id': event.body.teamId,
+            'name': event.body.name,
+            'description': event.body.description
+          }
+        });
         let result = await teamModel.findOneAndUpdate(
           {
               teamId: event.body.teamId
@@ -42,6 +52,14 @@ export const createOrUpdateTeam = async(event) => {
           description: event.body.description,
           teamId: 'T_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
         };
+        neo4jUpdate = await main({
+          actionType: 'createOrUpdateTeamNeo4j',
+          node: {
+            'id': docToInsert.teamId,
+            'name': event.body.name,
+            'description': event.body.description
+          }
+        });
         await teamModel.create(docToInsert);
         return successResponse('Team Added Successfully', docToInsert);
       }
