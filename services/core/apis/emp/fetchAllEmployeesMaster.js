@@ -12,7 +12,7 @@ export const fetchAllEmployeesMaster = async(event) => {
                 success: false,
                 message: 'Employees Not Found',
             };
-        } 
+        }
         return {
         data: obj,
         success: true,
