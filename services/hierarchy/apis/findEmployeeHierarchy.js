@@ -31,7 +31,7 @@ export const findEmployeeHierarchy = async(event) => {
       }
     } catch(err) {
       errorLogger("findEmployeeHierarchy", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
   }
 };
 function generateRegex(str) {

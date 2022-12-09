@@ -31,6 +31,6 @@ export const exportExcelEmpMaster = async (event) => {
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelEmpMaster", err, "Error db call");
-        throw internalServer(`Error in DB `, err);
+        return internalServer(`Error in DB `);
     }
 };

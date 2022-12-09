@@ -33,6 +33,6 @@ export const fetchEmployeeRoles = async(event) => {
       } else return auth;
     } catch(err) {
       errorLogger("fetchEmployeeRoles", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };

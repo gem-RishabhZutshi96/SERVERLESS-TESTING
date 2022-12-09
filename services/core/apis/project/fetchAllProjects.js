@@ -13,6 +13,6 @@ export const fetchAllProjects = async(event) => {
         return successResponse('Projects Fetched Successfully', obj);
     } catch(err) {
       errorLogger("fetchAllProjects", err, "Error db call");
-      throw internalServer(`Error in DB `, err);
+      return internalServer(`Error in DB `);
     }
 };

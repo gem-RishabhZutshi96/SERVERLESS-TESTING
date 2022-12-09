@@ -23,7 +23,7 @@ export const getEmployeeForDirectoryById = async(event) => {
       return response;
     } catch(err){
       errorLogger("getEmployeeForDirectoryById", err, "Error db call");
-      throw internalServer(`Error in DB`, err);
+      return internalServer(`Error in DB`);
     }
 };
 async function getEmployeeForDirectoryFromId(_id) {

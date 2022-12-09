@@ -4,10 +4,12 @@ import { internalServer, successResponse, failResponse } from "../../../utilitie
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
+import { main } from "../../neo4j-handler/index";
 export const deleteTeam = async(event) => {
     try{
       devLogger("deleteTeam", event, "event");
       let userToken =null;
+      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -19,6 +21,12 @@ export const deleteTeam = async(event) => {
         return auth;
       }
       const teamId = event.path.id;
+      neo4jUpdate = await main({
+        actionType: 'deleteProjectNeo4j',
+        node: {
+          'id': projectId,
+        }
+      });
       const obj = await teamModel.remove({ teamId: { $eq: teamId } });
       if (obj.deletedCount >= 1) {
         return successResponse('Team Deleted Successfully',
@@ -28,6 +36,6 @@ export const deleteTeam = async(event) => {
       } else return failResponse(`Team Not Found`);
     } catch(err) {
       errorLogger("deleteTeam", err, "Error db call");
-      throw internalServer(`Error in deleting the mapping `, err);
+      return internalServer(`Error in deleting the mapping `);
     }
 };

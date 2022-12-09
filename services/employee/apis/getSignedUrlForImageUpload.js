@@ -25,6 +25,6 @@ export const getSignedUrlForImageUpload = async (event) => {
         return response;
     } catch (err) {
         errorLogger("getSignedUrlForImageUpload", err, "Error db call");
-        throw internalServer(`Error in DB`, err);
+        return internalServer(`Error in DB`);
     }
 };
