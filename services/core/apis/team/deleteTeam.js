@@ -24,7 +24,7 @@ export const deleteTeam = async(event) => {
       neo4jUpdate = await main({
         actionType: 'deleteProjectNeo4j',
         node: {
-          'id': projectId,
+          'id': teamId,
         }
       });
       const obj = await teamModel.remove({ teamId: { $eq: teamId } });
