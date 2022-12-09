@@ -27,20 +27,27 @@ export const createOrUpdateEmpNeo4j = async (event) => {
       //   `);
       //  return successResponse('Node Updated Successfully');
       //}
-      await session.run(`CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
-      UNWIND value as emps
-      FOREACH (emp in emps |
-          MERGE (a:EMPLOYEE{OfficialId:emp.OfficialId,
+      await session.run(`
+        CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
+        UNWIND value as nodes
+        FOREACH (emp in nodes.createNode |
+          CREATE (a:EMPLOYEE{EmployeeCode:emp.EmployeeCode,
           EmployeeName:emp.EmployeeName, 
           Designation:emp.Designation, 
           ImagePath:emp.ImagePath,
-          ReportingManagerID:emp.ReportingManagerID})
-          ON CREATE 
-            SET a.nodeId = emp.nodeId)
-      MATCH (n:EMPLOYEE)
-      WITH n
-      MATCH (parent:EMPLOYEE {OfficialId:n.ReportingManagerID})
-      CREATE (n)-[:Belongs_To]->(parent)`);
+          ManagerCode:emp.ManagerCode}))
+        FOREACH (emp in nodes.updateNode |
+          MERGE (a:EMPLOYEE{EmployeeCode:emp.EmployeeCode,
+          EmployeeName:emp.EmployeeName, 
+          Designation:emp.Designation, 
+          ImagePath:emp.ImagePath,
+          ManagerCode:emp.ManagerCode}))
+        WITH value
+        MATCH (n:EMPLOYEE)
+        WITH n
+        MATCH (parent:EMPLOYEE {EmployeeCode:n.ManagerCode})
+        MERGE (n)-[:RL_Gemini]->(parent)
+      `);
     } catch (err) {
       errorLogger("createOrUpdateEmpNeo4j::::", err);
       console.log(err);
