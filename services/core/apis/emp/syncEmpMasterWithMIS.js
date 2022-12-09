@@ -30,6 +30,8 @@ export const syncEmpMasterWithMIS = async(event) => {
     let updateArray = [];
     let deleteArray = [];
     let createNode = [];
+    let updateNode = [];
+    let deleteNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
         'EmailId': {'$regex': `^${emp.Email}$`, $options: 'i'}
@@ -84,15 +86,6 @@ export const syncEmpMasterWithMIS = async(event) => {
     if(createArray.length >= 1){
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
-        // await main({
-        //   actionType: 'createOrUpdateEmpNeo4j',
-        //   node: {
-        //     'EmployeeCode': emp.EmployeeCode,
-        //     'EmployeeName': emp.EmployeeName,
-        //     'Designation': emp.Designation,
-        //     'ImagePath': emp.ImagePath
-        //   }
-        // });
         createNode.push({
           nodeId: cryptoRandomString({length: 5, type: 'base64'}),
           EmployeeCode: emp.EmployeeCode,
@@ -128,7 +121,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
       await main({
         actionType: 'createOrUpdateEmpNeo4j',
-        createUrl: downloadURL
+        s3JsonUrl: downloadURL
       });
       await bulk.execute();
     }
@@ -149,11 +142,75 @@ export const syncEmpMasterWithMIS = async(event) => {
             MobileNumber: emp.MobileNumber,
           },
         };
+        updateNode.push({
+          EmployeeCode: emp.EmployeeCode,
+          EmployeeName: emp.EmployeeName,
+          Designation: emp.Designation,
+          ImagePath: emp.ImagePath,
+          ManagerCode: emp.ManagerCode
+        });
+        var buf = Buffer.from(JSON.stringify(createNode));
+        let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+        const fileName = `json/${timestamp}--createNode.json`;
+        var data = {
+          Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+          Key: fileName,
+          ContentType: 'application/json',
+          Body: buf
+        };
+        s3.config.update({
+          accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+          secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+          region: parameterStore[process.env.stage].s3Params.region,
+          signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+        });
+        console.log("---- UPLODAING TO S3 ----");
+        await s3.upload(data).promise();
+        console.log("---- GETTING SIGNED URL FROM S3 ----");
+        let downloadURL = s3.getSignedUrl("getObject",{
+          Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+          Key: fileName,
+          Expires: 3600
+        });
+        await main({
+          actionType: 'createOrUpdateEmpNeo4j',
+          s3JsonUrl: downloadURL
+        });
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
     if(deleteArray.length >= 1) {
       deleteArray.forEach(async emp => {
+          deleteNode.push({
+            EmployeeCode: emp.EmployeeCode
+          });
+          var buf = Buffer.from(JSON.stringify(createNode));
+          let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+          const fileName = `json/${timestamp}--createNode.json`;
+          var data = {
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Key: fileName,
+            ContentType: 'application/json',
+            Body: buf
+          };
+          s3.config.update({
+            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+            region: parameterStore[process.env.stage].s3Params.region,
+            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+          });
+          console.log("---- UPLODAING TO S3 ----");
+          await s3.upload(data).promise();
+          console.log("---- GETTING SIGNED URL FROM S3 ----");
+          let downloadURL = s3.getSignedUrl("getObject",{
+            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Key: fileName,
+            Expires: 3600
+          });
+          await main({
+            actionType: 'deleteEmpNeo4j',
+            deleteUrl: downloadURL
+          });
         await employeeMasterModel.remove({ EmailId: { $eq: emp.EmailId } });
       });
     }
