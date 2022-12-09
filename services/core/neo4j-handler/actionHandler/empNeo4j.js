@@ -27,12 +27,20 @@ export const createOrUpdateEmpNeo4j = async (event) => {
       //   `);
       //  return successResponse('Node Updated Successfully');
       //}
-      await session.run(`
-        CALL apoc.periodic.iterate("CALL apoc.load.json('${event.downloadURL}') YIELD value",
-        "UNWIND value as emp \r\n"+ 
-        "MERGE (emp.nodeId:EMPLOYEE{EmployeeCode:emp.EmployeeCode, EmployeeName:emp.EmployeeName, Designation:emp.Designation, ImagePath:emp.ImagePath, })",
-        {batchSize:10000, iterateList:true});
-      `);
+      await session.run(`CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
+      UNWIND value as emps
+      FOREACH (emp in emps |
+          MERGE (a:EMPLOYEE{OfficialId:emp.OfficialId,
+          EmployeeName:emp.EmployeeName, 
+          Designation:emp.Designation, 
+          ImagePath:emp.ImagePath,
+          ReportingManagerID:emp.ReportingManagerID})
+          ON CREATE 
+            SET a.nodeId = emp.nodeId)
+      MATCH (n:EMPLOYEE)
+      WITH n
+      MATCH (parent:EMPLOYEE {OfficialId:n.ReportingManagerID})
+      CREATE (n)-[:Belongs_To]->(parent)`);
     } catch (err) {
       errorLogger("createOrUpdateEmpNeo4j::::", err);
       console.log(err);
@@ -47,8 +55,11 @@ export const deleteEmpNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     await session.run(
-      `MATCH (n:EMPLOYEE {EmployeeCode:"${event.node.EmployeeCode}"})
-      DETACH DELETE n`);
+      `CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
+      UNWIND value as emps
+      FOREACH (emp in emps |
+        MATCH (n:EMPLOYEE {EmployeeCode:"${event.node.EmployeeCode}"})
+        DETACH DELETE n)`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
     errorLogger("deleteEmpNeo4j::::", err);
