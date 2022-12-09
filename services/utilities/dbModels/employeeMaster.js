@@ -28,6 +28,9 @@ const employeeMaster = new Schema(
     Location: {
       type: String,
     },
+    Experience: {
+      type: String,
+    },
     ImagePath: {
       type: String,
     },

@@ -1,5 +1,5 @@
 import * as path from 'path';
-export const dataStore = {
+export const parameterStore = {
     dev: {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
         sourceViews: {
@@ -165,6 +165,7 @@ export const dataStore = {
         misapi: {
           fetchImages: `https://misapi.geminisolutions.com/api/Pimco/GeminiUserProfileData`,
           authentication: `https://misapi.geminisolutions.com/api/Authenticate/Authenticate`,
+          uri: "https://misapi.geminisolutions.com/api/External/OrgDetails?key=Ks5GSWiV2tZjuF87rSIJgQ==&token=9849AE58-1CF2-4D97-8F1A-5B4D7A52BAA5",
         },
     },
     production: {

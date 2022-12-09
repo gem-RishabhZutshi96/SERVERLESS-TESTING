@@ -1,25 +1,25 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
-import { projectModel } from "../../../utilities/dbModels/project";
+import { employeeMasterModel } from "../../../utilities/dbModels/employeeMaster";
 import { internalServer } from "../../../utilities/response/index";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-export const fetchAllProjects = async(event) => {
+export const fetchAllEmployeesMaster = async(event) => {
     try{
-        devLogger("fetchAllProjects", event, "event");
+        devLogger("fetchAllEmployeesMaster", event, "event");
         await makeDBConnection();
-        const obj = await projectModel.find();
+        const obj = await employeeMasterModel.find();
         if(obj.length < 1){
             return {
                 success: false,
-                message: 'Projects Not Found',
+                message: 'Employees Not Found',
             };
-        } 
+        }
         return {
         data: obj,
         success: true,
-        message: 'Projects Fetched Successfully',
+        message: 'Employees Fetched Successfully',
         };
     } catch(err) {
-      errorLogger("fetchAllProjects", err, "Error db call");
+      errorLogger("fetchAllEmployeesMaster", err, "Error db call");
       return internalServer(`Error in DB `);
     }
 };

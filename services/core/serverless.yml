@@ -66,6 +66,24 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  fetchAllEmployeesMaster:
+    handler: apis/emp/fetchAllEmployeesMaster.fetchAllEmployeesMaster
+    timeout: 900
+    events: 
+      - http:
+          method: GET
+          path: core/emp/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   exportExcelEmpMaster:
     handler: apis/emp/exportExcelEmpMaster.exportExcelEmpMaster
     timeout: 900
