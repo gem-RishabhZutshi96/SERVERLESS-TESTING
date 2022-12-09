@@ -4,10 +4,12 @@ import { internalServer, failResponse, successResponse } from "../../../utilitie
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
+import { main } from "../../neo4j-handler/index";
 export const deleteProject = async(event) => {
     try{
       devLogger("deleteProject", event, "event");
       let userToken =null;
+      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -19,6 +21,12 @@ export const deleteProject = async(event) => {
         return auth;
       }
       const projectId = event.path.id;
+      neo4jUpdate = await main({
+        actionType: 'deleteProjectNeo4j',
+        node: {
+          'id': projectId,
+        }
+      });
       const obj = await projectModel.remove({ projectId: { $eq: projectId } });
       if (obj.deletedCount >= 1) {
         return successResponse('Project Deleted Successfully',
