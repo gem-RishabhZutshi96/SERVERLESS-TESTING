@@ -17,13 +17,13 @@ export const createOrUpdateProjectNeo4j = async (event) => {
       if(!exist) {
         await session.run(`
           CREATE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'url-safe'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
           MERGE
-          (${cryptoRandomString({length: 5, type: 'base64'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          (${cryptoRandomString({length: 5, type: 'url-safe'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
         `);
         return successResponse('Node Updated Successfully');
       }
