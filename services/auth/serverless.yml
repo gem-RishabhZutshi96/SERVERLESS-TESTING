@@ -50,7 +50,6 @@ functions:
         Resource: "*"
   getRole:
     handler: apis/getRoleForUser.getRoleForUser
-    timeout: 900
     events: 
       - http:
           method: GET
@@ -68,7 +67,6 @@ functions:
         Resource: "*" 
   verifyMSALToken:
     handler: apis/verifyLogin.verifyLogin
-    timeout: 900
     events: 
       - http:
           method: POST
