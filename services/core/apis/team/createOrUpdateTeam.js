@@ -10,7 +10,6 @@ export const createOrUpdateTeam = async(event) => {
     try{
       devLogger("createOrUpdateTeam", event, "event");
       let userToken =null;
-      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -22,7 +21,7 @@ export const createOrUpdateTeam = async(event) => {
         return auth;
       }
       if(event.body.teamId){
-        neo4jUpdate = await main({
+        await main({
           actionType: 'createOrUpdateTeamNeo4j',
           node: {
             'id': event.body.teamId,
@@ -50,9 +49,9 @@ export const createOrUpdateTeam = async(event) => {
         const docToInsert = {
           name: event.body.name,
           description: event.body.description,
-          teamId: 'T_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          teamId: 'T_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
         };
-        neo4jUpdate = await main({
+        await main({
           actionType: 'createOrUpdateTeamNeo4j',
           node: {
             'id': docToInsert.teamId,
