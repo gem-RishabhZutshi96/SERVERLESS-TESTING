@@ -40,7 +40,7 @@ export const createOrUpdateRole = async(event) => {
         const docToInsert = { 
           name: event.body.name,
           description: event.body.description,
-          roleId: 'R_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          roleId: 'R_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
         };
         await roleMasterModel.create(docToInsert);
         return successResponse('Role Added Successfully', docToInsert);
