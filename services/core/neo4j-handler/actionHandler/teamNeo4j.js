@@ -2,7 +2,6 @@ import {
     makeNeo4jDBConnection
 } from "../../../utilities/db/neo4j";
 import { parameterStore } from "../../../utilities/config/commonData";
-import cryptoRandomString from 'crypto-random-string';
 import { internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 export const createOrUpdateTeamNeo4j = async (event) => {
@@ -14,16 +13,15 @@ export const createOrUpdateTeamNeo4j = async (event) => {
       const exist = await session.run(
         `OPTIONAL MATCH (n:TEAM {teamId:"${event.node.id}"})
         RETURN n IS NOT NULL AS Predicate`);
-      if(!exist){
+      const isTeamNode = exist.records.map(i => i.get('Predicate'));
+      if(isTeamNode[0] !== true){
         await session.run(`
-          CREATE
-          (${cryptoRandomString({length: 5, type: 'url-safe'})}:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          CREATE (n:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", description:"${event.node.description}"})
         `);
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
-          MERGE
-          (${cryptoRandomString({length: 5, type: 'url-safe'})}:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          MERGE (n:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", description:"${event.node.description}"})
         `);
         return successResponse('Node Updated Successfully');
       }
