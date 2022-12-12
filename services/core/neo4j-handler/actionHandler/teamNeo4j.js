@@ -21,7 +21,10 @@ export const createOrUpdateTeamNeo4j = async (event) => {
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
-          MERGE (n:TEAM{teamId:"${event.node.id}", name:"${event.node.name}", description:"${event.node.description}"})
+          MATCH (n:TEAM {teamId:"${event.node.id}"})
+          WITH n
+          SET n.name="${event.node.name}",n.description="${event.node.description}"
+          RETURN n
         `);
         return successResponse('Node Updated Successfully');
       }
