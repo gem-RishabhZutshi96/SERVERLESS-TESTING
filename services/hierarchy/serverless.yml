@@ -50,7 +50,6 @@ functions:
         Resource: "*"
   findEmployeeHierarchy:
     handler: apis/findEmployeeHierarchy.findEmployeeHierarchy
-    timeout: 900
     events: 
       - http:
           method: GET

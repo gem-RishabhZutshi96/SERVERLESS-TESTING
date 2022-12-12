@@ -9,7 +9,6 @@ export const deleteTeam = async(event) => {
     try{
       devLogger("deleteTeam", event, "event");
       let userToken =null;
-      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -21,7 +20,7 @@ export const deleteTeam = async(event) => {
         return auth;
       }
       const teamId = event.path.id;
-      neo4jUpdate = await main({
+      await main({
         actionType: 'deleteProjectNeo4j',
         node: {
           'id': teamId,

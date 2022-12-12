@@ -94,7 +94,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
         createNode.push({
-          nodeId: cryptoRandomString({length: 5, type: 'base64'}),
+          nodeId: cryptoRandomString({length: 5, type: 'url-safe'}),
           EmployeeCode: emp.EmployeeCode,
           EmployeeName: emp.EmployeeName,
           Designation: emp.Designation,

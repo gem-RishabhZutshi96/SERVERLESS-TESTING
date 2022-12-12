@@ -50,7 +50,6 @@ functions:
         Resource: "*"
   importImages:
     handler: apis/importImages.importImages
-    timeout: 900
     events: 
       - http:
           method: GET
@@ -68,7 +67,6 @@ functions:
         Resource: "*" 
   createOrUpdateRole:
     handler: apis/createOrUpdateRole.createOrUpdateRole
-    timeout: 900
     events: 
       - http:
           method: PUT
@@ -86,7 +84,6 @@ functions:
         Resource: "*"       
   fetchEmployeeRoles:
     handler: apis/fetchEmployeeRoles.fetchEmployeeRoles
-    timeout: 900
     events: 
       - http:
           method: GET
@@ -104,7 +101,6 @@ functions:
         Resource: "*"       
   deleteRoles:
     handler: apis/deleteRoles.deleteRoles
-    timeout: 900
     events: 
       - http:
           method: POST

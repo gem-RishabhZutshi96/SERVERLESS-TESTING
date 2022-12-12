@@ -17,13 +17,13 @@ export const createOrUpdateEmpNeo4j = async (event) => {
       // if(!exist) {
       //   await session.run(`
       //      MERGE
-      //      (${cryptoRandomString({length: 5, type: 'base64'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}", ImagePath:"${event.node.ImagePath}"})
+      //      (${cryptoRandomString({length: 5, type: 'url-safe'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}", ImagePath:"${event.node.ImagePath}"})
       //     `);
       //   return successResponse('Node Created Successfully');
       // } else {
       //   await session.run(`
       //     MERGE
-      //     (${cryptoRandomString({length: 5, type: 'base64'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}", ImagePath:"${event.node.ImagePath}"})
+      //     (${cryptoRandomString({length: 5, type: 'url-safe'})}:EMPLOYEE{EmployeeCode:"${event.node.EmployeeCode}", EmployeeName:"${event.node.EmployeeName}", Designation:"${event.node.Designation}", ImagePath:"${event.node.ImagePath}"})
       //   `);
       //  return successResponse('Node Updated Successfully');
       //}

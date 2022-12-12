@@ -10,7 +10,6 @@ export const createOrUpdateProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
       let userToken =null;
-      let neo4jUpdate;
       await makeDBConnection();
       userToken = getUserToken(event);
       let authQuery={
@@ -22,7 +21,7 @@ export const createOrUpdateProject = async(event) => {
         return auth;
       }
       if(event.body.projectId){
-        neo4jUpdate = await main({
+        await main({
           actionType: 'createOrUpdateProjectNeo4j',
           node: {
             'id': event.body.projectId,
@@ -50,9 +49,9 @@ export const createOrUpdateProject = async(event) => {
         const docToInsert = {
           name: event.body.name,
           description: event.body.description,
-          projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
         };
-        neo4jUpdate = await main({
+        await main({
           actionType: 'createOrUpdateProjectNeo4j',
           node: {
             'id': docToInsert.projectId,
