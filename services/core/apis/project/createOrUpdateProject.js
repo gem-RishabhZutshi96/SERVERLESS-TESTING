@@ -21,14 +21,6 @@ export const createOrUpdateProject = async(event) => {
         return auth;
       }
       if(event.body.projectId){
-        await main({
-          actionType: 'createOrUpdateProjectNeo4j',
-          node: {
-            'id': event.body.projectId,
-            'name': event.body.name,
-            'description': event.body.description
-          }
-        });
         let result = await projectModel.findOneAndUpdate(
           {
             projectId: event.body.projectId
@@ -38,10 +30,18 @@ export const createOrUpdateProject = async(event) => {
             upsert: false
           }
         );
+        await main({
+          actionType: 'createOrUpdateProjectNeo4j',
+          node: {
+            'id': event.body.projectId,
+            'name': event.body.name || result.name,
+            'description': event.body.description || result.description
+          }
+        });
         if(result){
-            return successResponse('Project Updated Successfully');
+          return successResponse('Project Updated Successfully');
         } else{
-            return failResponse('No info found to updated');
+          return failResponse('No info found to updated');
         }
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");
@@ -56,7 +56,7 @@ export const createOrUpdateProject = async(event) => {
           node: {
             'id': docToInsert.projectId,
             'name': event.body.name,
-            'description': event.body.description
+            'description': event.body.description,
           }
         });
         await projectModel.create(docToInsert);

@@ -38,11 +38,11 @@ export const syncEmpMasterWithMIS = async(event) => {
     let deleteNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
-        'EmailId': {'$regex': `^${emp.Email}$`, $options: 'i'}
+        'EmailId': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
       });
       if(element.length < 1){
         createArray.push({
-          "EmailId": emp["Email"] ? emp["Email"] : "",
+          "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
           "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
           "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
           "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
@@ -54,20 +54,20 @@ export const syncEmpMasterWithMIS = async(event) => {
           "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
           "Experience": emp["Experience"] ?emp["Experience"] : "",
         });
-      } else if(element.length >= 1 &&
-                (emp.EmployeeCode != element.EmployeeCode ||
-                emp.EmployeeName != element.EmployeeName ||
-                emp.Department != element.Department ||
-                emp.Designation != element.Designation ||
-                emp.ReportingManager != element.ReportingManager ||
-                emp.ManagerCode != element.ManagerCode ||
-                emp.Location != element.Location ||
-                emp.ImagePath != element.ImagePath ||
-                emp.MobileNumber != element.MobileNumber ||
-                emp.Experience != element.Experience))
+      } else if(element.length >= 1
+                && (emp.EmployeeCode != element[0].EmployeeCode ||
+                emp.EmployeeName != element[0].EmployeeName ||
+                emp.DepartmentName != element[0].DepartmentName ||
+                emp.Designation != element[0].Designation ||
+                emp.ReportingManager != element[0].ReportingManager ||
+                emp.ManagerCode != element[0].ManagerCode ||
+                emp.Location != element[0].Location ||
+                emp.ImagePath != element[0].ImagePath ||
+                emp.MobileNumber != element[0].MobileNumber ||
+                emp.Experience != element[0].Experience))
           {
             updateArray.push({
-              "EmailId": emp["Email"] ? emp["Email"] : "",
+              "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
               "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
               "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
               "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
@@ -83,10 +83,10 @@ export const syncEmpMasterWithMIS = async(event) => {
     });
     const res = await employeeMasterModel.find();
     res.forEach(document => {
-      let obj = misData.Result.find(emp => emp.Email == document.EmailId);
+      let obj = misData.Result.find(emp => emp.EmailId == document.EmailId);
       if(obj == undefined){
         deleteArray.push({
-          "EmailId": document.EmailId
+          "EmployeeCode": document.EmployeeCode
         });
       }
     });
@@ -113,7 +113,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           $set: {
             EmployeeCode: emp.EmployeeCode,
             EmployeeName: emp.EmployeeName,
-            Department: emp.Department,
+            DepartmentName: emp.DepartmentName,
             Designation: emp.Designation,
             ReportingManager: emp.ReportingManager,
             ManagerCode: emp.ManagerCode,
@@ -133,48 +133,53 @@ export const syncEmpMasterWithMIS = async(event) => {
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
-    buf = Buffer.from(JSON.stringify(
-      {
-        'createNode': createNode,
-        'updateNode': updateNode
-      }
-    ));
-    timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
-    fileName = `json/${timestamp}--createNode.json`;
-    data = {
-      Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
-      Key: fileName,
-      ContentType: 'application/json',
-      Body: buf
-    };
-    s3.config.update({
-      accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-      secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-      region: parameterStore[process.env.stage].s3Params.region,
-      signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-    });
-    console.log("---- UPLODAING TO S3 ----");
-    await s3.upload(data).promise();
-    console.log("---- GETTING SIGNED URL FROM S3 ----");
-    let downloadURL = s3.getSignedUrl("getObject",{
-      Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
-      Key: fileName,
-      Expires: 3600
-    });
-    await main({
-      actionType: 'createOrUpdateEmpNeo4j',
-      s3JsonUrl: downloadURL
-    });
+    if(createNode.length >= 1 || updateNode.length >= 1){
+      buf = Buffer.from(JSON.stringify(
+        {
+          'createNode': createNode,
+          'updateNode': updateNode
+        }
+      ));
+      timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+      fileName = `json/${timestamp}--createOrUpdateNode.json`;
+      data = {
+        Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+        Key: fileName,
+        ContentType: 'application/json',
+        Body: buf
+      };
+      s3.config.update({
+        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+        region: parameterStore[process.env.stage].s3Params.region,
+        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+      });
+      console.log("---- UPLODAING TO S3 ----");
+      await s3.upload(data).promise();
+      console.log("---- GETTING SIGNED URL FROM S3 ----");
+      let downloadURL = s3.getSignedUrl("getObject",{
+        Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+        Key: fileName,
+        Expires: 3600
+      });
+      await main({
+        actionType: 'createOrUpdateEmpNeo4j',
+        s3JsonUrl: downloadURL
+      });
+    }
     if(deleteArray.length >= 1) {
       deleteArray.forEach(async emp => {
         deleteNode.push({
           EmployeeCode: emp.EmployeeCode
         });
-        await employeeMasterModel.remove({ EmailId: { $eq: emp.EmailId } });
+        await employeeMasterModel.remove({ EmployeeCode: { $eq: emp.EmployeeCode } });
       });
-      buf = Buffer.from(JSON.stringify(createNode));
+    }
+    if(deleteNode.length >= 1){
+      buf = Buffer.from(JSON.stringify(
+        {'deleteNode': deleteNode}));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
-      fileName = `json/${timestamp}--createNode.json`;
+      fileName = `json/${timestamp}--deleteNode.json`;
       data = {
         Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
         Key: fileName,
@@ -202,7 +207,6 @@ export const syncEmpMasterWithMIS = async(event) => {
     }
     return successResponse('Employee Master Table and Neo4J DB Synced Successfully with MIS');
   } catch(err) {
-    console.log(err);
     errorLogger("syncEmpMasterWithMIS", err, "Error db call");
     return internalServer(`Error in DB`);
   }

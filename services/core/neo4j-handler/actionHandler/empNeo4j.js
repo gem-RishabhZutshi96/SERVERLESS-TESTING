@@ -63,11 +63,10 @@ export const deleteEmpNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     await session.run(
-      `CALL apoc.load.json("${event.s3JsonUrl}") YIELD value
-      UNWIND value as emps
-      FOREACH (emp in emps |
-        MATCH (n:EMPLOYEE {EmployeeCode:"${event.node.EmployeeCode}"})
-        DETACH DELETE n)`);
+      `CALL apoc.load.json("${event.deleteUrl}") YIELD value
+      UNWIND value.deleteNode as emp
+      MATCH (n:EMPLOYEE {EmployeeCode: emp.EmployeeCode})
+      DETACH DELETE n`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
     errorLogger("deleteEmpNeo4j::::", err);

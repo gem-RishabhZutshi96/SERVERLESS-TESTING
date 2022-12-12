@@ -1,7 +1,6 @@
 import {
     makeNeo4jDBConnection
 } from "../../../utilities/db/neo4j";
-import cryptoRandomString from 'crypto-random-string';
 import { parameterStore } from "../../../utilities/config/commonData";
 import { internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -14,16 +13,19 @@ export const createOrUpdateProjectNeo4j = async (event) => {
       const exist = await session.run(
         `OPTIONAL MATCH (n:PROJECT {projectId:"${event.node.id}"})
         RETURN n IS NOT NULL AS Predicate`);
-      if(!exist) {
+      const isProjectNode = exist.records.map(i => i.get('Predicate'));
+      if(isProjectNode[0] !== true) {
         await session.run(`
-          CREATE
-          (${cryptoRandomString({length: 5, type: 'url-safe'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+          CREATE (n:PROJECT {projectId:"${event.node.id}", name:"${event.node.name}", description:"${event.node.description}"})
+          RETURN n
         `);
         return successResponse('Node Created Successfully');
       } else {
         await session.run(`
-          MERGE
-          (${cryptoRandomString({length: 5, type: 'url-safe'})}:PROJECT{projectId:"${event.node.id}", name:"${event.node.name}", desciption:"${event.node.description}"})
+        MATCH (n:PROJECT {projectId:"${event.node.id}"})
+        WITH n
+        SET n.name="${event.node.name}",n.description="${event.node.description}"
+        RETURN n
         `);
         return successResponse('Node Updated Successfully');
       }
@@ -40,7 +42,7 @@ export const deleteProjectNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     await session.run(
-      `MATCH (n:PROJECT {projectId:"${event.node.id}"})
+      `MATCH (n:PROJECT{projectId:"${event.node.id}"})
       DETACH DELETE n
     `);
     return successResponse('Node Deleted Successfully');

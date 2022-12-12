@@ -21,14 +21,6 @@ export const createOrUpdateTeam = async(event) => {
         return auth;
       }
       if(event.body.teamId){
-        await main({
-          actionType: 'createOrUpdateTeamNeo4j',
-          node: {
-            'id': event.body.teamId,
-            'name': event.body.name,
-            'description': event.body.description
-          }
-        });
         let result = await teamModel.findOneAndUpdate(
           {
               teamId: event.body.teamId
@@ -38,6 +30,15 @@ export const createOrUpdateTeam = async(event) => {
               upsert: false
           }
         );
+        console.log(result);
+        await main({
+          actionType: 'createOrUpdateTeamNeo4j',
+          node: {
+            'id': event.body.teamId,
+            'name': event.body.name || result.name,
+            'description': event.body.description || result.description
+          }
+        });
         if(result){
             return successResponse('Team Updated Successfully');
         } else{
