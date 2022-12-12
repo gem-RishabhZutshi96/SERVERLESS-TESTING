@@ -40,7 +40,7 @@ export const createOrUpdateView = async(event) => {
         const docToInsert = {
           name: event.body.name,
           relationName: event.body.relationName,
-          viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'base64'})),
+          viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
         };
         await viewModel.create(docToInsert);
         return successResponse('View Added Successfully', docToInsert);
