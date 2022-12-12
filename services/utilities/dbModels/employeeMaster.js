@@ -29,7 +29,7 @@ const employeeMaster = new Schema(
       type: String,
     },
     Experience: {
-      type: String,
+      type: Number,
     },
     ImagePath: {
       type: String,
