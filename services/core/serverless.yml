@@ -337,3 +337,54 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  createOrUpdateRole:
+    handler: apis/role/createOrUpdateRole.createOrUpdateRole
+    events: 
+      - http:
+          method: PUT
+          path: core/role/createOrUpdate
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  fetchAllRoles:
+    handler: apis/role/fetchAllRoles.fetchAllRoles
+    events: 
+      - http:
+          method: GET
+          path: core/role/fetch
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
+  deleteRole:
+    handler: apis/role/deleteRole.deleteRole
+    events: 
+      - http:
+          method: GET
+          path: core/role/delete/{id}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
