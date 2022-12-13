@@ -32,7 +32,7 @@ export const createOrUpdateView = async(event) => {
         if(result){
             return successResponse('View Updated Successfully');
         } else{
-            return failResponse('No info found to updated');
+            return failResponse('No info found to updated', 404);
         }
       } else if(!(event.body.name || event.body.relationName)){
         return badRequest("🤔🤔 Missing body parameters");
