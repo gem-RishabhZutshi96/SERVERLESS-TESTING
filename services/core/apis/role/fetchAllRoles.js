@@ -8,7 +8,7 @@ export const fetchAllRoles = async(event) => {
         await makeDBConnection();
         const obj = await roleMasterModel.find();
         if(obj.length < 1){
-            return failResponse('Roles Not Found');
+            return failResponse('Roles Not Found', 404);
         }
         return successResponse('Roles Fetched Successfully', obj);
     } catch(err) {
