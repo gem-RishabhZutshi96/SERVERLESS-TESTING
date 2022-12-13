@@ -27,7 +27,7 @@ export const deleteMapping = async(event) => {
           "email": email
         });
       } else {
-        return failResponse(`No mapping exists for this user : ${email}`);
+        return failResponse(`No mapping exists for this user : ${email}`, 404);
       }
     } catch(err) {
       errorLogger("deleteMapping", err, "Error db call");

@@ -15,7 +15,7 @@ export const fetchAllMappings = async(event) => {
       if(auth.email){
         const obj = await empRoleMapModel.find();
         if(obj.length < 1){
-          return failResponse('Mappings Not Found');
+          return failResponse('Mappings Not Found', 404);
         }
         return successResponse('Mappings Fetched Successfully', obj);
       } else return auth;

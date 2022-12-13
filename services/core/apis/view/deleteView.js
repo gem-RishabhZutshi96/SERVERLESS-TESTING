@@ -28,7 +28,7 @@ export const deleteView = async(event) => {
           }
         );
       } else {
-        return failResponse(`View Not Found`);
+        return failResponse(`View Not Found`, 404);
       }
     } catch(err) {
       errorLogger("deleteView", err, "Error db call");

@@ -41,7 +41,7 @@ export const createOrUpdateProject = async(event) => {
         if(result){
           return successResponse('Project Updated Successfully');
         } else{
-          return failResponse('No info found to updated');
+          return failResponse('No info found to updated', 404);
         }
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");

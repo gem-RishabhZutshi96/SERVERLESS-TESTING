@@ -35,7 +35,7 @@ export const deleteProject = async(event) => {
           }
         );
       } else {
-        return failResponse(`Project Not Found`);
+        return failResponse(`Project Not Found`, 404);
       }
     } catch(err) {
       errorLogger("deleteProject", err, "Error db call");
