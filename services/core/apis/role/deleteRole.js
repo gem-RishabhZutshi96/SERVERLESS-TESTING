@@ -1,5 +1,5 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
-import { projectModel } from "../../../utilities/dbModels/project";
+import { roleMasterModel } from "../../../utilities/dbModels/roleMaster";
 import { internalServer, successResponse, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
@@ -19,7 +19,7 @@ export const deleteRole = async(event) => {
         return auth;
       }
       const roleId = event.path.id;
-      const obj = await projectModel.remove({ roleId: { $eq: roleId } });
+      const obj = await roleMasterModel.remove({ roleId: { $eq: roleId } });
       if (obj.deletedCount >= 1) {
         return successResponse('Role Deleted Successfully',
         {
