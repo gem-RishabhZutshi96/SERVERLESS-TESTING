@@ -32,7 +32,7 @@ export const deleteTeam = async(event) => {
         {
             "deletedCount": obj.deletedCount,
         });
-      } else return failResponse(`Team Not Found`);
+      } else return failResponse(`Team Not Found`, 404);
     } catch(err) {
       errorLogger("deleteTeam", err, "Error db call");
       return internalServer(`Error in deleting the mapping `);
