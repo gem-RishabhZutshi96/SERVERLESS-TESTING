@@ -8,7 +8,7 @@ export const fetchAllTeams = async(event) => {
         await makeDBConnection();
         const obj = await teamModel.find();
         if(obj.length < 1){
-            return failResponse('Teams Not Found');
+            return failResponse('Teams Not Found', 404);
         }
         return successResponse('Teams Fetched Successfully', obj);
     } catch(err) {
