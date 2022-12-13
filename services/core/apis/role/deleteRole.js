@@ -27,7 +27,7 @@ export const deleteRole = async(event) => {
           "roleId": roleId
         });
       } else {
-        return failResponse(`Role Not Found`);
+        return failResponse(`Role Not Found`, 404);
       }
     } catch(err) {
       errorLogger("deleteRole", err, "Error db call");
