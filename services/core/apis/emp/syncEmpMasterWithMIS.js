@@ -8,7 +8,6 @@ import {getDataService} from "../../externalCall/getDataService";
 import { main } from "../../neo4j-handler/index";
 import { parameterStore } from "../../../utilities/config/commonData";
 import moment from 'moment';
-import cryptoRandomString from 'crypto-random-string';
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const syncEmpMasterWithMIS = async(event) => {
@@ -33,9 +32,9 @@ export const syncEmpMasterWithMIS = async(event) => {
     let createArray = [];
     let updateArray = [];
     let deleteArray = [];
-    let createNode = [];
-    let updateNode = [];
-    let deleteNode = [];
+    // let createNode = [];
+    // let updateNode = [];
+    // let deleteNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
         'EmailId': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
@@ -85,22 +84,20 @@ export const syncEmpMasterWithMIS = async(event) => {
     res.forEach(document => {
       let obj = misData.Result.find(emp => emp.EmailId == document.EmailId);
       if(obj == undefined){
-        deleteArray.push({
-          "EmployeeCode": document.EmployeeCode
-        });
+        deleteArray.push(document.EmployeeCode);
       }
     });
     if(createArray.length >= 1){
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
-        createNode.push({
-          nodeId: cryptoRandomString({length: 5, type: 'url-safe'}),
-          EmployeeCode: emp.EmployeeCode,
-          EmployeeName: emp.EmployeeName,
-          Designation: emp.Designation,
-          ImagePath: emp.ImagePath,
-          ManagerCode: emp.ManagerCode
-        });
+      //   createNode.push({
+      //     nodeId: cryptoRandomString({length: 5, type: 'url-safe'}),
+      //     EmployeeCode: emp.EmployeeCode,
+      //     EmployeeName: emp.EmployeeName,
+      //     Designation: emp.Designation,
+      //     ImagePath: emp.ImagePath,
+      //     ManagerCode: emp.ManagerCode
+      //   });
         await bulk.insert(emp);
       });
       await bulk.execute();
@@ -123,21 +120,21 @@ export const syncEmpMasterWithMIS = async(event) => {
             Experience: emp.Experience,
           },
         };
-        updateNode.push({
-          EmployeeCode: emp.EmployeeCode,
-          EmployeeName: emp.EmployeeName,
-          Designation: emp.Designation,
-          ImagePath: emp.ImagePath,
-          ManagerCode: emp.ManagerCode
-        });
+        // updateNode.push({
+        //   EmployeeCode: emp.EmployeeCode,
+        //   EmployeeName: emp.EmployeeName,
+        //   Designation: emp.Designation,
+        //   ImagePath: emp.ImagePath,
+        //   ManagerCode: emp.ManagerCode
+        // });
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
-    if(createNode.length >= 1 || updateNode.length >= 1){
+    if(createArray.length >= 1 || updateArray.length >= 1){
       buf = Buffer.from(JSON.stringify(
         {
-          'createNode': createNode,
-          'updateNode': updateNode
+          'createNode': createArray,
+          'updateNode': updateArray
         }
       ));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
@@ -168,16 +165,17 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
     }
     if(deleteArray.length >= 1) {
-      deleteArray.forEach(async emp => {
-        deleteNode.push({
-          EmployeeCode: emp.EmployeeCode
-        });
-        await employeeMasterModel.remove({ EmployeeCode: { $eq: emp.EmployeeCode } });
-      });
+      // deleteArray.forEach(async emp => {
+      //   deleteNode.push({
+      //     EmployeeCode: emp.EmployeeCode
+      //   });
+        // single query for delete
+        await employeeMasterModel.remove({ EmployeeCode: { $in: deleteArray } });
+      // });
     }
-    if(deleteNode.length >= 1){
+    if(deleteArray.length >= 1){
       buf = Buffer.from(JSON.stringify(
-        {'deleteNode': deleteNode}));
+        {'deleteNode': deleteArray}));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
       fileName = `json/${timestamp}--deleteNode.json`;
       data = {
