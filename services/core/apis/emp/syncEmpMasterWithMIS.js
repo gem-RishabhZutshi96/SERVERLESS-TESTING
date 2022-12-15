@@ -32,9 +32,6 @@ export const syncEmpMasterWithMIS = async(event) => {
     let createArray = [];
     let updateArray = [];
     let deleteArray = [];
-    // let createNode = [];
-    // let updateNode = [];
-    // let deleteNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
         'EmailId': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
@@ -90,14 +87,6 @@ export const syncEmpMasterWithMIS = async(event) => {
     if(createArray.length >= 1){
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
-      //   createNode.push({
-      //     nodeId: cryptoRandomString({length: 5, type: 'url-safe'}),
-      //     EmployeeCode: emp.EmployeeCode,
-      //     EmployeeName: emp.EmployeeName,
-      //     Designation: emp.Designation,
-      //     ImagePath: emp.ImagePath,
-      //     ManagerCode: emp.ManagerCode
-      //   });
         await bulk.insert(emp);
       });
       await bulk.execute();
@@ -120,13 +109,6 @@ export const syncEmpMasterWithMIS = async(event) => {
             Experience: emp.Experience,
           },
         };
-        // updateNode.push({
-        //   EmployeeCode: emp.EmployeeCode,
-        //   EmployeeName: emp.EmployeeName,
-        //   Designation: emp.Designation,
-        //   ImagePath: emp.ImagePath,
-        //   ManagerCode: emp.ManagerCode
-        // });
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
@@ -165,13 +147,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
     }
     if(deleteArray.length >= 1) {
-      // deleteArray.forEach(async emp => {
-      //   deleteNode.push({
-      //     EmployeeCode: emp.EmployeeCode
-      //   });
-        // single query for delete
-        await employeeMasterModel.remove({ EmployeeCode: { $in: deleteArray } });
-      // });
+      await employeeMasterModel.remove({ EmployeeCode: { $in: deleteArray } });
     }
     if(deleteArray.length >= 1){
       buf = Buffer.from(JSON.stringify(
