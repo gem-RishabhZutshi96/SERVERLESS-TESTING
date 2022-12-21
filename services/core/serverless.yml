@@ -388,3 +388,36 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  fetchEmployeeHierarchy:
+    handler: apis/hierarchy/fetchEmployeeHierarchy.fetchEmployeeHierarchy
+    events: 
+      - http:
+          method: GET
+          path: core/hierarchy/{source}
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
+  createHierarchy:
+    handler: apis/hierarchy/createHierarchy.createHierarchy
+    events: 
+      - http:
+          method: POST
+          path: core/hierarchy/import/excel
+          authorizer: authorizerFunc
+          cors: true
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
