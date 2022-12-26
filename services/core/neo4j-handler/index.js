@@ -14,9 +14,6 @@ import {
     createOrUpdateTeamNeo4j,
     deleteTeamNeo4j
 } from "./actionHandler/teamNeo4j";
-import {
-    createHierarchyForExcel
-} from "./actionHandler/hierarchyNeo4j";
 export async function main(event) {
     try {
         let result = await processEvent(event);
@@ -45,7 +42,5 @@ const processEvent = async (event) => {
             return createOrUpdateEmpNeo4j(event);
         case "deleteEmpNeo4j":
             return deleteEmpNeo4j(event);
-        case "createHierarchyForExcel":
-            return createHierarchyForExcel(event);
     }
 };
