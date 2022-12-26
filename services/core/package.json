@@ -14,7 +14,6 @@
     "json2xls": "^0.1.2"
   },
   "dependencies": {
-    "aws-multipart-parser": "^0.2.1",
     "aws-sdk": "^2.1267.0",
     "axios": "^0.27.2",
     "bluebird": "^3.7.2",
@@ -22,7 +21,6 @@
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.1",
-    "url": "^0.10.3",
-    "xlsx": "^0.18.5"
+    "url": "^0.10.3"
   }
 }
