@@ -50,6 +50,7 @@ functions:
         Resource: "*"
   getSignedUrlForExcelUpload:
     handler: apis/getSignedUrlForExcelUpload.getSignedUrlForExcelUpload
+    timeout: 30
     events: 
       - http:
           method: GET
@@ -72,6 +73,7 @@ functions:
         Resource: "*" 
   fetchEmployeeHierarchy:
     handler: apis/fetchEmployeeHierarchy.fetchEmployeeHierarchy
+    timeout: 30
     events: 
       - http:
           method: GET
@@ -89,6 +91,7 @@ functions:
         Resource: "*" 
   createHierarchy:
     handler: apis/createHierarchy.createHierarchy
+    timeout: 30
     events: 
       - http:
           method: GET
@@ -103,14 +106,6 @@ functions:
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
-      #- s3:
-      #    bucket: gemini-docs-manish
-      #    event: s3:ObjectCreated:*
-      #    rules:
-      #      - prefix: createHierarchyExcels/
-      #      - suffix: .xlsx
-      #    existing: true
-      #    forceDeploy: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
