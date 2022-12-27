@@ -12,6 +12,7 @@ const viewsMaster = new Schema(
     },
     relationName: {
         type: String,
+        unique: true,
     }
   },
   {
