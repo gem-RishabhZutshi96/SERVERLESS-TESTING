@@ -2,7 +2,6 @@ import {
     makeNeo4jDBConnection
 } from "../../../utilities/db/neo4j";
 import { parameterStore } from "../../../utilities/config/commonData";
-//import cryptoRandomString from 'crypto-random-string';
 import { internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 export const createOrUpdateEmpNeo4j = async (event) => {
@@ -29,11 +28,6 @@ export const createOrUpdateEmpNeo4j = async (event) => {
               a.Designation = emps.Designation, 
               a.ImagePath = emps.ImagePath,
               a.ManagerCode = emps.ManagerCode
-        WITH emps
-        MATCH (n:EMPLOYEE)
-        WITH n
-        MATCH (parent:EMPLOYEE {EmployeeCode:n.ManagerCode})
-        MERGE (n)-[:RL_Gemini]->(parent)
       `);
     } catch (err) {
       errorLogger("createOrUpdateEmpNeo4j::::", err);
