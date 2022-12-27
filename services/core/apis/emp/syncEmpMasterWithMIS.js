@@ -36,6 +36,7 @@ export const syncEmpMasterWithMIS = async(event) => {
     }
     let misData = await getDataService();
     let createArray = [];
+    let updateNode = [];
     let updateArray = [];
     let deleteArray = [];
     misData.Result.forEach(async emp => {
@@ -56,32 +57,48 @@ export const syncEmpMasterWithMIS = async(event) => {
           "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
           "Experience": emp["Experience"] ?emp["Experience"] : "",
         });
-      } else if(element.length >= 1
-                && (emp.EmployeeCode != element[0].EmployeeCode ||
-                emp.EmployeeName != element[0].EmployeeName ||
-                emp.DepartmentName != element[0].DepartmentName ||
-                emp.Designation != element[0].Designation ||
-                emp.ReportingManager != element[0].ReportingManager ||
-                emp.ManagerCode != element[0].ManagerCode ||
-                emp.Location != element[0].Location ||
-                emp.ImagePath != element[0].ImagePath ||
-                emp.MobileNumber != element[0].MobileNumber ||
-                emp.Experience != element[0].Experience))
+      }
+      if(element.length >= 1
+          && (emp.EmployeeCode != element[0].EmployeeCode ||
+          emp.EmployeeName != element[0].EmployeeName ||
+          emp.Designation != element[0].Designation ||
+          emp.ManagerCode != element[0].ManagerCode ||
+          emp.ImagePath != element[0].ImagePath))
           {
-            updateArray.push({
-              "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
+            updateNode.push({
               "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
               "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
-              "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
               "Designation": emp["Designation"] ? emp["Designation"] : "",
-              "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
               "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
-              "Location": emp["Location"] ? emp["Location"] : "",
               "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
-              "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
-              "Experience": emp["Experience"] ? emp["Experience"] : "",
           });
         }
+      if(element.length >= 1
+          && (emp.EmployeeCode != element[0].EmployeeCode ||
+          emp.EmployeeName != element[0].EmployeeName ||
+          emp.DepartmentName != element[0].DepartmentName ||
+          emp.Designation != element[0].Designation ||
+          emp.ReportingManager != element[0].ReportingManager ||
+          emp.ManagerCode != element[0].ManagerCode ||
+          emp.Location != element[0].Location ||
+          emp.ImagePath != element[0].ImagePath ||
+          emp.MobileNumber != element[0].MobileNumber ||
+          emp.Experience != element[0].Experience))
+    {
+      updateArray.push({
+        "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
+        "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
+        "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
+        "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
+        "Designation": emp["Designation"] ? emp["Designation"] : "",
+        "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
+        "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
+        "Location": emp["Location"] ? emp["Location"] : "",
+        "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
+        "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
+        "Experience": emp["Experience"] ? emp["Experience"] : "",
+    });
+  }
     });
     const res = await employeeMasterModel.find();
     res.forEach(document => {
@@ -118,7 +135,7 @@ export const syncEmpMasterWithMIS = async(event) => {
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
-    if(createArray.length >= 1 || updateArray.length >= 1){
+    if(createArray.length >= 1 || updateNode.length >= 1){
       buf = Buffer.from(JSON.stringify(
         {
           'createNode': createArray,
