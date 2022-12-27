@@ -5,6 +5,7 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
+import { parameterStore } from "../../../utilities/config/commonData";
 export const createOrUpdateView = async(event) => {
     try{
       devLogger("createOrUpdateView", event, "event");
@@ -37,16 +38,24 @@ export const createOrUpdateView = async(event) => {
       } else if(!(event.body.name || event.body.relationName)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const docToInsert = {
-          name: event.body.name,
-          relationName: event.body.relationName,
-          viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
-        };
-        await viewModel.create(docToInsert);
-        return successResponse('View Added Successfully', docToInsert);
+        const sourceRelations = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(event.body.relationName).test(value.relation));
+        if(sourceRelations.length >= 1){
+          const docToInsert = {
+            name: event.body.name,
+            relationName: sourceRelations[0][1].relation,
+            viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
+          };
+          await viewModel.create(docToInsert);
+          return successResponse('View Added Successfully', docToInsert);
+        } else {
+          return badRequest("Invalid Relation Name");
+        }
       }
     } catch(err) {
       errorLogger("createOrUpdateView", err, "Error db call");
       return internalServer(`Error in DB `);
     }
 };
+function generateRegex(str) {
+  return new RegExp(`${str}`,"i");
+}
