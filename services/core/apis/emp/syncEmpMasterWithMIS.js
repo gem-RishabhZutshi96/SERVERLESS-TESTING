@@ -10,6 +10,12 @@ import { parameterStore } from "../../../utilities/config/commonData";
 import moment from 'moment';
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
+s3.config.update({
+  accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+  secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+  region: parameterStore[process.env.stage].s3Params.region,
+  signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+});
 export const syncEmpMasterWithMIS = async(event) => {
   try{
     devLogger("syncEmpMasterWithMIS", event, "event");
@@ -81,7 +87,7 @@ export const syncEmpMasterWithMIS = async(event) => {
     res.forEach(document => {
       let obj = misData.Result.find(emp => emp.EmailId == document.EmailId);
       if(obj == undefined){
-        deleteArray.push(document.EmployeeCode);
+        deleteArray.push(document.EmailId);
       }
     });
     if(createArray.length >= 1){
@@ -127,12 +133,6 @@ export const syncEmpMasterWithMIS = async(event) => {
         ContentType: 'application/json',
         Body: buf
       };
-      s3.config.update({
-        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-        region: parameterStore[process.env.stage].s3Params.region,
-        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-      });
       console.log("---- UPLODAING TO S3 ----");
       await s3.upload(data).promise();
       console.log("---- GETTING SIGNED URL FROM S3 ----");
@@ -147,9 +147,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
     }
     if(deleteArray.length >= 1) {
-      await employeeMasterModel.remove({ EmployeeCode: { $in: deleteArray } });
-    }
-    if(deleteArray.length >= 1){
+      await employeeMasterModel.remove({ EmailId: { $in: deleteArray } });
       buf = Buffer.from(JSON.stringify(
         {'deleteNode': deleteArray}));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
@@ -160,12 +158,6 @@ export const syncEmpMasterWithMIS = async(event) => {
         ContentType: 'application/json',
         Body: buf
       };
-      s3.config.update({
-        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-        region: parameterStore[process.env.stage].s3Params.region,
-        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-      });
       console.log("---- UPLODAING TO S3 ----");
       await s3.upload(data).promise();
       console.log("---- GETTING SIGNED URL FROM S3 ----");
