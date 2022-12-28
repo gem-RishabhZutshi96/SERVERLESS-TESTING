@@ -139,7 +139,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       buf = Buffer.from(JSON.stringify(
         {
           'createNode': createArray,
-          'updateNode': updateArray
+          'updateNode': updateNode
         }
       ));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
