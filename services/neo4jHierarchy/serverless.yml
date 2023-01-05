@@ -111,3 +111,21 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  updateHierarchy:
+    handler: apis/updateHierarchy.updateHierarchy
+    timeout: 30
+    events: 
+      - http:
+          method: PUT
+          path: hierarchy/update
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
