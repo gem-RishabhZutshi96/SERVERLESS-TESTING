@@ -45,7 +45,6 @@ export const createHierarchy = async(event) => {
       });
       return successResponse("Excel reading is completed and hierarchy is created successfully for data uploaded", []);
     } catch(err) {
-      console.log(err);
       errorLogger("createHierarchy", err, "Error db call");
       return internalServer(`Error in DB `);
     }
