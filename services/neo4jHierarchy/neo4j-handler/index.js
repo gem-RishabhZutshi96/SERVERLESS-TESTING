@@ -4,6 +4,7 @@ import {
 } from "../utils/log-helper";
 import {
     createHierarchyForExcel,
+    fetchHierarchy,
     updateHierarchy
 } from "./actionHandler/hierarchyNeo4j";
 export async function main(event) {
@@ -24,6 +25,8 @@ const processEvent = async (event) => {
     switch (event.actionType) {
         case "createHierarchyForExcel":
             return createHierarchyForExcel(event);
+        case "fetchHierarchy":
+            return fetchHierarchy(event);
         case "updateHierarchy":
             return updateHierarchy(event);
     }
