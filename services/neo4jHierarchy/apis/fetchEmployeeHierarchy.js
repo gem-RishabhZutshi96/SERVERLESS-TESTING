@@ -1,29 +1,21 @@
-import { makeNeo4jDBConnection } from "../../utilities/db/neo4j";
 import { badRequest } from "../../utilities/response/index";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import { internalServer } from "../../utilities/response";
 import { parameterStore } from '../../utilities/config/commonData';
+import { main } from "../neo4j-handler";
 export const fetchEmployeeHierarchy = async(event) => {
   try {
-      const { database } = parameterStore[process.env.stage].NEO4J;
       devLogger("fetchEmployeeHierarchy", event, "event");
       let source = event.path.source || event.pathParameters.source;
       if(parameterStore[process.env.stage].sourceViews.hasOwnProperty(`${source}`)){
-        let driver = await makeNeo4jDBConnection();
-        let session = driver.session({ database });
-        let view = parameterStore[process.env.stage].sourceViews[`${source}`];
-        const result = await session.run(`
-          MATCH p=(:EMPLOYEE {officialID:"${view.rootId}"})<-[:${view.relation}*]-()
-          WITH COLLECT(p) AS ps
-          CALL apoc.convert.toTree(ps) yield value
-          RETURN apoc.convert.toJson(value);`
-        );
-        const regex = generateRegex(view.relation);
-        const resp =  result.records.map(i => i.get('apoc.convert.toJson(value)')).toString().replace(regex,"children");
+        const resp = await main({
+          actionType: 'fetchHierarchy',
+          source: source
+        });
         let response = {
-          success: true,
-          message: "Hierarchy fetched successfully",
-          data: JSON.parse(resp)
+          success: resp.success,
+          message: resp.message,
+          data: JSON.parse(resp.data)
         };
         return response;
       } else {
@@ -34,6 +26,3 @@ export const fetchEmployeeHierarchy = async(event) => {
       return internalServer(`Error in DB `);
   }
 };
-function generateRegex(str) {
-  return new RegExp(`${str}`,"ig");
-}
