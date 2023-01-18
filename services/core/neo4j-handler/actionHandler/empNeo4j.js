@@ -30,6 +30,7 @@ export const createOrUpdateEmpNeo4j = async (event) => {
               a.ManagerCode = emps.ManagerCode
       `);
     } catch (err) {
+      console.log(err);
       errorLogger("createOrUpdateEmpNeo4j::::", err);
       throw internalServer(`Error in Creating or Updating Node::::`);
     }
