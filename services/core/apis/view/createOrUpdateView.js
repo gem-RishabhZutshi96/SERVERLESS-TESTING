@@ -38,7 +38,7 @@ export const createOrUpdateView = async(event) => {
       } else if(!(event.body.name || event.body.relationName)){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const sourceRelations = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(event.body.relationName).test(value.relation));
+        const sourceRelations = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(value.relation).test(event.body.relationName));
         if(sourceRelations.length >= 1){
           const docToInsert = {
             name: event.body.name,
@@ -48,12 +48,12 @@ export const createOrUpdateView = async(event) => {
           await viewModel.create(docToInsert);
           return successResponse('View Added Successfully', docToInsert);
         } else {
-          return badRequest("Invalid Relation Name");
+          return badRequest("Invalid Body Parameters");
         }
       }
     } catch(err) {
       errorLogger("createOrUpdateView", err, "Error db call");
-      return internalServer(`Error in DB `);
+      return internalServer(`Invalid Body Parameters`);
     }
 };
 function generateRegex(str) {
