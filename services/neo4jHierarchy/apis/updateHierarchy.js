@@ -23,7 +23,7 @@ export const updateHierarchy = async(event) => {
         if(!(event.body.parentId || event.body.nodeId || event.body.view)){
             return badRequest("Missing body parameters");
         } else {
-            const views = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(event.body.view).test(key));
+            const views = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(key).test(event.body.view));
             if(views.length >= 1){
                 const { parentId, nodeId } = event.body;
                 response = await main({
