@@ -135,7 +135,7 @@ functions:
     events: 
       - http:
           method: PUT
-          path: hierarchy/node/delete
+          path: hierarchy/delete
           authorizer: authorizerFunc
           cors: true
           integration: lambda
