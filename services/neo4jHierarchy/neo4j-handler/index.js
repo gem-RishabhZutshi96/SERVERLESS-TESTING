@@ -7,6 +7,9 @@ import {
     fetchHierarchy,
     updateHierarchy
 } from "./actionHandler/hierarchyNeo4j";
+import {
+    deleteNode
+} from "./actionHandler/nodesNeo4j";
 export async function main(event) {
     try {
         let result = await processEvent(event);
@@ -29,5 +32,7 @@ const processEvent = async (event) => {
             return fetchHierarchy(event);
         case "updateHierarchy":
             return updateHierarchy(event);
+        case "deleteNode":
+            return deleteNode(event);
     }
 };
