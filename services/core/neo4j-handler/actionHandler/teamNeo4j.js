@@ -30,7 +30,7 @@ export const createOrUpdateTeamNeo4j = async (event) => {
       }
     } catch (err) {
       errorLogger("createOrUpdateTeamNeo4j:::", err);
-      throw internalServer(`Error in Creating or Updating Node::::`);
+      throw internalServer(`Error in Creating or Updating Node `);
     }
 };
 
@@ -45,7 +45,7 @@ export const deleteTeamNeo4j = async (event) => {
       DETACH DELETE n`);
       return successResponse('Node Updated Successfully');
   } catch (err) {
-    errorLogger("deleteTeamNeo4j::::", err);
-    throw internalServer(`Error in Deleting Node::::`);
+    errorLogger("deleteTeamNeo4j ", err);
+    throw internalServer(`Error in Deleting Node `);
   }
 };

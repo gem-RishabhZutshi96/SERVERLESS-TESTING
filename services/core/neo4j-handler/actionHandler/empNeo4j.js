@@ -31,8 +31,8 @@ export const createOrUpdateEmpNeo4j = async (event) => {
       `);
     } catch (err) {
       console.log(err);
-      errorLogger("createOrUpdateEmpNeo4j::::", err);
-      throw internalServer(`Error in Creating or Updating Node::::`);
+      errorLogger("createOrUpdateEmpNeo4j ", err);
+      throw internalServer(`Error in Creating or Updating Node `);
     }
 };
 
@@ -49,7 +49,7 @@ export const deleteEmpNeo4j = async (event) => {
       DETACH DELETE n`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
-    errorLogger("deleteEmpNeo4j::::", err);
-    throw internalServer(`Error in Deleting Node::::`);
+    errorLogger("deleteEmpNeo4j ", err);
+    throw internalServer(`Error in Deleting Node `);
   }
 };

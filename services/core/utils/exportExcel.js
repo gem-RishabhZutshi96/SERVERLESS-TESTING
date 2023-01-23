@@ -30,7 +30,7 @@ export const exportExcelDataEmpMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting employees master table excel:::::', e);
+        errorLogger('Error in exporting employees master table excel ', e);
         throw e;
     }
 };
@@ -60,7 +60,7 @@ export const exportExcelDataProjectMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting project master table excel::::', e);
+        errorLogger('Error in exporting project master table excel ', e);
         throw e;
     }
 };
@@ -90,7 +90,7 @@ export const exportExcelDataTeamMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting team master table excel::::', e);
+        errorLogger('Error in exporting team master table excel ', e);
         throw e;
     }
 };

@@ -19,8 +19,8 @@ export const createHierarchyForExcel = async (event) => {
         RETURN rel
       `,{nodeData: nodeData, relN: event.relationName});
     } catch (err) {
-      errorLogger("createHierarchyForExcel::::", err);
-      throw internalServer(`Error in Creating or Updating Node::::`);
+      errorLogger("createHierarchyForExcel ", err);
+      throw internalServer(`Error in Creating or Updating Node `);
     }
 };
 
@@ -68,8 +68,8 @@ export const fetchHierarchy = async (event) => {
     const resp =  tree.toString().replace(regex,`"children":`);
     return successResponse('Hierarchy fetched successfully', resp);
   } catch (err) {
-    errorLogger("fetchHierarchy::::", err);
-    throw internalServer(`Error in fetching Hierarchy::::`);
+    errorLogger("fetchHierarchy ", err);
+    throw internalServer(`Error in fetching Hierarchy `);
   }
 };
 
