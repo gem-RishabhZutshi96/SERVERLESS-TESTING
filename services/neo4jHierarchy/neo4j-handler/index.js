@@ -4,11 +4,11 @@ import {
 } from "../utils/log-helper";
 import {
     createHierarchyForExcel,
-    fetchHierarchy,
-    updateHierarchy
+    fetchHierarchy
 } from "./actionHandler/hierarchyNeo4j";
 import {
-    deleteNode
+    deleteNode,
+    addNode
 } from "./actionHandler/nodesNeo4j";
 export async function main(event) {
     try {
@@ -30,8 +30,8 @@ const processEvent = async (event) => {
             return createHierarchyForExcel(event);
         case "fetchHierarchy":
             return fetchHierarchy(event);
-        case "updateHierarchy":
-            return updateHierarchy(event);
+        case "addNode":
+            return addNode(event);
         case "deleteNode":
             return deleteNode(event);
     }
