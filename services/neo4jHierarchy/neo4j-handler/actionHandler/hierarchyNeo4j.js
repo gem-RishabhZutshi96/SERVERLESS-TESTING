@@ -60,9 +60,9 @@ export const fetchHierarchy = async (event) => {
       WITH COLLECT(path) as ps
       CALL apoc.convert.toTree(ps)
       YIELD value
-      RETURN apoc.convert.toJson(value)
+      RETURN apoc.convert.toJson(value) AS output
   `,{rootId: view.rootId});
-  return result.records.map(record => record.get('apoc.convert.toJson(value)'));
+  return result.records.map(record => record.get('output'));
     });
     const regex = generateRegex(view.relation);
     const resp =  tree.toString().replace(regex,`"children":`);
