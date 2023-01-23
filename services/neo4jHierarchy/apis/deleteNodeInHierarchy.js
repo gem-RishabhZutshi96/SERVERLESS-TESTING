@@ -5,9 +5,9 @@ import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import { main } from "../neo4j-handler/index";
 import { parameterStore } from "../../utilities/config/commonData";
-export const deleteNode = async(event) => {
+export const deleteNodeInHierarchy = async(event) => {
     try{
-        devLogger("deleteNode", event, "event");
+        devLogger("deleteNodeInHierarchy", event, "event");
         let userToken =null;
         let response;
         await makeDBConnection();
@@ -40,7 +40,7 @@ export const deleteNode = async(event) => {
         return response;
     } catch(err) {
         console.log(err);
-        errorLogger("deleteNode", err, "Error db call");
+        errorLogger("deleteNodeInHierarchy", err, "Error db call");
         return internalServer(`Error in DB `);
     }
 };
