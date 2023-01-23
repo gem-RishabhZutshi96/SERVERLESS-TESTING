@@ -42,11 +42,11 @@ export const addNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE NOT(toString(b[k]) CONTAINS $parentId))
-            MATCH (a)-[rel:${queryParams.relationName} WHERE rel.isActive=true]->(b)
-            WITH rel
-            SET rel.isActive = false,
-                rel.endDate = $endDate
-            RETURN rel`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: moment().format('DD-MM-YYYY')}).then(result => result.records.map(i => i.get('rel'))));
+            MATCH (a)-[r:${queryParams.relationName} WHERE rel.isActive=true]->(b)
+            WITH r
+            SET r.isActive = false,
+                r.endDate = $endDate
+            RETURN apoc.convert.toJson(r) AS output`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: moment().format('DD-MM-YYYY')}).then(result => result.records.map(i => i.get('output'))));
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
@@ -59,8 +59,8 @@ export const addNode = async (event) => {
               'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
-            RETURN value`,
-            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('value'))));
+            RETURN apoc.convert.toJson(value) AS output`,
+            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{removeExistingRelation:removeExistingRelation, addNewRelation:addNewRelation}]);
       } else {
         console.log("--------------Node Does Not Exist In Hierarchy---------------------");
@@ -71,8 +71,8 @@ export const addNode = async (event) => {
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
-            RETURN rel
-          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('rel'))));
+            RETURN apoc.convert.toJson(rel) AS output
+          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: addNewRelation}]);
       }
     } else {
@@ -114,9 +114,9 @@ export const deleteNode = async (event) => {
           'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" ',
           'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
-          RETURN value
+          RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('value')));
+        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         return successResponse("Child Node Deleted Successfully", resp);
       } else {
         console.log("--------------Leaf Node Deletion---------------------");
@@ -128,9 +128,9 @@ export const deleteNode = async (event) => {
           'MATCH (n)-[r WHERE type(r) CONTAINS relN AND r.isActive = true]->() SET r.isActive = false, r.endDate = $endDate RETURN r',
           'RETURN false', {n:n, endDate:$endDate, relN:$relation}) 
           YIELD value
-          RETURN value
+          RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('value')));
+        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         return successResponse("Leaf Node Deleted Successfully", resp);
       }
     } catch (err) {
