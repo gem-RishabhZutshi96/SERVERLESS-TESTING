@@ -5,9 +5,9 @@ import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import { main } from "../neo4j-handler/index";
 import { parameterStore } from "../../utilities/config/commonData";
-export const updateHierarchy = async(event) => {
+export const addNodeInHierarchy = async(event) => {
     try{
-        devLogger("updateHierarchy", event, "event");
+        devLogger("addNodeInHierarchy", event, "event");
         let userToken =null;
         let response;
         await makeDBConnection();
@@ -27,7 +27,7 @@ export const updateHierarchy = async(event) => {
             if(views.length >= 1){
                 const { parentId, nodeId } = event.body;
                 response = await main({
-                    actionType: 'updateHierarchy',
+                    actionType: 'addNode',
                     queryParams: {
                         parentId: parentId,
                         nodeId: nodeId,
@@ -40,7 +40,7 @@ export const updateHierarchy = async(event) => {
         }
         return response;
     } catch(err) {
-      errorLogger("updateHierarchy", err, "Error db call");
+      errorLogger("addNodeInHierarchy", err, "Error db call");
       return internalServer(`Error in DB `);
     }
 };
