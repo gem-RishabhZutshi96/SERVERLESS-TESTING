@@ -111,13 +111,13 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  updateHierarchy:
-    handler: apis/updateHierarchy.updateHierarchy
+  addNodeInHierarchy:
+    handler: apis/addNodeInHierarchy.addNodeInHierarchy
     timeout: 30
     events: 
       - http:
-          method: PUT
-          path: hierarchy/update
+          method: POST
+          path: hierarchy/addNode
           authorizer: authorizerFunc
           cors: true
           integration: lambda
@@ -129,13 +129,13 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
-  deleteNode:
-    handler: apis/deleteNode.deleteNode
+  deleteNodeInHierarchy:
+    handler: apis/deleteNodeInHierarchy.deleteNodeInHierarchy
     timeout: 30
     events: 
       - http:
-          method: PUT
-          path: hierarchy/delete
+          method: POST
+          path: hierarchy/deleteNode
           authorizer: authorizerFunc
           cors: true
           integration: lambda
