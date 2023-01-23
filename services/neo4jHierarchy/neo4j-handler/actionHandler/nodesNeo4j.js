@@ -56,7 +56,7 @@ export const addNode = async (event) => {
             OPTIONAL MATCH (a)-[r]->(b)
             WITH *, coalesce(r) as r1
             CALL apoc.do.when(r1 IS NOT NULL,
-              'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET isActive:true, startDate:$startDate, endDate:"" RETURN r',
+              'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN value`,
@@ -79,8 +79,8 @@ export const addNode = async (event) => {
       return badRequest('Given Node or Parent Node Does Not Exist');
     }
   } catch (err) {
-    errorLogger("addNode::::", err);
-    throw internalServer(`Error in Adding Node::::`);
+    errorLogger("addNode ", err);
+    throw internalServer(`Error in Adding Node `);
   }
 };
 export const deleteNode = async (event) => {
@@ -108,7 +108,7 @@ export const deleteNode = async (event) => {
               r2.isActive = false,
               r2.endDate = $endDate
           WITH a, b
-          OPTIONAL MATCH (a)-[r WHERE type(r1) CONTAINS $relation]->(b)
+          OPTIONAL MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b)
           WITH *, coalesce(r) as r3
           CALL apoc.do.when(r3 IS NOT NULL,
           'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" ',
@@ -116,7 +116,7 @@ export const deleteNode = async (event) => {
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN value
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('value')));
+        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('value')));
         return successResponse("Child Node Deleted Successfully", resp);
       } else {
         console.log("--------------Leaf Node Deletion---------------------");
@@ -134,7 +134,7 @@ export const deleteNode = async (event) => {
         return successResponse("Leaf Node Deleted Successfully", resp);
       }
     } catch (err) {
-      errorLogger("deleteNode::::", err);
-      throw internalServer(`Error in deleting node::::`);
+      errorLogger("deleteNode ", err);
+      throw internalServer(`Error in deleting node `);
     }
   };
