@@ -42,7 +42,7 @@ export const addNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE NOT(toString(b[k]) CONTAINS $parentId))
-            MATCH (a)-[r:${queryParams.relationName} WHERE rel.isActive=true]->(b)
+            MATCH (a)-[r:${queryParams.relationName} WHERE r.isActive=true]->(b)
             WITH r
             SET r.isActive = false,
                 r.endDate = $endDate
@@ -61,7 +61,10 @@ export const addNode = async (event) => {
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
             { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
-        return successResponse('Node Added Successfully In Hierarchy', [{removeExistingRelation:removeExistingRelation, addNewRelation:addNewRelation}]);
+          if(removeExistingRelation.length < 1){
+            return badRequest('Node Does Not Exist In Hierarchy');
+          }
+        return successResponse('Node Added Successfully In Hierarchy', [{removeExistingRelation:JSON.parse(removeExistingRelation.toString()), addNewRelation:JSON.parse(addNewRelation.toString())}]);
       } else {
         console.log("--------------Node Does Not Exist In Hierarchy---------------------");
         const addNewRelation = await session.executeWrite(tx =>
@@ -73,7 +76,7 @@ export const addNode = async (event) => {
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
             RETURN apoc.convert.toJson(rel) AS output
           `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
-        return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: addNewRelation}]);
+        return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
       }
     } else {
       return badRequest('Given Node or Parent Node Does Not Exist');
@@ -111,13 +114,16 @@ export const deleteNode = async (event) => {
           OPTIONAL MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b)
           WITH *, coalesce(r) as r3
           CALL apoc.do.when(r3 IS NOT NULL,
-          'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" ',
+          'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" RETURN r',
           'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
         { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
-        return successResponse("Child Node Deleted Successfully", resp);
+        if(resp.length < 1){
+          return badRequest('Invalid Node Found');
+        }
+        return successResponse("Child Node Deleted Successfully", JSON.parse(resp.toString()));
       } else {
         console.log("--------------Leaf Node Deletion---------------------");
         const resp =  await session.run(`
@@ -131,7 +137,10 @@ export const deleteNode = async (event) => {
           RETURN apoc.convert.toJson(value) AS output
         `,
         { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
-        return successResponse("Leaf Node Deleted Successfully", resp);
+        if(resp.length < 1){
+          return badRequest('Invalid Node Found');
+        }
+        return successResponse("Leaf Node Deleted Successfully", JSON.parse(resp.toString()));
       }
     } catch (err) {
       errorLogger("deleteNode ", err);
