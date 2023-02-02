@@ -5,7 +5,6 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-import { parameterStore } from "../../../utilities/config/commonData";
 export const createOrUpdateView = async(event) => {
     try{
       devLogger("createOrUpdateView", event, "event");
@@ -35,14 +34,19 @@ export const createOrUpdateView = async(event) => {
         } else{
             return failResponse('No info found to updated', 404);
         }
-      } else if(!(event.body.name || event.body.relationName)){
+      } else if(!event.body.type || !event.body.name || !event.body.relationName || !event.body.rootId){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const sourceRelations = Object.entries(parameterStore[process.env.stage].sourceViews).filter(([key, value]) => generateRegex(value.relation).test(event.body.relationName));
-        if(sourceRelations.length >= 1){
+        const sourceViews = await viewModel.find({$or: [
+          { 'name': { '$regex': event.body.name, '$options': 'i' } },
+          { 'relationName': { '$regex': event.body.relationName, '$options': 'i' } }
+        ]});
+        if(sourceViews.length < 1){
           const docToInsert = {
-            name: event.body.name,
-            relationName: sourceRelations[0][1].relation,
+            name: event.body.name.toLowerCase(),
+            type: event.body.type,
+            rootId: event.body.rootId,
+            relationName: event.body.relationName,
             viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
           };
           await viewModel.create(docToInsert);
@@ -56,6 +60,3 @@ export const createOrUpdateView = async(event) => {
       return internalServer(`Invalid Body Parameters`);
     }
 };
-function generateRegex(str) {
-  return new RegExp(`${str}`,"i");
-}
