@@ -30,7 +30,6 @@ export const fetchHierarchy = async (event) => {
     const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
-    let view = parameterStore[process.env.stage].sourceViews[`${event.source}`];
     const tree = await session.executeRead(async tx => {
     //   const result = await tx.run(`
     //   MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
@@ -50,7 +49,7 @@ export const fetchHierarchy = async (event) => {
     const result = await tx.run(`
       MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
       CALL apoc.path.expandConfig(a, {
-        relationshipFilter: "${view.relation}<",
+        relationshipFilter: "${event.relationName}<",
           minLevel: 1,
           maxLevel: -1,
           uniqueness:'NODE_GLOBAL',
@@ -61,10 +60,10 @@ export const fetchHierarchy = async (event) => {
       CALL apoc.convert.toTree(ps)
       YIELD value
       RETURN apoc.convert.toJson(value) AS output
-  `,{rootId: view.rootId});
+  `,{rootId: event.rootId});
   return result.records.map(record => record.get('output'));
     });
-    const regex = generateRegex(view.relation);
+    const regex = generateRegex(event.relationName);
     const resp =  tree.toString().replace(regex,`"children":`);
     return successResponse('Hierarchy fetched successfully', resp);
   } catch (err) {
@@ -72,7 +71,6 @@ export const fetchHierarchy = async (event) => {
     throw internalServer(`Error in fetching Hierarchy `);
   }
 };
-
 function generateRegex(str) {
   return new RegExp(`"${str}":`,"ig");
 }
