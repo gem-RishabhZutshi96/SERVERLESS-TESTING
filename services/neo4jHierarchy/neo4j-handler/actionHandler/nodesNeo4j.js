@@ -123,7 +123,7 @@ export const deleteNode = async (event) => {
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }
-        return successResponse("Child Node Deleted Successfully", JSON.parse(resp.toString()));
+        return successResponse("Child Node Deleted Successfully");
       } else {
         console.log("--------------Leaf Node Deletion---------------------");
         const resp =  await session.run(`
@@ -140,7 +140,7 @@ export const deleteNode = async (event) => {
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }
-        return successResponse("Leaf Node Deleted Successfully", JSON.parse(resp.toString()));
+        return successResponse("Leaf Node Deleted Successfully");
       }
     } catch (err) {
       errorLogger("deleteNode ", err);
