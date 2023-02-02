@@ -6,6 +6,12 @@ const viewsMaster = new Schema(
       type: String,
       unique: true,
     },
+    type: {
+      type: String
+    },
+    rootId: {
+      type: String
+    },
     viewId: {
       type: String,
       unique: true,
