@@ -6,7 +6,7 @@ export const fetchAllProjects = async(event) => {
     try{
         devLogger("fetchAllProjects", event, "event");
         await makeDBConnection();
-        const obj = await projectModel.find();
+        const obj = await projectModel.find({isActive: true});
         if(obj.length < 1){
             return failResponse('Projects Not Found', 404);
         }

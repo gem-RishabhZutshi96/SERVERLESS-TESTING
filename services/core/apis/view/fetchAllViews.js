@@ -10,7 +10,7 @@ export const fetchAllViews = async(event) => {
         devLogger("fetchAllViews", event, "event");
         await makeDBConnection();
         let resultArray = [];
-        const documents = await viewModel.find();
+        const documents = await viewModel.find({isActive: true});
         if(documents.length < 1){
             return failResponse('Views Not Found', 404);
         } else {
