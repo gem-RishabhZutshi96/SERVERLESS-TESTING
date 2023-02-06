@@ -5,6 +5,7 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
+import moment from "moment";
 export const deleteTeam = async(event) => {
     try{
       devLogger("deleteTeam", event, "event");
@@ -16,22 +17,25 @@ export const deleteTeam = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return auth;
       }
       const teamId = event.path.id;
-      await main({
-        actionType: 'deleteProjectNeo4j',
-        node: {
-          'id': teamId,
-        }
-      });
-      const obj = await teamModel.remove({ teamId: { $eq: teamId } });
-      if (obj.deletedCount >= 1) {
-        return successResponse('Team Deleted Successfully',
-        {
-            "deletedCount": obj.deletedCount,
+      const obj = await teamModel.findOneAndUpdate(
+        { teamId: { $eq: teamId } },
+        { $set: { 'isActive' : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        {upsert: false}
+      );
+      if (obj) {
+        await main({
+          actionType: 'deleteTeamNeo4j',
+          node: {
+            'id': teamId,
+            'updatedAt': moment().format(),
+            'updatedBy': auth.userEmail,
+          }
         });
+        return successResponse('Team Deleted Successfully');
       } else return failResponse(`Team Not Found`, 404);
     } catch(err) {
       errorLogger("deleteTeam", err, "Error db call");
