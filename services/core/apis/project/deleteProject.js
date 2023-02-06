@@ -5,6 +5,7 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
+import moment from "moment";
 export const deleteProject = async(event) => {
     try{
       devLogger("deleteProject", event, "event");
@@ -16,24 +17,25 @@ export const deleteProject = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return auth;
       }
       const projectId = event.path.id;
-      await main({
-        actionType: 'deleteProjectNeo4j',
-        node: {
-          'id': projectId,
-        }
-      });
-      const obj = await projectModel.remove({ projectId: { $eq: projectId } });
-      if (obj.deletedCount >= 1) {
-        return successResponse('Project Deleted Successfully',
-          {
-            "deletedCount": obj.deletedCount,
-            "projectId": projectId
+      const obj = await projectModel.findOneAndUpdate(
+        { projectId: { $eq: projectId } },
+        { $set: { 'isActive' : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        {upsert: false}
+      );
+      if (obj) {
+        await main({
+          actionType: 'deleteProjectNeo4j',
+          node: {
+            'id': projectId,
+            'updatedAt': moment().format(),
+            'updatedBy': auth.userEmail,
           }
-        );
+        });
+        return successResponse('Project Deleted Successfully');
       } else {
         return failResponse(`Project Not Found`, 404);
       }
