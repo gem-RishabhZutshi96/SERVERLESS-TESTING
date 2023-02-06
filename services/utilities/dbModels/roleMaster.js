@@ -11,7 +11,7 @@ const rolesMaster = new Schema(
       unique: true,
     },
     description: {
-        type: String,
+      type: String,
     }
 
   },
