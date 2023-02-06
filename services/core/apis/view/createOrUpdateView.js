@@ -5,6 +5,7 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
+import moment from "moment";
 export const createOrUpdateView = async(event) => {
     try{
       devLogger("createOrUpdateView", event, "event");
@@ -16,7 +17,7 @@ export const createOrUpdateView = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return auth;
       }
       if(event.body.viewId){
@@ -41,19 +42,23 @@ export const createOrUpdateView = async(event) => {
           { 'name': { '$regex': event.body.name, '$options': 'i' } },
           { 'relationName': { '$regex': event.body.relationName, '$options': 'i' } }
         ]});
-        if(sourceViews.length < 1){
-          const docToInsert = {
-            name: event.body.name.toLowerCase(),
-            type: event.body.type,
-            rootId: event.body.rootId,
-            relationName: event.body.relationName,
-            viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
-          };
-          await viewModel.create(docToInsert);
-          return successResponse('View Added Successfully', docToInsert);
-        } else {
-          return badRequest("Invalid Body Parameters");
+        if(sourceViews.length >= 1){
+          return badRequest(`Invalid view name or relation name in body parameters. Only unique view name or relation name are allowed.`);
         }
+        const docToInsert = {
+          name: event.body.name.toLowerCase(),
+          type: event.body.type,
+          rootId: event.body.rootId,
+          relationName: event.body.relationName,
+          viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
+          isActive: true,
+          createdAt: moment().format(),
+          createdBy: auth.userEmail,
+          updatedAt: "",
+          updatedBy: ""
+        };
+        await viewModel.create(docToInsert);
+        return successResponse('View Added Successfully', docToInsert);
       }
     } catch(err) {
       errorLogger("createOrUpdateView", err, "Error db call");
