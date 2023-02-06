@@ -17,8 +17,23 @@ const viewsMaster = new Schema(
       unique: true,
     },
     relationName: {
-        type: String,
-        unique: true,
+      type: String,
+      unique: true,
+    },
+    isActive: {
+      type: Boolean,
+    },
+    createdAt: {
+      type: String,
+    },
+    createdBy: {
+      type: String,
+    },
+    updatedAt: {
+      type: String,
+    },
+    updatedBy: {
+      type: String,
     }
   },
   {
