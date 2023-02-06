@@ -16,7 +16,16 @@ export const createOrUpdateProjectNeo4j = async (event) => {
       const isProjectNode = exist.records.map(i => i.get('Predicate'));
       if(isProjectNode[0] !== true) {
         await session.run(`
-          CREATE (n:PROJECT {projectId:"${event.node.id}", name:"${event.node.name}", description:"${event.node.description}"})
+          CREATE (n:PROJECT {
+            projectId:"${event.node.id}", 
+            name:"${event.node.name}", 
+            description:"${event.node.description}",
+            isActive: "${event.node.isActive}",
+            createdAt: "${event.node.createdAt}", 
+            createdBy: "${event.node.createdBy}",
+            updatedAt: "",
+            updatedBy: ""
+          })
           RETURN n
         `);
         return successResponse('Node Created Successfully');
@@ -24,7 +33,12 @@ export const createOrUpdateProjectNeo4j = async (event) => {
         await session.run(`
         MATCH (n:PROJECT {projectId:"${event.node.id}"})
         WITH n
-        SET n.name="${event.node.name}",n.description="${event.node.description}"
+        SET n.name = "${event.node.name}",
+            n.description ="${event.node.description}"
+            n.createdAt = "${event.node.createdAt}", 
+            n.createdBy = "${event.node.createdBy}",
+            n.updatedAt = "${event.node.updatedAt}",
+            n.updatedBy = "${event.node.updatedBy}"
         RETURN n
         `);
         return successResponse('Node Updated Successfully');
@@ -41,10 +55,14 @@ export const deleteProjectNeo4j = async (event) => {
     const { database } = parameterStore[process.env.stage].NEO4J;
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
-    await session.run(
-      `MATCH (n:PROJECT{projectId:"${event.node.id}"})
-      DETACH DELETE n
-    `);
+    await session.run(`
+      MATCH (n:PROJECT{projectId:"${event.node.id}"})
+      WITH n, r
+      SET n.isActive = false,
+          n.updatedAt = "${event.node.updatedAt}",
+          n.updatedBy = "${event.node.updatedBy}",
+          r.isActive = false,
+          r.endDate = "${event.node.updatedAt}"`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
     errorLogger("deleteProjectNeo4j ",err);
