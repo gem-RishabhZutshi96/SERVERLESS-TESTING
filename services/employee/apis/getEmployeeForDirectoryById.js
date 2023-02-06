@@ -15,7 +15,7 @@ export const getEmployeeForDirectoryById = async(event) => {
         allowedFor:['management_su', 'hr_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return forbiddenRequest("❌❌User is not allowed to access the data");
       }
       let employeeID = event.path.id;

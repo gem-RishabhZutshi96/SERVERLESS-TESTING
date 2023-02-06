@@ -13,7 +13,7 @@ export const getSignedUrlForDocumentUpload = async (event) => {
             allowedFor: ['management_su', 'hr_su']
         };
         let auth = await accessAllowed(authQuery);
-        if (auth !== "allowed") {
+        if ( auth.access !== "allowed") {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
         const { type, key, officialID, name, pimcoId } = event.query || event.queryStringParameters;

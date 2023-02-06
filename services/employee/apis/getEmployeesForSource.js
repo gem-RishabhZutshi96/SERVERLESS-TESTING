@@ -18,7 +18,7 @@ export const getEmployeesForSource = async(event) => {
       };
       let source = event.path.source || event.pathParameters.source;
       const auth = await accessDeniedToSource(authQuery);
-      if(auth!=="denied"){
+      if( auth.access !=="denied"){
         console.log(`👍👍Find employees for ${ source } hierarchy`);
         const { id, parentId } = parameterStore[process.env.stage].sourceIds[source];
         const findQueries = {
