@@ -8,9 +8,15 @@ export const accessAllowed = async (event) => {
     let allowedFor = event.allowedFor;
     let userRole = await getUserRole(decode.email);
     if (allowedFor.includes(userRole)) {
-      return "allowed";
+      return {
+        access: "allowed",
+        userEmail: decode.email
+      };
     } else {
-      return "denied";
+      return {
+        access: "denied",
+        userEmail: decode.email
+      };
     }
   } catch (err) {
     console.log(err);
@@ -29,7 +35,10 @@ export const accessDeniedToSource = async(event) => {
     let role = await getUserRole(decode.email);
     if ((event.deniedSources).includes(source)) {
       if((event.deniedRoles).includes(role)){
-        return "denied";
+        return {
+          access: "denied",
+          userEmail: decode.email
+        };
       }
     }
   } catch (err) {
@@ -49,7 +58,10 @@ export const accessAllowedToSource = async (event) => {
     let role = await getUserRole(decode.email);
     if (event.allowedSources.includes(source)) {
       if(event.allowedRoles.includes(role)){
-        return "allowed";
+        return {
+          access: "allowed",
+          userEmail: decode.email
+        };
       }
     }
   } catch (err) {
