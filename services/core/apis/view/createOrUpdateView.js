@@ -38,11 +38,11 @@ export const createOrUpdateView = async(event) => {
       } else if(!event.body.type || !event.body.name || !event.body.relationName || !event.body.rootId){
         return badRequest("🤔🤔 Missing body parameters");
       } else {
-        const sourceViews = await viewModel.find({$or: [
-          { 'name': { '$regex': event.body.name, '$options': 'i' } },
-          { 'relationName': { '$regex': event.body.relationName, '$options': 'i' } }
-        ]});
-        if(sourceViews.length >= 1){
+        const sourceViews = await viewModel.find();
+        const doc = sourceViews.filter((el) => {
+          return generateRegex(el.relationName).test(event.body.relationName) || generateRegex(el.name).test(event.body.name);
+        });
+        if(doc.length >= 1){
           return badRequest(`Invalid view name or relation name in body parameters. Only unique view name or relation name are allowed.`);
         }
         const docToInsert = {
@@ -65,3 +65,6 @@ export const createOrUpdateView = async(event) => {
       return internalServer(`Invalid Body Parameters`);
     }
 };
+function generateRegex(str) {
+  return new RegExp(`${str}`,"i");
+}
