@@ -27,6 +27,11 @@ export const fetchAllViews = async(event) => {
                     rootName : emp[0].EmployeeName,
                     relationName: document.relationName,
                     viewId: document.viewId,
+                    isActive: document.isActive,
+                    createdAt: document.createdAt,
+                    createdBy: document.createdBy,
+                    updatedAt: document.updatedAt,
+                    updatedBy: document.updatedBy
                 });
                 } else if(generateRegex('Project').test(document.type)){
                     const emp =  await projectModel.find({ 'projectId': { '$regex': document.rootId, '$options': 'i' } });
