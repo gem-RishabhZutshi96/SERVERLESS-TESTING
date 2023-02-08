@@ -6,12 +6,34 @@ const viewsMaster = new Schema(
       type: String,
       unique: true,
     },
+    type: {
+      type: String
+    },
+    rootId: {
+      type: String
+    },
     viewId: {
       type: String,
       unique: true,
     },
     relationName: {
-        type: String,
+      type: String,
+      unique: true,
+    },
+    isActive: {
+      type: Boolean,
+    },
+    createdAt: {
+      type: String,
+    },
+    createdBy: {
+      type: String,
+    },
+    updatedAt: {
+      type: String,
+    },
+    updatedBy: {
+      type: String,
     }
   },
   {

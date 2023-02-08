@@ -1,11 +1,11 @@
-import { internalServer, forbiddenRequest } from "../../utilities/response/index";
+import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
 import { devLogger, errorLogger } from "../utils/log-helper";
-export const getSignedUrlForDocumentUpload = async (event) => {
+export const getSignedUrlForExcelUpload = async (event) => {
     try {
-        devLogger("getSignedUrlForDocumentUpload", event, "event");
+        devLogger("getSignedUrlForExcelUpload", event, "event");
         let userToken = null;
         userToken = getUserToken(event);
         let authQuery = {
@@ -16,12 +16,14 @@ export const getSignedUrlForDocumentUpload = async (event) => {
         if ( auth.access !== "allowed") {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
-        const { type, key, officialID, name, pimcoId } = event.query || event.queryStringParameters;
-        // console.log({ type, key, officialID, name, pimcoId });
-        const response = await s3SignedUrlForDocuments('getSignedUrlForUpload', { type, key, officialID, name, pimcoId });
+        const { type, key } = event.query || event.queryStringParameters;
+        if(!type || !key){
+            return badRequest('Missing Query Parameters');
+        }
+        const response = await s3SignedUrlForDocuments('getSignedUrlForUpload', { type, key});
         return response;
     } catch (err) {
-        errorLogger("getSignedUrlForDocumentUpload", err, "Error db call");
+        errorLogger("getSignedUrlForExcelUpload", err, "Error db call");
         return internalServer(`Error in DB `);
     }
 };

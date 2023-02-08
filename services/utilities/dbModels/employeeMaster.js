@@ -37,6 +37,21 @@ const employeeMaster = new Schema(
     MobileNumber: {
       type: String,
     },
+    isActive: {
+      type: Boolean,
+    },
+    createdAt: {
+      type: String,
+    },
+    createdBy: {
+      type: String,
+    },
+    updatedAt: {
+      type: String,
+    },
+    updatedBy: {
+      type: String,
+    }
   },
   {
     toJSON: {

@@ -8,9 +8,14 @@ import {getDataService} from "../../externalCall/getDataService";
 import { main } from "../../neo4j-handler/index";
 import { parameterStore } from "../../../utilities/config/commonData";
 import moment from 'moment';
-import cryptoRandomString from 'crypto-random-string';
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
+s3.config.update({
+  accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
+  secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
+  region: parameterStore[process.env.stage].s3Params.region,
+  signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
+});
 export const syncEmpMasterWithMIS = async(event) => {
   try{
     devLogger("syncEmpMasterWithMIS", event, "event");
@@ -26,16 +31,14 @@ export const syncEmpMasterWithMIS = async(event) => {
       allowedFor:['management_su']
     };
     let auth= await accessAllowed(authQuery);
-    if(auth!=="allowed"){
+    if( auth.access !=="allowed"){
       return auth;
     }
     let misData = await getDataService();
     let createArray = [];
+    let updateNode = [];
     let updateArray = [];
     let deleteArray = [];
-    let createNode = [];
-    let updateNode = [];
-    let deleteNode = [];
     misData.Result.forEach(async emp => {
       let element = await employeeMasterModel.find({
         'EmailId': {'$regex': `^${emp.EmailId}$`, $options: 'i'}
@@ -54,53 +57,59 @@ export const syncEmpMasterWithMIS = async(event) => {
           "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
           "Experience": emp["Experience"] ?emp["Experience"] : "",
         });
-      } else if(element.length >= 1
-                && (emp.EmployeeCode != element[0].EmployeeCode ||
-                emp.EmployeeName != element[0].EmployeeName ||
-                emp.DepartmentName != element[0].DepartmentName ||
-                emp.Designation != element[0].Designation ||
-                emp.ReportingManager != element[0].ReportingManager ||
-                emp.ManagerCode != element[0].ManagerCode ||
-                emp.Location != element[0].Location ||
-                emp.ImagePath != element[0].ImagePath ||
-                emp.MobileNumber != element[0].MobileNumber ||
-                emp.Experience != element[0].Experience))
+      }
+      if(element.length >= 1
+          && (emp.EmployeeCode != element[0].EmployeeCode ||
+          emp.EmployeeName != element[0].EmployeeName ||
+          emp.Designation != element[0].Designation ||
+          emp.ManagerCode != element[0].ManagerCode ||
+          emp.ImagePath != element[0].ImagePath))
           {
-            updateArray.push({
-              "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
+            updateNode.push({
               "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
               "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
-              "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
               "Designation": emp["Designation"] ? emp["Designation"] : "",
-              "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
               "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
-              "Location": emp["Location"] ? emp["Location"] : "",
               "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
-              "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
-              "Experience": emp["Experience"] ? emp["Experience"] : "",
           });
         }
+      if(element.length >= 1
+          && (emp.EmployeeCode != element[0].EmployeeCode ||
+          emp.EmployeeName != element[0].EmployeeName ||
+          emp.DepartmentName != element[0].DepartmentName ||
+          emp.Designation != element[0].Designation ||
+          emp.ReportingManager != element[0].ReportingManager ||
+          emp.ManagerCode != element[0].ManagerCode ||
+          emp.Location != element[0].Location ||
+          emp.ImagePath != element[0].ImagePath ||
+          emp.MobileNumber != element[0].MobileNumber ||
+          emp.Experience != element[0].Experience))
+    {
+      updateArray.push({
+        "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
+        "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
+        "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
+        "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
+        "Designation": emp["Designation"] ? emp["Designation"] : "",
+        "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
+        "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
+        "Location": emp["Location"] ? emp["Location"] : "",
+        "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
+        "MobileNumber": emp["MobileNumber"] ? emp["MobileNumber"] : "",
+        "Experience": emp["Experience"] ? emp["Experience"] : "",
+    });
+  }
     });
     const res = await employeeMasterModel.find();
     res.forEach(document => {
       let obj = misData.Result.find(emp => emp.EmailId == document.EmailId);
       if(obj == undefined){
-        deleteArray.push({
-          "EmployeeCode": document.EmployeeCode
-        });
+        deleteArray.push(document.EmailId);
       }
     });
     if(createArray.length >= 1){
       const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
       createArray.forEach(async emp => {
-        createNode.push({
-          nodeId: cryptoRandomString({length: 5, type: 'url-safe'}),
-          EmployeeCode: emp.EmployeeCode,
-          EmployeeName: emp.EmployeeName,
-          Designation: emp.Designation,
-          ImagePath: emp.ImagePath,
-          ManagerCode: emp.ManagerCode
-        });
         await bulk.insert(emp);
       });
       await bulk.execute();
@@ -123,20 +132,13 @@ export const syncEmpMasterWithMIS = async(event) => {
             Experience: emp.Experience,
           },
         };
-        updateNode.push({
-          EmployeeCode: emp.EmployeeCode,
-          EmployeeName: emp.EmployeeName,
-          Designation: emp.Designation,
-          ImagePath: emp.ImagePath,
-          ManagerCode: emp.ManagerCode
-        });
         await employeeMasterModel.updateMany(filter, updateDoc, options);
       });
     }
-    if(createNode.length >= 1 || updateNode.length >= 1){
+    if(createArray.length >= 1 || updateNode.length >= 1){
       buf = Buffer.from(JSON.stringify(
         {
-          'createNode': createNode,
+          'createNode': createArray,
           'updateNode': updateNode
         }
       ));
@@ -148,12 +150,6 @@ export const syncEmpMasterWithMIS = async(event) => {
         ContentType: 'application/json',
         Body: buf
       };
-      s3.config.update({
-        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-        region: parameterStore[process.env.stage].s3Params.region,
-        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-      });
       console.log("---- UPLODAING TO S3 ----");
       await s3.upload(data).promise();
       console.log("---- GETTING SIGNED URL FROM S3 ----");
@@ -168,16 +164,9 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
     }
     if(deleteArray.length >= 1) {
-      deleteArray.forEach(async emp => {
-        deleteNode.push({
-          EmployeeCode: emp.EmployeeCode
-        });
-        await employeeMasterModel.remove({ EmployeeCode: { $eq: emp.EmployeeCode } });
-      });
-    }
-    if(deleteNode.length >= 1){
+      await employeeMasterModel.remove({ EmailId: { $in: deleteArray } });
       buf = Buffer.from(JSON.stringify(
-        {'deleteNode': deleteNode}));
+        {'deleteNode': deleteArray}));
       timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
       fileName = `json/${timestamp}--deleteNode.json`;
       data = {
@@ -186,12 +175,6 @@ export const syncEmpMasterWithMIS = async(event) => {
         ContentType: 'application/json',
         Body: buf
       };
-      s3.config.update({
-        accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-        secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-        region: parameterStore[process.env.stage].s3Params.region,
-        signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-      });
       console.log("---- UPLODAING TO S3 ----");
       await s3.upload(data).promise();
       console.log("---- GETTING SIGNED URL FROM S3 ----");

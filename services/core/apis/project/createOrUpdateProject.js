@@ -6,6 +6,7 @@ import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
 import cryptoRandomString from 'crypto-random-string';
+import moment from "moment";
 export const createOrUpdateProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
@@ -17,28 +18,32 @@ export const createOrUpdateProject = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return auth;
       }
       if(event.body.projectId){
         let result = await projectModel.findOneAndUpdate(
-          {
-            projectId: event.body.projectId
+          { projectId: { $eq: event.body.projectId },
+            isActive: true,
           },
           event.body,
           {
             upsert: false
           }
         );
-        await main({
-          actionType: 'createOrUpdateProjectNeo4j',
-          node: {
-            'id': event.body.projectId,
-            'name': event.body.name || result.name,
-            'description': event.body.description || result.description
-          }
-        });
         if(result){
+          await main({
+            actionType: 'createOrUpdateProjectNeo4j',
+            node: {
+              'id': event.body.projectId,
+              'name': event.body.name ? event.body.name : result.name,
+              'description': event.body.description ? event.body.description : result.description,
+              'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
+              'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
+              'updatedAt': moment().format(),
+              'updatedBy': auth.userEmail
+            }
+          });
           return successResponse('Project Updated Successfully');
         } else{
           return failResponse('No info found to updated', 404);
@@ -50,6 +55,11 @@ export const createOrUpdateProject = async(event) => {
           name: event.body.name,
           description: event.body.description,
           projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
+          isActive: true,
+          createdAt: moment().format(),
+          createdBy: auth.userEmail,
+          updatedAt: "",
+          updatedBy: ""
         };
         await main({
           actionType: 'createOrUpdateProjectNeo4j',
@@ -57,6 +67,11 @@ export const createOrUpdateProject = async(event) => {
             'id': docToInsert.projectId,
             'name': event.body.name,
             'description': event.body.description,
+            'isActive': true,
+            'createdAt': moment().format(),
+            'createdBy': auth.userEmail,
+            'updatedAt': "",
+            'updatedBy': ""
           }
         });
         await projectModel.create(docToInsert);

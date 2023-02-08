@@ -19,7 +19,7 @@ export const exportExcelOfEmployees = async (event) => {
             allowedFor: ['management_su']
         };
         let auth = await accessAllowed(authQuery);
-        if (auth !== "allowed") {
+        if ( auth.access !== "allowed") {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
         s3.config.update({

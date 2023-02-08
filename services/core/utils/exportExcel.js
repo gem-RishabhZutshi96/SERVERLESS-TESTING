@@ -30,7 +30,7 @@ export const exportExcelDataEmpMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting employees master table excel:::::', e);
+        errorLogger('Error in exporting employees master table excel ', e);
         throw e;
     }
 };
@@ -38,7 +38,7 @@ export const exportExcelDataEmpMaster = async (fileName) => {
 
 export const exportExcelDataProjectMaster = async (fileName) => {
     try {
-        const employees = await projectModel.find();
+        const employees = await projectModel.find({isActive: true});
         const xls = json2xls(employees.map(emp => getProjectMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         s3.config.update({
@@ -60,7 +60,7 @@ export const exportExcelDataProjectMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting project master table excel::::', e);
+        errorLogger('Error in exporting project master table excel ', e);
         throw e;
     }
 };
@@ -68,7 +68,7 @@ export const exportExcelDataProjectMaster = async (fileName) => {
 
 export const exportExcelDataTeamMaster = async (fileName) => {
     try {
-        const employees = await teamModel.find();
+        const employees = await teamModel.find({isActive: true});
         const xls = json2xls(employees.map(emp => getTeamMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         s3.config.update({
@@ -90,7 +90,7 @@ export const exportExcelDataTeamMaster = async (fileName) => {
         });
         return downloadURL;
     } catch (e) {
-        errorLogger('Error in exporting team master table excel::::', e);
+        errorLogger('Error in exporting team master table excel ', e);
         throw e;
     }
 };

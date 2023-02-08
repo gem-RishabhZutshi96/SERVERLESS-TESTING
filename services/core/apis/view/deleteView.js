@@ -15,18 +15,17 @@ export const deleteView = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if(auth!=="allowed"){
+      if( auth.access !=="allowed"){
         return auth;
       }
       const viewId = event.path.id;
-      const obj = await viewModel.remove({ viewId: { $eq: viewId } });
-      if (obj.deletedCount >= 1) {
-        return successResponse("View Deleted Successfully",
-          {
-            "deletedCount": obj.deletedCount,
-            "viewId": viewId
-          }
-        );
+      const obj = await viewModel.findOneAndUpdate(
+        { viewId: { $eq: viewId } },
+        { $set: { "isActive" : false } },
+        {upsert: false}
+      );
+      if (obj) {
+        return successResponse("View Deleted Successfully");
       } else {
         return failResponse(`View Not Found`, 404);
       }

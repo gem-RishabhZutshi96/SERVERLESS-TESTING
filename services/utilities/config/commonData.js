@@ -2,24 +2,6 @@ import * as path from 'path';
 export const parameterStore = {
     dev: {
         MONGODB_URI : "mongodb://localhost:27017/orgchart-serverless",
-        sourceViews: {
-          gemini: {
-            rootId: "GSI N 001",
-            relation: "RL_Gemini",
-          },
-          ec: {
-            rootId: "GSI N 002",
-            relation: "RL_EC",
-          },
-          dc: {
-            rootId: "GSI G 818",
-            relation: "RL_DC",
-          },
-          pimco: {
-            rootId: "GSI G 818",
-            relation: "RL_Pimco",
-          }
-        },
         NEO4J: {
           URL: "bolt://localhost:7687",
           db_username: "neo4j",

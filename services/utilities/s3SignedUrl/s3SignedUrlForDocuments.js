@@ -30,8 +30,17 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
                     fileName = key.split('/').join('') + '_' + timestamp + '.docx';
                 }
             }
+            if (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+                fileName = key.split('/').join('') + '_' + timestamp + '.xlsx';
+            }
             let Name = toPascalCase(name);
-            let s3Key = officialID + '-' + Name + '/' + fileName;
+            let s3Key;
+            if (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                s3Key = 'hierachyExcels' + '/' + fileName;
+            } else {
+                s3Key = officialID + '-' + Name + '/' + fileName;
+            }
             let params = {
                 Bucket: sowBucket,
                 Key: s3Key,

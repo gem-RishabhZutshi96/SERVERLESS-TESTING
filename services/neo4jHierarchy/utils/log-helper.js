@@ -2,7 +2,7 @@ import { info, error, devLog } from "../../utilities/logging/log";
 const infoLogger = (apiMethod, data, message = "") => {
   try {
     let logObj = {
-      component: "HIERARCHY SERVICE",
+      component: "NEO4J_HIERARCHY SERVICE",
       apiMethod,
       data,
       message,
@@ -16,7 +16,7 @@ const infoLogger = (apiMethod, data, message = "") => {
 const errorLogger = (apiMethod, data, message = "") => {
   try {
     let logObj = {
-      component: "HIERARCHY SERVICE",
+      component: "NEO4J_HIERARCHY SERVICE",
       apiMethod,
       data,
       message,
@@ -30,7 +30,7 @@ const errorLogger = (apiMethod, data, message = "") => {
 const devLogger = (apiMethod, data, message = "") => {
   try {
     let logObj = {
-      component: "HIERARCHY SERVICE",
+      component: "NEO4J_HIERARCHY SERVICE",
       apiMethod,
       data,
       message,
