@@ -94,15 +94,11 @@ functions:
     timeout: 30
     events: 
       - http:
-          method: GET
-          path: hierarchy/importExcel/{relation}
+          method: POST
+          path: hierarchy/create/{relation}
           authorizer: authorizerFunc
           cors: true
           integration: lambda
-          request:
-            parameters:
-              querystrings:
-                key: true
           response:
             headers:
               Access-Control-Allow-Origin: "'*'"
