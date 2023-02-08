@@ -8,7 +8,8 @@ import {
 } from "./actionHandler/hierarchyNeo4j";
 import {
     deleteNode,
-    addNode
+    addNode,
+    addDuplicateNode
 } from "./actionHandler/nodesNeo4j";
 export async function main(event) {
     try {
