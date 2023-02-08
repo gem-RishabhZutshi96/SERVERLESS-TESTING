@@ -47,7 +47,6 @@ export const fetchEmployeeHierarchy = async(event) => {
         return badRequest("Invalid path parameters");
       }
     } catch(err) {
-      console.log(err);
       errorLogger("fetchEmployeeHierarchy", err, "Error db call");
       return internalServer(`Error in DB `);
   }
