@@ -32,6 +32,8 @@ const processEvent = async (event) => {
             return fetchHierarchy(event);
         case "addNode":
             return addNode(event);
+        case "addDuplicateNode":
+            return addDuplicateNode(event);
         case "deleteNode":
             return deleteNode(event);
     }
