@@ -1,7 +1,8 @@
 import { makeNeo4jDBConnection } from "../../../utilities/db/neo4j";
 import { parameterStore } from "../../../utilities/config/commonData";
-import { internalServer, successResponse } from "../../../utilities/response";
+import { badRequest, internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
+import moment from 'moment';
 export const createHierarchyForExcel = async (event) => {
     try {
       devLogger("createHierarchyForExcel", event, "event");
@@ -9,15 +10,35 @@ export const createHierarchyForExcel = async (event) => {
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
       const nodeData = event.nodeData;
-      await session.run(`
-        UNWIND $nodeData as emp
-        MATCH (a)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
-        MATCH (b)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
-        CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:"", endDate:""}, b) YIELD rel 
-        RETURN rel
-      `,{nodeData: nodeData, relN: event.relationName});
+      let count = 0;
+      const allNodeIds = await session.executeRead(async tx => {
+        const result = await tx.run(`
+          UNWIND $nodeData as emp
+          MATCH (a)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
+          WITH emp, COLLECT(emp.nodeID) AS nodeIds
+          MATCH (b)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
+          WITH nodeIds, COLLECT({nodeID:emp.nodeID, nodeParentID: emp.nodeParentID}) AS ids
+          UNWIND ids AS nIds
+          RETURN nIds
+        `,{nodeData: nodeData, relN: event.relationName});
+        return result.records.map(record => record.get('nIds'));
+      });
+      if(allNodeIds.length == nodeData.length){
+        await session.run(`
+          UNWIND $nodeData as emp
+          MATCH (a)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
+          MATCH (b)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
+          CALL apoc.create.relationship(a, $relN, {isActive:true, startDate: $startDate, endDate:""}, b) YIELD rel
+          SET rel.rIndex = id(rel)
+          RETURN rel
+        `,{nodeData: nodeData, relN: event.relationName, startDate: moment().format(), count:count});
+        return successResponse("Excel reading is completed and hierarchy is created successfully for data uploaded", []);
+      }
+      return badRequest('Excel file contains IDs which are non existent in DB',[]);
     } catch (err) {
       errorLogger("createHierarchyForExcel ", err);
       throw internalServer(`Error in Creating or Updating Node `);
