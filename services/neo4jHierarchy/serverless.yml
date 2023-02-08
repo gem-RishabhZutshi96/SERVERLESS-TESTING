@@ -125,6 +125,24 @@ functions:
         Action:
           - "lambda:InvokeFunction"
         Resource: "*"
+  addDuplicateNodeInHierarchy:
+    handler: apis/addDuplicateNodeInHierarchy.addDuplicateNodeInHierarchy
+    timeout: 30
+    events: 
+      - http:
+          method: POST
+          path: hierarchy/addDuplicateNode
+          authorizer: authorizerFunc
+          cors: true
+          integration: lambda
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*"
   deleteNodeInHierarchy:
     handler: apis/deleteNodeInHierarchy.deleteNodeInHierarchy
     timeout: 30
