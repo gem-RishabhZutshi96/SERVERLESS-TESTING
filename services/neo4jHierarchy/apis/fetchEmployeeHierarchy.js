@@ -19,22 +19,17 @@ export const fetchEmployeeHierarchy = async(event) => {
         resp.data = JSON.parse(resp.data);
         const nodes = flatten([resp.data]);
         if(nodes.length <= 1){
-          let obj = {
-            "id": resp.data.id,
-            "type": resp.data.type,
-            "labels": resp.data.labels,
-            "Designation": resp.data.properties.Designation,
-            "ManagerCode": resp.data.properties.ManagerCode,
-            "EmployeeCode": resp.data.properties.EmployeeCode,
-            "ImagePath": resp.data.properties.ImagePath,
-            "EmployeeName": resp.data.properties.EmployeeName
-          };
+          let obj = {};
+          Object.entries(resp.data.properties).forEach(([key, value]) => {
+            Object.assign(obj, {[key]:value});
+          });
+          Object.assign(obj, {id: resp.data.id, labels: resp.data.labels, children:[]});
           let response = {
             success: resp.success,
             message: resp.message,
             data: {
-              hierarchyData: Object.assign(obj, {"children":[]}),
-              nodeData: flatten([obj])
+              hierarchyData: Object.assign(obj, ),
+              nodeData: [obj]
             }
           };
           return response;
