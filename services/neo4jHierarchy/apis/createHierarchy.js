@@ -1,5 +1,5 @@
 import { makeDBConnection } from "../../utilities/db/mongo";
-import { internalServer, successResponse, badRequest } from "../../utilities/response/index";
+import { internalServer, badRequest, failResponse } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
@@ -22,7 +22,7 @@ export const createHierarchy = async(event) => {
       if( auth.access !=="allowed"){
         return auth;
       }
-      const { key } = event.query || event.queryStringParameters;
+      const { key } = event.body;
       if(!key){
         return badRequest('Missing Query Parameters');
       }
@@ -38,12 +38,15 @@ export const createHierarchy = async(event) => {
       };
       const file = await s3.getObject(params).promise();
       const result = await readExcelData(file);
-      await main({
+      if(result.length < 1){
+        return failResponse('Excel File is Empty');
+      }
+      const resp = await main({
         actionType: 'createHierarchyForExcel',
         nodeData: result,
         relationName: event.path.relation
       });
-      return successResponse("Excel reading is completed and hierarchy is created successfully for data uploaded", []);
+      return resp;
     } catch(err) {
       errorLogger("createHierarchy", err, "Error db call");
       return internalServer(`Error in DB `);
