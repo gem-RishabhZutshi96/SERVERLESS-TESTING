@@ -46,7 +46,7 @@ export const addNode = async (event) => {
             WITH r
             SET r.isActive = false,
                 r.endDate = $endDate
-            RETURN apoc.convert.toJson(r) AS output`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: moment().format('DD-MM-YYYY')}).then(result => result.records.map(i => i.get('output'))));
+            RETURN apoc.convert.toJson(r) AS output`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: moment().format()}).then(result => result.records.map(i => i.get('output'))));
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
@@ -60,7 +60,7 @@ export const addNode = async (event) => {
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
-            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
           if(removeExistingRelation.length < 1){
             return badRequest('Node Does Not Exist In Hierarchy');
           }
@@ -75,7 +75,7 @@ export const addNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
             RETURN apoc.convert.toJson(rel) AS output
-          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format('DD-MM-YYYY'), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
       }
     } else {
@@ -86,6 +86,88 @@ export const addNode = async (event) => {
     throw internalServer(`Error in Adding Node `);
   }
 };
+
+export const addDuplicateNode = async (event) => {
+  try {
+    devLogger("addDuplicateNode", event, "event");
+    const { database } = parameterStore[process.env.stage].NEO4J;
+    let driver = await makeNeo4jDBConnection();
+    let session = driver.session({ database });
+    const queryParams = event.queryParams;
+    let newNodeId = 'P_'.concat(cryptoRandomString({length: 3, type: 'url-safe'}));
+    const currentNode = await session.executeRead(async tx => {
+      const result = await tx.run(`
+        MATCH (a)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+        RETURN a`,{nodeId: queryParams.nodeId});
+      return result.records.map(record => record.get('a'));
+    });
+    const parentNode = await session.executeRead(async tx => {
+      const result = await tx.run(`
+        MATCH (b)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+        RETURN b`,{parentId: queryParams.parentId});
+      return result.records.map(record => record.get('b'));
+    });
+    if(currentNode.length >= 1 && parentNode.length >= 1){
+      const nodeType = await session.executeRead(async tx => {
+        const result = await tx.run(`
+          MATCH (a)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->()
+          RETURN r
+        `,{nodeId: queryParams.nodeId, relation: queryParams.relationName});
+        return result.records.map(record => record.get('r'));
+      });
+      if(nodeType.length >= 1){
+        console.log("--------------Node Exist In Hierarchy---------------------");
+        const addDuplicateNode = await session.executeWrite(tx =>
+          tx.run(`
+            UNWIND ['teamId', 'projectId', 'EmployeeCode'] AS x
+            MATCH (a) WHERE toString(a[x]) CONTAINS $nodeId
+            CREATE (b)
+            SET b = PROPERTIES(a)
+            WITH a, b
+            SET b[x] = $newNodeId
+            RETURN apoc.convert.toJson(b) AS output`,
+            { nodeId: queryParams.nodeId, newNodeId: newNodeId }).then(result => result.records.map(i => i.get('output'))));
+        const addRelation = await session.executeWrite(tx =>
+          tx.run(`
+            MATCH (a)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+            MATCH (b)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+            OPTIONAL MATCH (a)-[r]->(b)
+            WITH *, coalesce(r) as r1
+            CALL apoc.do.when(r1 IS NOT NULL,
+              'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
+              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
+              {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
+            RETURN apoc.convert.toJson(value) AS output`,
+            { nodeId: newNodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+        return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation.toString()), addDuplicateNode:JSON.parse(addDuplicateNode.toString())}]);
+      } else {
+        console.log("--------------Node Does Not Exist In Hierarchy---------------------");
+        const addNewRelation = await session.executeWrite(tx =>
+          tx.run(`
+            MATCH (a)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+            MATCH (b)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+            CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
+            RETURN apoc.convert.toJson(rel) AS output
+          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+        return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
+      }
+    } else {
+      return badRequest('Given Node or Parent Node Does Not Exist');
+    }
+  } catch (err) {
+    errorLogger("addDuplicateNode ", err);
+    throw internalServer(`Error in Adding Duplicate Node `);
+  }
+};
+
 export const deleteNode = async (event) => {
     try {
       devLogger("deleteNode", event, "event");
@@ -119,7 +201,7 @@ export const deleteNode = async (event) => {
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), startDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
+        { nodeId: queryParams.nodeId, endDate: moment().format(), startDate: moment().format(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }
@@ -136,7 +218,7 @@ export const deleteNode = async (event) => {
           YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format('DD-MM-YYYY'), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
+        { nodeId: queryParams.nodeId, endDate: moment().format(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }
