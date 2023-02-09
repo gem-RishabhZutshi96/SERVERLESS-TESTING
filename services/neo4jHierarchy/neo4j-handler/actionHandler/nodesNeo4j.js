@@ -3,6 +3,7 @@ import { parameterStore } from "../../../utilities/config/commonData";
 import { badRequest, internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import moment from 'moment';
+import cryptoRandomString from 'crypto-random-string';
 export const addNode = async (event) => {
   try {
     devLogger("addNode", event, "event");
@@ -94,7 +95,6 @@ export const addDuplicateNode = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     const queryParams = event.queryParams;
-    let newNodeId = 'P_'.concat(cryptoRandomString({length: 3, type: 'url-safe'}));
     const currentNode = await session.executeRead(async tx => {
       const result = await tx.run(`
         MATCH (a)
@@ -110,6 +110,21 @@ export const addDuplicateNode = async (event) => {
       return result.records.map(record => record.get('b'));
     });
     if(currentNode.length >= 1 && parentNode.length >= 1){
+      let newNodeId;
+      const duplicateRel = await session.executeRead(async tx => {
+        const result = await tx.run(`
+          MATCH (a)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+          MATCH (b)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->(b)
+          RETURN r
+        `,{nodeId: queryParams.nodeId, parentId: queryParams.parentId, relation: queryParams.relationName});
+        return result.records.map(record => record.get('r'));
+      });
+      if(duplicateRel.length >= 1){
+        return badRequest('An active relation of same type already exists between between current node and parent node');
+      }
       const nodeType = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (a)
@@ -120,21 +135,25 @@ export const addDuplicateNode = async (event) => {
         return result.records.map(record => record.get('r'));
       });
       if(nodeType.length >= 1){
-        console.log("--------------Node Exist In Hierarchy---------------------");
-        const addDuplicateNode = await session.executeWrite(tx =>
-          tx.run(`
-            UNWIND ['teamId', 'projectId', 'EmployeeCode'] AS x
-            MATCH (a) WHERE toString(a[x]) CONTAINS $nodeId
-            CREATE (b)
-            SET b = PROPERTIES(a)
-            WITH a, b
-            SET b[x] = $newNodeId
-            RETURN apoc.convert.toJson(b) AS output`,
-            { nodeId: queryParams.nodeId, newNodeId: newNodeId }).then(result => result.records.map(i => i.get('output'))));
+        console.log("--------------Node Exist In Hierarchy---------------------", currentNode);
+        let props = {};
+        Object.entries(currentNode[0].properties).forEach(([key, value]) => {
+          if([key][0].toString() == 'teamId' || [key][0].toString() == 'projectId' || [key][0].toString() == 'EmployeeCode'){
+            newNodeId = cryptoRandomString({length: 3, type: 'url-safe'});
+            Object.assign(props, {[key]:value.concat(newNodeId)});
+          } else {
+            Object.assign(props, {[key]:value});
+          }
+        });
+        console.log("Properties of new node are::::",props);
         const addRelation = await session.executeWrite(tx =>
           tx.run(`
+            MATCH (x)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(x[k]) CONTAINS $currentNodeId)
+            WITH x, LABELS(x) AS labls
+            CALL apoc.create.node(labls, $props) YIELD node
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $newNodeId)
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
             OPTIONAL MATCH (a)-[r]->(b)
@@ -144,8 +163,8 @@ export const addDuplicateNode = async (event) => {
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
-            { nodeId: newNodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
-        return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation.toString()), addDuplicateNode:JSON.parse(addDuplicateNode.toString())}]);
+            { currentNodeId: queryParams.nodeId, newNodeId: newNodeId,props: props, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+        return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation.toString())}]);
       } else {
         console.log("--------------Node Does Not Exist In Hierarchy---------------------");
         const addNewRelation = await session.executeWrite(tx =>
