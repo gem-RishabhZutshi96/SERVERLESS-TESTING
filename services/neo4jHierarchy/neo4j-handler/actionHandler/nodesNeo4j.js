@@ -58,7 +58,7 @@ export const addNode = async (event) => {
             WITH *, coalesce(r) as r1
             CALL apoc.do.when(r1 IS NOT NULL,
               'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
-              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
+              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
             { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
@@ -74,7 +74,8 @@ export const addNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
-            CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
+            CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel
+            SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
           `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
@@ -160,7 +161,7 @@ export const addDuplicateNode = async (event) => {
             WITH *, coalesce(r) as r1
             CALL apoc.do.when(r1 IS NOT NULL,
               'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
-              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
+              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
             { currentNodeId: queryParams.nodeId, newNodeId: newNodeId,props: props, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
@@ -173,7 +174,7 @@ export const addDuplicateNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
             MATCH (b)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
-            CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel 
+            CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
           `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
@@ -216,7 +217,7 @@ export const deleteNode = async (event) => {
           WITH *, coalesce(r) as r3
           CALL apoc.do.when(r3 IS NOT NULL,
           'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" RETURN r',
-          'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel RETURN rel',
+          'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
