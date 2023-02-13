@@ -22,31 +22,36 @@ export const createOrUpdateTeam = async(event) => {
         return auth;
       }
       if(event.body.teamId){
-        let result = await teamModel.findOneAndUpdate(
-          {
+        if(!event.body.updatedAt && !event.body.updatedBy){
+          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let result = await teamModel.findOneAndUpdate(
+            {
               teamId: event.body.teamId
-          },
-          event.body,
-          {
+            },
+            updateObj,
+            {
               upsert: false
-          }
-        );
-        if(result){
-          await main({
-            actionType: 'createOrUpdateTeamNeo4j',
-            node: {
-              'id': event.body.teamId,
-              'name': event.body.name ? event.body.name : result.name,
-              'description': event.body.description ? event.body.description : result.description,
-              'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
-              'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
-              'updatedAt': moment().format(),
-              'updatedBy': auth.userEmail
             }
-          });
-          return successResponse('Team Updated Successfully');
-        } else{
+          );
+          if(result){
+            await main({
+              actionType: 'createOrUpdateTeamNeo4j',
+              node: {
+                'id': event.body.teamId,
+                'name': event.body.name ? event.body.name : result.name,
+                'description': event.body.description ? event.body.description : result.description,
+                'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
+                'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
+                'updatedAt': moment().format(),
+                'updatedBy': auth.userEmail
+              }
+            });
+            return successResponse('Team Updated Successfully');
+          } else {
             return failResponse('No info found to updated', 404);
+          }
+        } else {
+          return badRequest("updatedAt or updatedBy fields are not allowed in request body");
         }
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");

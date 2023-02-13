@@ -21,19 +21,24 @@ export const createOrUpdateView = async(event) => {
         return auth;
       }
       if(event.body.viewId){
-        let result = await viewModel.findOneAndUpdate(
-          {
-            viewId: event.body.viewId
-          },
-          event.body,
-          {
-            upsert: false
-          }
-        );
-        if(result){
+        if(!event.body.updatedAt && !event.body.updatedBy){
+          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let result = await viewModel.findOneAndUpdate(
+            {
+              viewId: event.body.viewId
+            },
+            updateObj,
+            {
+              upsert: false
+            }
+          );
+          if(result){
             return successResponse('View Updated Successfully');
-        } else{
+          } else{
             return failResponse('No info found to updated', 404);
+          }
+        } else {
+          return badRequest("updatedAt or updatedBy fields are not allowed in request body");
         }
       } else if(!event.body.type || !event.body.name || !event.body.relationName || !event.body.rootId){
         return badRequest("🤔🤔 Missing body parameters");
