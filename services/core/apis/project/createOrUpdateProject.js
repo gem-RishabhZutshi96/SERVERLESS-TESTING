@@ -22,31 +22,36 @@ export const createOrUpdateProject = async(event) => {
         return auth;
       }
       if(event.body.projectId){
-        let result = await projectModel.findOneAndUpdate(
-          { projectId: { $eq: event.body.projectId },
-            isActive: true,
-          },
-          event.body,
-          {
-            upsert: false
-          }
-        );
-        if(result){
-          await main({
-            actionType: 'createOrUpdateProjectNeo4j',
-            node: {
-              'id': event.body.projectId,
-              'name': event.body.name ? event.body.name : result.name,
-              'description': event.body.description ? event.body.description : result.description,
-              'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
-              'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
-              'updatedAt': moment().format(),
-              'updatedBy': auth.userEmail
+        if(!event.body.updatedAt && !event.body.updatedBy){
+          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let result = await projectModel.findOneAndUpdate(
+            { projectId: { $eq: event.body.projectId },
+              isActive: true,
+            },
+            updateObj,
+            {
+              upsert: false
             }
-          });
-          return successResponse('Project Updated Successfully');
-        } else{
-          return failResponse('No info found to updated', 404);
+          );
+          if(result){
+            await main({
+              actionType: 'createOrUpdateProjectNeo4j',
+              node: {
+                'id': event.body.projectId,
+                'name': event.body.name ? event.body.name : result.name,
+                'description': event.body.description ? event.body.description : result.description,
+                'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
+                'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
+                'updatedAt': moment().format(),
+                'updatedBy': auth.userEmail
+              }
+            });
+            return successResponse('Project Updated Successfully');
+          } else{
+            return failResponse('No info found to updated', 404);
+          }
+        } else {
+          return badRequest("updatedAt or updatedBy fields are not allowed in request body");
         }
       } else if(!(event.body.name || event.body.description)){
         return badRequest("🤔🤔 Missing body parameters");

@@ -37,6 +37,12 @@ const employeeMaster = new Schema(
     MobileNumber: {
       type: String,
     },
+    ECTech: {
+      type: String,
+    },
+    DCTech: {
+      type: String,
+    },
     isActive: {
       type: Boolean,
     },
