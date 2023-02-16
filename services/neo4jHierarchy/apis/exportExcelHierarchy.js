@@ -1,12 +1,8 @@
 import { internalServer, forbiddenRequest, successResponse } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
-import AWS from 'aws-sdk';
-import { parameterStore } from "../../utilities/config/commonData";
-import moment from 'moment';
 import { devLogger, errorLogger } from "../utils/log-helper";
-const s3 = new AWS.S3();
-import { exportExcelDataProjectMaster } from "../utils/exportExcel";
+import moment from 'moment';
 export const exportExcelHierarchy = async (event) => {
     try {
         devLogger("exportExcelHierarchy", event, "event");
@@ -20,14 +16,8 @@ export const exportExcelHierarchy = async (event) => {
         if ( auth.access !== "allowed") {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
-        s3.config.update({
-            accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
-            secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
-            region: parameterStore[process.env.stage].s3Params.region,
-            signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
-        });
         let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
-        const excelFilePath = await exportExcelDataProjectMaster('excels' + '/' + timestamp + '--' +`ProjectMasterTable.xlsx`);
+        const excelFilePath = await exportExcelHierarchy({'fileName': 'excels' + '/' + timestamp + '--' +`ProjectMasterTable.xlsx`});
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelHierarchy", err, "Error db call");
