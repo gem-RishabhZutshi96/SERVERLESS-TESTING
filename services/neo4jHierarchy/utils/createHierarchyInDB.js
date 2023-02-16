@@ -9,10 +9,10 @@ export const createHierarchyInDB = async (event) => {
         const { database } = parameterStore[process.env.stage].NEO4J;
         let driver = await makeNeo4jDBConnection();
         let session = driver.session({ database });
-        const nodeData = event.nodeData; 
+        const nodeData = event.nodeData;
         if(!nodeData || !event.relationName || nodeData.length < 1){
             return badRequest("Invalid Data Recieved");
-        }   
+        }
         await session.run(`
             UNWIND $nodeData as emp
             MATCH (a)

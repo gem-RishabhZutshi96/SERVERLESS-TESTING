@@ -12,7 +12,7 @@ export const createHierarchyForExcel = async (event) => {
       const nodeData = event.nodeData;
       const resp = await verifyData({nodeData: nodeData});
       if(resp.success){
-        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName})
+        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
         return addRel;
       }
       return resp;
@@ -98,7 +98,7 @@ export const bulkEditHierarchyForExcel = async (event) => {
       const saveView = await saveViewToS3({relationName: event.relationName});
       const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
       if(saveView.success && delAllRels.success){
-        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName})
+        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
         return addRel;
       }
     }
