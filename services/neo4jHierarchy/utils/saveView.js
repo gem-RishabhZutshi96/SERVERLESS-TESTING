@@ -5,6 +5,7 @@ import { parameterStore } from "../../utilities/config/commonData";
 import { makeDBConnection } from "../../utilities/db/mongo";
 import { viewModel } from "../../utilities/dbModels/view";
 import moment from 'moment';
+import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 s3.config.update({
   accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
