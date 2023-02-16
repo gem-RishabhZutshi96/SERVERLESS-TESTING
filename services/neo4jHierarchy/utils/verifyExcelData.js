@@ -23,7 +23,7 @@ export const verifyData = async (event) => {
           WITH nodeIds, COLLECT({nodeID:emp.nodeID, nodeParentID: emp.nodeParentID}) AS ids
           UNWIND ids AS nIds
           RETURN nIds
-        `,{nodeData: nodeData, relN: event.relationName});
+        `,{nodeData: nodeData});
         return result.records.map(record => record.get('nIds'));
       });
       if(allNodeIds.length == nodeData.length){

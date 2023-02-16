@@ -10,7 +10,6 @@ export const createHierarchyForExcel = async (event) => {
       let driver = await makeNeo4jDBConnection();
       let session = driver.session({ database });
       const nodeData = event.nodeData;
-      let count = 0;
       const allNodeIds = await session.executeRead(async tx => {
         const result = await tx.run(`
           UNWIND $nodeData as emp
@@ -35,7 +34,7 @@ export const createHierarchyForExcel = async (event) => {
           CALL apoc.create.relationship(a, $relN, {isActive:true, startDate: $startDate, endDate:""}, b) YIELD rel
           SET rel.rIndex = id(rel)
           RETURN rel
-        `,{nodeData: nodeData, relN: event.relationName, startDate: moment().format(), count:count});
+        `,{nodeData: nodeData, relN: event.relationName, startDate: moment().format()});
         return successResponse("Excel reading is completed and hierarchy is created successfully for data uploaded", []);
       }
       return badRequest('Excel file contains IDs which are non existent in DB',[]);
