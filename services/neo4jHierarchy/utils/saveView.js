@@ -28,7 +28,7 @@ export const saveViewToS3 = async (event) => {
             let buf = Buffer.from(JSON.stringify(
                 {
                     'viewName': sourceViews[0].name,
-                    'type': sourceViews[0].type,  
+                    'type': sourceViews[0].type,
                     'viewId': sourceViews[0].viewId,
                     'relationName': sourceViews[0].relationName,
                     'rootId': sourceViews[0].rootId,
