@@ -1,7 +1,7 @@
-import { makeNeo4jDBConnection } from "../../../utilities/db/neo4j";
-import { parameterStore } from "../../../utilities/config/commonData";
-import { badRequest, internalServer, successResponse } from "../../../utilities/response";
-import { devLogger, errorLogger } from "../../utils/log-helper";
+import { makeNeo4jDBConnection } from "../../utilities/db/neo4j";
+import { parameterStore } from "../../utilities/config/commonData";
+import { badRequest, internalServer, successResponse } from "../../utilities/response";
+import { devLogger, errorLogger } from "../utils/log-helper";
 import moment from 'moment';
 export const createHierarchyInDB = async (event) => {
     try {
