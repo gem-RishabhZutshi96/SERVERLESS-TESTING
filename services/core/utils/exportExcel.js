@@ -2,13 +2,14 @@ import { employeeMasterModel } from "../../utilities/dbModels/employeeMaster";
 import { projectModel } from "../../utilities/dbModels/project";
 import { teamModel } from "../../utilities/dbModels/team";
 import * as json2xls from 'json2xls';
-import { errorLogger } from "./log-helper";
+import { devLogger, errorLogger } from "./log-helper";
 import { parameterStore } from "../../utilities/config/commonData";
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const exportExcelDataEmpMaster = async (fileName) => {
     try {
-        const employees = await employeeMasterModel.find();
+        devLogger("exportExcelDataEmpMaster", fileName, "event");
+        const employees = await employeeMasterModel.find({isActive: true});
         const xls = json2xls(employees.map(emp => getEmpMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
         s3.config.update({
@@ -38,6 +39,7 @@ export const exportExcelDataEmpMaster = async (fileName) => {
 
 export const exportExcelDataProjectMaster = async (fileName) => {
     try {
+        devLogger("exportExcelDataProjectMaster", fileName, "event");
         const employees = await projectModel.find({isActive: true});
         const xls = json2xls(employees.map(emp => getProjectMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
@@ -68,6 +70,7 @@ export const exportExcelDataProjectMaster = async (fileName) => {
 
 export const exportExcelDataTeamMaster = async (fileName) => {
     try {
+        devLogger("exportExcelDataTeamMaster", fileName, "event");
         const employees = await teamModel.find({isActive: true});
         const xls = json2xls(employees.map(emp => getTeamMasterJSON(emp)));
         const buffer = Buffer.from(xls, 'binary');
