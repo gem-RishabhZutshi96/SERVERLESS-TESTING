@@ -1,44 +1,21 @@
 import { makeNeo4jDBConnection } from "../../../utilities/db/neo4j";
 import { parameterStore } from "../../../utilities/config/commonData";
-import { badRequest, internalServer, successResponse } from "../../../utilities/response";
+import { internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-import moment from 'moment';
+import { verifyData } from "../../utils/verifyExcelData";
+import { createHierarchyInDB } from "../../utils/createHierarchyInDB";
+import { deleteAllRelationsForView } from "../../utils/deleteAllRelations";
+import { saveViewToS3 } from "../../utils/saveView";
 export const createHierarchyForExcel = async (event) => {
     try {
       devLogger("createHierarchyForExcel", event, "event");
-      const { database } = parameterStore[process.env.stage].NEO4J;
-      let driver = await makeNeo4jDBConnection();
-      let session = driver.session({ database });
       const nodeData = event.nodeData;
-      let count = 0;
-      const allNodeIds = await session.executeRead(async tx => {
-        const result = await tx.run(`
-          UNWIND $nodeData as emp
-          MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
-          WITH emp, COLLECT(emp.nodeID) AS nodeIds
-          MATCH (b)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
-          WITH nodeIds, COLLECT({nodeID:emp.nodeID, nodeParentID: emp.nodeParentID}) AS ids
-          UNWIND ids AS nIds
-          RETURN nIds
-        `,{nodeData: nodeData, relN: event.relationName});
-        return result.records.map(record => record.get('nIds'));
-      });
-      if(allNodeIds.length == nodeData.length){
-        await session.run(`
-          UNWIND $nodeData as emp
-          MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
-          MATCH (b)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
-          CALL apoc.create.relationship(a, $relN, {isActive:true, startDate: $startDate, endDate:""}, b) YIELD rel
-          SET rel.rIndex = id(rel)
-          RETURN rel
-        `,{nodeData: nodeData, relN: event.relationName, startDate: moment().format(), count:count});
-        return successResponse("Excel reading is completed and hierarchy is created successfully for data uploaded", []);
+      const resp = await verifyData({nodeData: nodeData});
+      if(resp.success){
+        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
+        return addRel;
       }
-      return badRequest('Excel file contains IDs which are non existent in DB',[]);
+      return resp;
     } catch (err) {
       errorLogger("createHierarchyForExcel ", err);
       throw internalServer(`Error in Creating or Updating Node `);
@@ -111,6 +88,27 @@ export const fetchHierarchy = async (event) => {
     throw internalServer(`Error in fetching Hierarchy `);
   }
 };
+
+export const bulkEditHierarchyForExcel = async (event) => {
+  try {
+    devLogger("bulkEditHierarchyForExcel", event, "event");
+    const nodeData = event.nodeData;
+    const resp = await verifyData({nodeData: nodeData});
+    if(resp.success){
+      const saveView = await saveViewToS3({relationName: event.relationName});
+      const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
+      if(saveView.success && delAllRels.success){
+        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
+        return addRel;
+      }
+    }
+    return resp;
+  } catch (err) {
+    errorLogger("bulkEditHierarchyForExcel ", err);
+    throw internalServer(`Error in Creating or Updating Node `);
+  }
+};
+
 function generateRegex(str) {
   return new RegExp(`"${str}":`,"ig");
 }

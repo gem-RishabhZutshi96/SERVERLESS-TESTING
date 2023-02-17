@@ -6,6 +6,9 @@ import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
 import moment from "moment";
+import { teamModel } from "../../../utilities/dbModels/team";
+import { projectModel } from "../../../utilities/dbModels/project";
+import { employeeMasterModel } from "../../../utilities/dbModels/employeeMaster";
 export const createOrUpdateView = async(event) => {
     try{
       devLogger("createOrUpdateView", event, "event");
@@ -49,6 +52,22 @@ export const createOrUpdateView = async(event) => {
         });
         if(doc.length >= 1){
           return badRequest(`Invalid view name or relation name in body parameters. Only unique view name or relation name are allowed.`);
+        }
+        if(generateRegex('Employee').test(event.body.type)){
+          const emp =  await employeeMasterModel.find({ 'EmployeeCode': { '$regex': event.body.rootId, '$options': 'i' } });
+          if(emp.length < 1){
+            return internalServer('Invalid rootId');
+          }
+        } else if(generateRegex('Project').test(event.body.type)){
+          const emp =  await projectModel.find({ 'projectId': { '$regex': event.body.rootId, '$options': 'i' } });
+          if(emp.length < 1){
+            return internalServer('Invalid rootId');
+          }
+        } else {
+          const emp =  await teamModel.find({ 'teamId': { '$regex': event.body.rootId, '$options': 'i' } });
+          if(emp.length < 1){
+            return internalServer('Invalid rootId');
+          }
         }
         const docToInsert = {
           name: event.body.name.toLowerCase(),
