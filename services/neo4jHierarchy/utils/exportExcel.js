@@ -14,7 +14,7 @@ export const exportHierarchyExcel = async (event) => {
         let fileName = event.fileName;
         const checkForValidRel = await session.executeRead(async tx => {
             const result = await tx.run(`
-                MATCH ()-[r]->() WHERE TYPE(r) CONTAINS $relN
+                MATCH ()-[r]->() WHERE TYPE(r) = $relN
                 RETURN r
             `,{relN: event.relationName});
             return result.records.map(record => record.get('r'));
@@ -24,7 +24,7 @@ export const exportHierarchyExcel = async (event) => {
         }
         let relations = await session.executeRead(async tx => {
             const result = await tx.run(`
-                MATCH ()-[r]->() WHERE r.isActive AND TYPE(r) CONTAINS $relN 
+                MATCH ()-[r]->() WHERE r.isActive AND TYPE(r) = $relN 
                 RETURN apoc.convert.toJson(r) AS output
             `,{relN: event.relationName});
             return result.records.map(record => record.get('output'));
