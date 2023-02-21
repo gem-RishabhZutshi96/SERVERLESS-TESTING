@@ -96,10 +96,16 @@ export const bulkEditHierarchyForExcel = async (event) => {
     const resp = await verifyData({nodeData: nodeData});
     if(resp.success){
       const saveView = await saveViewToS3({relationName: event.relationName});
-      const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
-      if(saveView.success && delAllRels.success){
-        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
-        return addRel;
+      if(saveView.success){
+        const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
+        if(delAllRels.success){
+          const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
+          return addRel;
+        } else {
+          return delAllRels;
+        }
+      } else {
+        return saveView;
       }
     }
     return resp;
