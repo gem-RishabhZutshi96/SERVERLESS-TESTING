@@ -10,7 +10,7 @@ export const deleteAllRelationsForView = async (event) => {
         let session = driver.session({ database });
         const checkForValidRel = await session.executeRead(async tx => {
             const result = await tx.run(`
-                MATCH ()-[r]->() WHERE TYPE(r) CONTAINS $relN
+                MATCH ()-[r]->() WHERE TYPE(r) = $relN
                 RETURN r
             `,{relN: event.relationName});
             return result.records.map(record => record.get('r'));
