@@ -36,7 +36,7 @@ export const saveViewToS3 = async (event) => {
                 }
             ));
             let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
-            let fileName = `json/${timestamp}--createOrUpdateNode.json`;
+            let fileName = 'hierarchyJSON' + '/' + sourceViews[0].name + '__' + timestamp + '.json';
             let data = {
                 Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
                 Key: fileName,
