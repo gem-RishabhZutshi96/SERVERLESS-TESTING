@@ -37,7 +37,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
             let Name = toPascalCase(name);
             let s3Key;
             if (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                s3Key = 'hierachyExcels' + '/' + fileName;
+                s3Key = 'hierarchyExcels' + '/' + fileName;
             } else {
                 s3Key = officialID + '-' + Name + '/' + fileName;
             }
