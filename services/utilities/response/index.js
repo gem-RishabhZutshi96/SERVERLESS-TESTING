@@ -37,11 +37,12 @@ export function internalServer(message, data) {
     };
     return response;
 }
-export function failResponse(message, StatusCode) {
+export function failResponse(message, StatusCode, data) {
     let response = {
         success: false,
         "StatusCode": StatusCode,
-        message
+        message,
+        data
     };
     return response;
 }

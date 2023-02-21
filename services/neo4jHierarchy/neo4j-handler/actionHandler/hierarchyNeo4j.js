@@ -30,8 +30,8 @@ export const fetchHierarchy = async (event) => {
     let session = driver.session({ database });
     const checkRelation = await session.executeRead(async tx => {
       const result = await tx.run(`
-        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
-        MATCH (a)<-[r]-() WHERE type(r) CONTAINS $relN
+        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
+        MATCH (a)<-[r]-() WHERE type(r) = $relN
         RETURN r
       `,{rootId: event.rootId, relN: event.relationName});
       return result.records.map(record => record.get('r'));
@@ -39,7 +39,7 @@ export const fetchHierarchy = async (event) => {
     if(checkRelation.length > 1){
       const tree = await session.executeRead(async tx => {
       //   const result = await tx.run(`
-      //   MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
+      //   MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
       //   CALL {
       //     MATCH p=(a)<-[:${view.relation}*]-()
       //         WHERE apoc.coll.duplicates(NODES(p)) = []
@@ -54,7 +54,7 @@ export const fetchHierarchy = async (event) => {
       // `,{rootId: view.rootId});
       // return result.records.map(record => record.get('apoc.convert.toJson(value)'))[0];
       const result = await tx.run(`
-        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
+        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
         CALL apoc.path.expandConfig(a, {
           relationshipFilter: "${event.relationName}<",
             minLevel: 1,
@@ -76,7 +76,7 @@ export const fetchHierarchy = async (event) => {
     }
     const rootNode = await session.executeRead(async tx => {
       const result = await tx.run(`
-        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $rootId)
+        MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
         RETURN apoc.convert.toJson(a) AS output
       `,{rootId: event.rootId});
       return result.records.map(record => record.get('output'));
@@ -96,10 +96,16 @@ export const bulkEditHierarchyForExcel = async (event) => {
     const resp = await verifyData({nodeData: nodeData});
     if(resp.success){
       const saveView = await saveViewToS3({relationName: event.relationName});
-      const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
-      if(saveView.success && delAllRels.success){
-        const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
-        return addRel;
+      if(saveView.success){
+        const delAllRels = await deleteAllRelationsForView({relationName: event.relationName});
+        if(delAllRels.success){
+          const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
+          return addRel;
+        } else {
+          return delAllRels;
+        }
+      } else {
+        return saveView;
       }
     }
     return resp;

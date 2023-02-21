@@ -36,22 +36,42 @@ export const saveViewToS3 = async (event) => {
                 }
             ));
             let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
-            let fileName = `json/${timestamp}--createOrUpdateNode.json`;
-            let data = {
+            let fileName = 'hierarchyJSON' + '/' + sourceViews[0].name + '__' + timestamp + '.json';
+            let params = {
                 Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
                 Key: fileName,
                 ContentType: 'application/json',
                 Body: buf
             };
+            let responseOfUpload;
             console.log("---- UPLODAING TO S3 ----");
-            await s3.upload(data).promise();
-            console.log("---- GETTING SIGNED URL FROM S3 ----");
-            let downloadURL = s3.getSignedUrl("getObject",{
-                Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
-                Key: fileName,
-                Expires: 3600
+            const upload = new Promise((resolve, reject) => {
+                s3.upload(params, function (err, data) {
+                  if (err) {
+                    console.log(err, err.stack);
+                    responseOfUpload = {
+                      statusCode: "[400]",
+                      message: "some error occured",
+                      data: err,
+                    };
+                    reject(responseOfUpload);
+                  } else {
+                    responseOfUpload = {
+                      statusCode: "[200]",
+                      message: "JSON Uploaded",
+                      data: data.Location,
+                    };
+                    resolve(responseOfUpload);
+                  }
+                });
             });
-            return successResponse("Current view hierarchy uploded successfully to S3", downloadURL);
+            // console.log("---- GETTING SIGNED URL FROM S3 ----");
+            // let downloadURL = s3.getSignedUrl("getObject",{
+            //     Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            //     Key: fileName,
+            //     Expires: 3600
+            // });
+            return successResponse("Current view hierarchy uploded successfully to S3");
         }
         return badRequest("Invalid relation name");
     } catch (err) {

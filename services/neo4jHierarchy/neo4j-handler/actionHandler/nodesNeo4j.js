@@ -14,14 +14,14 @@ export const addNode = async (event) => {
     const currentNode = await session.executeRead(async tx => {
       const result = await tx.run(`
         MATCH (a)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
         RETURN a`,{nodeId: queryParams.nodeId});
       return result.records.map(record => record.get('a'));
     });
     const parentNode = await session.executeRead(async tx => {
       const result = await tx.run(`
         MATCH (b)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
         RETURN b`,{parentId: queryParams.parentId});
       return result.records.map(record => record.get('b'));
     });
@@ -29,8 +29,8 @@ export const addNode = async (event) => {
       const nodeType = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
-          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->()
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
+          MATCH (a)-[r WHERE type(r) = $relation AND r.isActive = true]->()
           RETURN r
         `,{nodeId: queryParams.nodeId, relation: queryParams.relationName});
         return result.records.map(record => record.get('r'));
@@ -40,9 +40,9 @@ export const addNode = async (event) => {
         const removeExistingRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
             MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE NOT(toString(b[k]) CONTAINS $parentId))
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE NOT(toString(b[k]) = $parentId))
             MATCH (a)-[r:${queryParams.relationName} WHERE r.isActive=true]->(b)
             WITH r
             SET r.isActive = false,
@@ -51,13 +51,13 @@ export const addNode = async (event) => {
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
             MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
             OPTIONAL MATCH (a)-[r]->(b)
             WITH *, coalesce(r) as r1
             CALL apoc.do.when(r1 IS NOT NULL,
-              'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
+              'MATCH (a)-[r WHERE type(r) = $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
@@ -71,9 +71,9 @@ export const addNode = async (event) => {
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
             MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel
             SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
@@ -99,14 +99,14 @@ export const addDuplicateNode = async (event) => {
     const currentNode = await session.executeRead(async tx => {
       const result = await tx.run(`
         MATCH (a)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
         RETURN a`,{nodeId: queryParams.nodeId});
       return result.records.map(record => record.get('a'));
     });
     const parentNode = await session.executeRead(async tx => {
       const result = await tx.run(`
         MATCH (b)
-          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+          WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
         RETURN b`,{parentId: queryParams.parentId});
       return result.records.map(record => record.get('b'));
     });
@@ -115,10 +115,10 @@ export const addDuplicateNode = async (event) => {
       const duplicateRel = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
           MATCH (b)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
-          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->(b)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
+          MATCH (a)-[r WHERE type(r) = $relation AND r.isActive = true]->(b)
           RETURN r
         `,{nodeId: queryParams.nodeId, parentId: queryParams.parentId, relation: queryParams.relationName});
         return result.records.map(record => record.get('r'));
@@ -129,8 +129,8 @@ export const addDuplicateNode = async (event) => {
       const nodeType = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
-          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->()
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
+          MATCH (a)-[r WHERE type(r) = $relation AND r.isActive = true]->()
           RETURN r
         `,{nodeId: queryParams.nodeId, relation: queryParams.relationName});
         return result.records.map(record => record.get('r'));
@@ -150,17 +150,17 @@ export const addDuplicateNode = async (event) => {
         const addRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (x)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(x[k]) CONTAINS $currentNodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(x[k]) = $currentNodeId)
             WITH x, LABELS(x) AS labls
             CALL apoc.create.node(labls, $props) YIELD node
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $newNodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $newNodeId)
             MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
             OPTIONAL MATCH (a)-[r]->(b)
             WITH *, coalesce(r) as r1
             CALL apoc.do.when(r1 IS NOT NULL,
-              'MATCH (a)-[r WHERE type(r) CONTAINS $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
+              'MATCH (a)-[r WHERE type(r) = $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
@@ -171,9 +171,9 @@ export const addDuplicateNode = async (event) => {
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
             MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS $parentId)
+              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
           `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
@@ -198,7 +198,7 @@ export const deleteNode = async (event) => {
       const nodeType = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (n) WHERE id(n) = $nodeId
-          MATCH (a)-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->(n)
+          MATCH (a)-[r WHERE type(r) = $relation AND r.isActive = true]->(n)
           RETURN r
         `,{nodeId: queryParams.nodeId, relation: queryParams.relationName});
         return result.records.map(record => record.get('r'));
@@ -207,16 +207,16 @@ export const deleteNode = async (event) => {
         console.log("--------------Child Node Deletion---------------------");
         const resp =  await session.run(`
           MATCH (n) WHERE id(n) = $nodeId
-          MATCH p=(a)-[r1 WHERE type(r1) CONTAINS $relation AND r1.isActive = true]->(n)-[r2 WHERE type(r2) CONTAINS $relation AND r2.isActive = true]->(b)
+          MATCH p=(a)-[r1 WHERE type(r1) = $relation AND r1.isActive = true]->(n)-[r2 WHERE type(r2) = $relation AND r2.isActive = true]->(b)
           SET r1.isActive = false,
               r1.endDate = $endDate,
               r2.isActive = false,
               r2.endDate = $endDate
           WITH a, b
-          OPTIONAL MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b)
+          OPTIONAL MATCH (a)-[r WHERE type(r) = $relation]->(b)
           WITH *, coalesce(r) as r3
           CALL apoc.do.when(r3 IS NOT NULL,
-          'MATCH (a)-[r WHERE type(r) CONTAINS $relation]->(b) SET r.isActive = true, r.endDate ="" RETURN r',
+          'MATCH (a)-[r WHERE type(r) = $relation]->(b) SET r.isActive = true, r.endDate ="" RETURN r',
           'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN apoc.convert.toJson(value) AS output
@@ -230,10 +230,10 @@ export const deleteNode = async (event) => {
         console.log("--------------Leaf Node Deletion---------------------");
         const resp =  await session.run(`
           MATCH (n) WHERE id(n) = $nodeId
-          OPTIONAL MATCH ()-[r WHERE type(r) CONTAINS $relation AND r.isActive = true]->(n)
+          OPTIONAL MATCH ()-[r WHERE type(r) = $relation AND r.isActive = true]->(n)
           WITH n, coalesce(r) as r3
           CALL apoc.do.when(r3 IS NULL,
-          'MATCH (n)-[r WHERE type(r) CONTAINS relN AND r.isActive = true]->() SET r.isActive = false, r.endDate = $endDate RETURN r',
+          'MATCH (n)-[r WHERE type(r) = relN AND r.isActive = true]->() SET r.isActive = false, r.endDate = $endDate RETURN r',
           'RETURN false', {n:n, endDate:$endDate, relN:$relation}) 
           YIELD value
           RETURN apoc.convert.toJson(value) AS output

@@ -16,9 +16,9 @@ export const createHierarchyInDB = async (event) => {
         await session.run(`
             UNWIND $nodeData as emp
             MATCH (a)
-                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
+                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = emp.nodeID)
             MATCH (b)
-                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
+                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = emp.nodeParentID)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate: $startDate, endDate:""}, b) YIELD rel
             SET rel.rIndex = id(rel)
             RETURN rel

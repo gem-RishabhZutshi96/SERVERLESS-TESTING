@@ -16,20 +16,21 @@ export const verifyData = async (event) => {
         const result = await tx.run(`
           UNWIND $nodeData as emp
           MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS emp.nodeID)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = emp.nodeID)
           WITH emp, COLLECT(emp.nodeID) AS nodeIds
           MATCH (b)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) CONTAINS emp.nodeParentID)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = emp.nodeParentID)
           WITH nodeIds, COLLECT({nodeID:emp.nodeID, nodeParentID: emp.nodeParentID}) AS ids
           UNWIND ids AS nIds
           RETURN nIds
         `,{nodeData: nodeData});
         return result.records.map(record => record.get('nIds'));
       });
+      const results = nodeData.filter(item1 => !allNodeIds.some(item2 => (item2.nodeID === item1.nodeID && item2.nodeParentID === item1.nodeParentID)));
       if(allNodeIds.length == nodeData.length){
         return successResponse("Data Validation is Successfull", []);
       }
-      return failResponse('Data contains IDs which are non existent in DB',[]);
+      return failResponse('Data contains IDs which are non existent in DB', 500, results);
     } catch (err) {
       errorLogger("verifyData ", err);
       throw internalServer(`Error in Data Verification `);
