@@ -115,7 +115,7 @@ export const addDuplicateNode = async (event) => {
       const duplicateRel = await session.executeRead(async tx => {
         const result = await tx.run(`
           MATCH (a)
-            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $nodeId)
+            WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) CONTAINS $nodeId)
           MATCH (b)
             WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
           MATCH (a)-[r WHERE type(r) = $relation AND r.isActive = true]->(b)
@@ -140,32 +140,36 @@ export const addDuplicateNode = async (event) => {
         let props = {};
         Object.entries(currentNode[0].properties).forEach(([key, value]) => {
           if([key][0].toString() == 'teamId' || [key][0].toString() == 'projectId' || [key][0].toString() == 'EmployeeCode'){
-            newNodeId = cryptoRandomString({length: 3, type: 'url-safe'});
-            Object.assign(props, {[key]:value.concat(newNodeId)});
+            newNodeId = value.concat(cryptoRandomString({length: 3, type: 'url-safe'}));
+            Object.assign(props, {[key]:newNodeId});
           } else {
             Object.assign(props, {[key]:value});
           }
         });
-        console.log("Properties of new node are::::",props);
-        const addRelation = await session.executeWrite(tx =>
+        await session.executeWrite(tx =>
           tx.run(`
             MATCH (x)
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(x[k]) = $currentNodeId)
             WITH x, LABELS(x) AS labls
             CALL apoc.create.node(labls, $props) YIELD node
-            MATCH (a)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $newNodeId)
-            MATCH (b)
-              WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
-            OPTIONAL MATCH (a)-[r]->(b)
-            WITH *, coalesce(r) as r1
-            CALL apoc.do.when(r1 IS NOT NULL,
-              'MATCH (a)-[r WHERE type(r) = $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
-              'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
-              {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
-            RETURN apoc.convert.toJson(value) AS output`,
-            { currentNodeId: queryParams.nodeId, newNodeId: newNodeId,props: props, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
-        return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation.toString())}]);
+            RETURN apoc.convert.toJson(node) AS output
+            `,
+            { currentNodeId: queryParams.nodeId, props: props, parentId: queryParams.parentId }).then(result => result.records.map(i => i.get('output'))));
+          const addRelation = await session.executeWrite(tx =>
+            tx.run(`
+              MATCH (a)
+                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $newNodeId)
+              MATCH (b)
+                WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
+              OPTIONAL MATCH (a)-[r]->(b)
+              WITH *, coalesce(r) as r1
+              CALL apoc.do.when(r1 IS NOT NULL,
+                'MATCH (a)-[r WHERE type(r) = $relN]->(b) SET r.isActive = true, r.startDate = $startDate, r.endDate ="" RETURN r',
+                'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
+                {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
+              RETURN apoc.convert.toJson(value) AS output`,
+            { newNodeId: newNodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+          return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation[0].toString())}]);
       } else {
         console.log("--------------Node Does Not Exist In Hierarchy---------------------");
         const addNewRelation = await session.executeWrite(tx =>
