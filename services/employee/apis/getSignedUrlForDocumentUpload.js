@@ -1,7 +1,7 @@
 import { internalServer, forbiddenRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
-import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { s3SignedUrlForDocuments } from "../../utilities/s3Utils/s3SignedUrlForDocuments";
 import { devLogger, errorLogger } from "../utils/log-helper";
 export const getSignedUrlForDocumentUpload = async (event) => {
     try {

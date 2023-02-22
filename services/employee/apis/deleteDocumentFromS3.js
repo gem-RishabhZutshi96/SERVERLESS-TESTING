@@ -4,7 +4,7 @@ import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
 import { devLogger, errorLogger } from "../utils/log-helper";
 import * as mongoose from 'mongoose';
-import { s3SignedUrlForDocuments } from "../../utilities/s3SignedUrl/s3SignedUrlForDocuments";
+import { s3SignedUrlForDocuments } from "../../utilities/s3Utils/s3SignedUrlForDocuments";
 export const deleteDocumentFromS3 = async (event) => {
     try {
         devLogger("deleteDocumentFromS3", event, "event");
