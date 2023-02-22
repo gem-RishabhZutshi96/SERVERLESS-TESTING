@@ -26,10 +26,10 @@ export const verifyData = async (event) => {
         `,{nodeData: nodeData});
         return result.records.map(record => record.get('nIds'));
       });
-      const results = nodeData.filter(item1 => !allNodeIds.some(item2 => (item2.nodeID === item1.nodeID && item2.nodeParentID === item1.nodeParentID)));
       if(allNodeIds.length == nodeData.length){
         return successResponse("Data Validation is Successfull", []);
       }
+      const results = nodeData.filter(item1 => !allNodeIds.some(item2 => (item2.nodeID === item1.nodeID && item2.nodeParentID === item1.nodeParentID)));
       return failResponse('Data contains IDs which are non existent in DB', 500, results);
     } catch (err) {
       errorLogger("verifyData ", err);

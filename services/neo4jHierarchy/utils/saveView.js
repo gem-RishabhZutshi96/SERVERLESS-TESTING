@@ -71,7 +71,7 @@ export const saveViewToS3 = async (event) => {
             //     Key: fileName,
             //     Expires: 3600
             // });
-            return successResponse("Current view hierarchy uploded successfully to S3");
+            return successResponse("Current view hierarchy uploded successfully to S3", upload);
         }
         return badRequest("Invalid relation name");
     } catch (err) {
