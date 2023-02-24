@@ -51,7 +51,7 @@ export const fetchEmployeeHierarchy = async(event) => {
       return internalServer(`Error in DB `);
   }
 };
-const flatten = (array) => array.flatMap(({Designation, ManagerCode, EmployeeCode, EmployeeName, ImagePath, children}) => [
-  { Designation, ManagerCode, EmployeeCode, EmployeeName, ImagePath },
+const flatten = (array) => array.flatMap(({description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, EmployeeName, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId, children}) => [
+  { description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, EmployeeName, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId },
   ...flatten(children || [])
 ]);
