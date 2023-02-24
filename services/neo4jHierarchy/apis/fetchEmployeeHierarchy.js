@@ -28,8 +28,9 @@ export const fetchEmployeeHierarchy = async(event) => {
             success: resp.success,
             message: resp.message,
             data: {
-              hierarchyData: Object.assign(obj, ),
-              nodeData: [obj]
+              hierarchyData: obj,
+              nodesData: [obj],
+              rootNodeData: [obj]
             }
           };
           return response;
@@ -39,7 +40,8 @@ export const fetchEmployeeHierarchy = async(event) => {
           message: resp.message,
           data: {
             hierarchyData: resp.data,
-            nodeData: nodes
+            nodesData: nodes,
+            rootNodeData: nodes[0]
           }
         };
         return response;
