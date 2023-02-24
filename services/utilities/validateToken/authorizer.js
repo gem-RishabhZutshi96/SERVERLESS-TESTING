@@ -41,6 +41,10 @@ export const accessDeniedToSource = async(event) => {
         };
       }
     }
+    return {
+      access: "allowed",
+      userEmail: decode.email
+    };
   } catch (err) {
     console.log(err);
   }
@@ -64,6 +68,10 @@ export const accessAllowedToSource = async (event) => {
         };
       }
     }
+    return {
+      access: "denied",
+      userEmail: decode.email
+    };
   } catch (err) {
     console.log(err);
   }

@@ -17,7 +17,7 @@ export const getEmployeeForDirectory = async(event) => {
         deniedSources:['gemini']
       };
       const auth = await accessDeniedToSource(authQuery);
-      if( auth.access !=="denied"){
+      if(auth.access!=="denied"){
         let pageNo = String(event.query.pageNo);
         let perPage = String(event.query.perPage);
         let pattern = String(event.query.pattern);
@@ -31,7 +31,7 @@ export const getEmployeeForDirectory = async(event) => {
       }
     } catch(err) {
       errorLogger("getEmployeeForDirectory", err, "Error db call");
-      return internalServer(`Error in DB `);
+      throw internalServer(`Error in DB `, err);
     }
 };
 async function getEmployeeForDirectoryResponse(query) {
@@ -66,7 +66,7 @@ async function getEmployeeForDirectoryResponse(query) {
     return {
       data: {
         employees,
-        count,
+        count
       },
       success: true,
       message: 'Employees fetched',
