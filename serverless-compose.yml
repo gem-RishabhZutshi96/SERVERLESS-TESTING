@@ -1,0 +1,11 @@
+services:
+  auth:
+    path: services/auth
+  core:
+    path: services/core
+  misc:
+    path: services/misc
+  employee:
+    path: services/employee
+  neo4jHierarchy:
+    path: services/neo4jHierarchy
