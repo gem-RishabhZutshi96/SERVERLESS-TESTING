@@ -5,7 +5,12 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "sls offline start"
+    "dev": "sls offline start --stage dev",
+    "beta": "sls offline start --stage beta",
+    "prod": "sls offline start --stage prod",
+    "deploy-dev": "sls deploy --stage dev",
+    "deploy-beta": "sls deploy --stage beta",
+    "deploy-prod": "sls deploy --stage prod"
   },
   "author": "******MANISH KUMAR PANDEY******",
   "license": "ISC",
