@@ -1,5 +1,5 @@
 import { parameterStore } from "../../utilities/config/commonData";
-import { successResponse, internalServer, badRequest } from "../../utilities/response/index";
+import { internalServer, badRequest } from "../../utilities/response/index";
 import { accessDeniedToSource } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
@@ -53,7 +53,7 @@ export const getEmployeesForSource = async(event) => {
           return getEmployeeResponseObject(empObj, id, parentId);
         });
         const root = getEmployeeResponseObject(rootData.toObject(), id, parentId);
-        return successResponse("Data Fetched Successfully",{ Result: { employees, root } });
+        return { Result: { employees, root }};
       } else {
         return "❌❌User is not authorized to access this resource";
       }
