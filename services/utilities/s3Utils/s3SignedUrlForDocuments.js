@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 import { parameterStore } from "../config/commonData";
-import moment from 'moment';
 export const s3SignedUrlForDocuments = async(s3Case, data) => {
     const s3 = new AWS.S3();
     const sowBucket = parameterStore[process.env.stage].s3Params.sowBucket;
@@ -15,7 +14,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
             let { type, key, officialID, name, pimcoId } = data;
             let fileName = '';
             if (type == 'application/pdf') {
-                let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+                let timestamp = new Date().toISOString();
                 if (pimcoId) {
                     fileName = key.split('/').join('') + '_' + pimcoId + '_' + timestamp + '.pdf';
                 } else {
@@ -23,7 +22,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
                 }
             }
             if (type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+                let timestamp = new Date().toISOString();
                 if (pimcoId) {
                     fileName = key.split('/').join('') + '_' + pimcoId + '_' + timestamp + '.docx';
                 } else {
@@ -31,7 +30,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
                 }
             }
             if (type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+                let timestamp = new Date().toISOString();
                 fileName = key.split('/').join('') + '_' + timestamp + '.xlsx';
             }
             let Name = toPascalCase(name);
@@ -96,7 +95,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
         case 'getSignedUrlForImageUpload': {
             let { type, key, officialID, name, pimcoId } = data;
             let fileName = '';
-            let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+            let timestamp = new Date().toISOString();
             if (pimcoId) {
                 fileName = key.split('/').join('') + '_' + pimcoId + '_' + timestamp + '.jpg';
             } else {
