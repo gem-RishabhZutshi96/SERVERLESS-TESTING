@@ -76,3 +76,8 @@ functions:
               Access-Control-Allow-Origin: "'*'"
           cors: true
           integration: lambda
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "lambda:InvokeFunction"
+        Resource: "*" 
