@@ -141,7 +141,7 @@ export const parameterStore = {
           accessKeyId: 'AKIATR4FIY7IJPVT755G',
           secretAccessKey: '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',
           region: 'ap-south-1',
-          sowBucket:'gemini-docs',
+          orgchartS3Bucket:'gemini-docs',
           signatureVersion:'v4'
         },
         misapi: {
