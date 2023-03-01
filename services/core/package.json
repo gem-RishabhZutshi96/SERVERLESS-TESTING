@@ -5,7 +5,12 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "sls offline start"
+    "dev": "sls offline start --stage dev",
+    "beta": "sls offline start --stage beta",
+    "prod": "sls offline start --stage prod",
+    "deploy-dev": "sls deploy --stage dev",
+    "deploy-beta": "sls deploy --stage beta",
+    "deploy-prod": "sls deploy --stage prod"
   },
   "author": "******MANISH KUMAR PANDEY******",
   "license": "ISC",
@@ -16,7 +21,6 @@
   "dependencies": {
     "aws-sdk": "^2.1267.0",
     "axios": "^0.27.2",
-    "bluebird": "^3.7.2",
     "crypto-random-string": "^5.0.0",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
