@@ -7,7 +7,6 @@ import { devLogger, errorLogger } from "../../utils/log-helper";
 import {getDataService} from "../../externalCall/getDataService";
 import { main } from "../../neo4j-handler/index";
 import { parameterStore } from "../../../utilities/config/commonData";
-import moment from 'moment';
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 s3.config.update({
@@ -58,7 +57,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "ECTech": emp["ECTech"] ? emp["ECTech"] : "",
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
-          "createdAt": moment().format(),
+          "createdAt": new Date().toISOString(),
           "createdBy": auth.userEmail,
           "updatedAt": "",
           "updatedBy": "",
@@ -81,7 +80,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "ECTech": emp["ECTech"] ? emp["ECTech"] : "",
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
-          "updatedAt": moment().format(),
+          "updatedAt": new Date().toISOString(),
           "updatedBy": auth.userEmail,
         });
       }
@@ -113,7 +112,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "ECTech": emp["ECTech"] ? emp["ECTech"] : "",
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
-          "updatedAt": moment().format(),
+          "updatedAt": new Date().toISOString(),
           "updatedBy": auth.userEmail,
         });
       }
@@ -165,7 +164,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       //     'updateNode': updateNode
       //   }
       // ));
-      // timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+      // timestamp = new Date().toISOString();
       // fileName = `json/${timestamp}--createOrUpdateNode.json`;
       // data = {
       //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
@@ -194,13 +193,13 @@ export const syncEmpMasterWithMIS = async(event) => {
     if(deleteArray.length >= 1) {
       await employeeMasterModel.remove.findOneAndUpdate(
         { EmailId: { $in: deleteArray } },
-        { $set: { 'isActive' : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
         {upsert: false}
       );
       // await employeeMasterModel.remove({ EmailId: { $in: deleteArray } });
       // buf = Buffer.from(JSON.stringify(
       //   {'deleteNode': deleteArray}));
-      // timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+      // timestamp = new Date().toISOString();
       // fileName = `json/${timestamp}--deleteNode.json`;
       // data = {
       //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,

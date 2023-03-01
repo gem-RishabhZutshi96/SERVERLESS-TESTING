@@ -1,7 +1,6 @@
 import { internalServer, forbiddenRequest, successResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
-import moment from 'moment';
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { exportExcelDataProjectMaster } from "../../utils/exportExcel";
 export const exportExcelProjectMaster = async (event) => {
@@ -17,7 +16,7 @@ export const exportExcelProjectMaster = async (event) => {
         if ( auth.access !== "allowed") {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
-        let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+        let timestamp = new Date().toISOString();
         const excelFilePath = await exportExcelDataProjectMaster('excels' + '/' + timestamp + '--' +`ProjectMasterTable.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
