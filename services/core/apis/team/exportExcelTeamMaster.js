@@ -17,7 +17,7 @@ export const exportExcelTeamMaster = async (event) => {
             return forbiddenRequest("❌❌  User is not allowed to access the data");
         }
         let timestamp = new Date().toISOString();
-        const excelFilePath = await exportExcelDataTeamMaster('excels' + '/' + timestamp + '--' +`EmpMasterTable.xlsx`);
+        const excelFilePath = await exportExcelDataTeamMaster(`excels/${timestamp}__EmpMasterTable.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelTeamMaster", err, "Error db call");

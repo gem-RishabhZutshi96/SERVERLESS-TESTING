@@ -23,7 +23,7 @@ export const exportExcelHierarchy = async (event) => {
         const sourceViews = await viewModel.find({ 'name': { '$regex': source, '$options': 'i' } });
         if(sourceViews.length >= 1){
             let timestamp = new Date().toISOString();
-            const resp = await exportHierarchyExcel({'fileName': 'hierarchyExcels' + '/' + timestamp + '--' +`${sourceViews[0].name}.xlsx`, 'relationName': sourceViews[0].relationName});
+            const resp = await exportHierarchyExcel({'fileName': `hierarchyExcels/${timestamp}__${sourceViews[0].name}.xlsx`, 'relationName': sourceViews[0].relationName});
             return resp;
         } else {
             return badRequest("Invalid path parameters");

@@ -28,7 +28,7 @@ export const exportExcelOfEmployees = async (event) => {
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         let timestamp = new Date().toISOString();
-        const excelFilePath = await exportExcelDataOfEmployees('excels',  'excels' + '/' + timestamp + '--' +`hierarchy-downloaded.xlsx`);
+        const excelFilePath = await exportExcelDataOfEmployees('excels', `excels/${timestamp}__hierarchy-downloaded.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelOfEmployees", err, "Error db call");
