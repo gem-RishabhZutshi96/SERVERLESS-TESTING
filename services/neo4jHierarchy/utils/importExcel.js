@@ -9,18 +9,17 @@ export const readExcelData = async (event) => {
           workbook.Sheets[workbook.SheetNames[0]]
         );
         const response = jsonRows.map(async emp => {
-           return await getNodeObject(emp);
+           return getNodeObject(emp);
         });
         const nodes = await Promise.all(response);
         return nodes;
     } catch (e) {
-        console.log(e);
         errorLogger("readExcelData",e,"Error in reading excel");
         throw e;
     }
 };
 
-async function getNodeObject(nodeData){
+function getNodeObject(nodeData){
     return JSON.parse(
         JSON.stringify(
             {
