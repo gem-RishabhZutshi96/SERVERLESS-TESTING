@@ -2,7 +2,6 @@ import { makeNeo4jDBConnection } from "../../../utilities/db/neo4j";
 import { parameterStore } from "../../../utilities/config/commonData";
 import { badRequest, internalServer, successResponse } from "../../../utilities/response";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-import moment from 'moment';
 import cryptoRandomString from 'crypto-random-string';
 export const addNode = async (event) => {
   try {
@@ -47,7 +46,7 @@ export const addNode = async (event) => {
             WITH r
             SET r.isActive = false,
                 r.endDate = $endDate
-            RETURN apoc.convert.toJson(r) AS output`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: moment().format()}).then(result => result.records.map(i => i.get('output'))));
+            RETURN apoc.convert.toJson(r) AS output`, { nodeId: queryParams.nodeId, parentId: queryParams.parentId, endDate: new Date().toISOString()}).then(result => result.records.map(i => i.get('output'))));
         const addNewRelation = await session.executeWrite(tx =>
           tx.run(`
             MATCH (a)
@@ -61,7 +60,7 @@ export const addNode = async (event) => {
               'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
               {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
             RETURN apoc.convert.toJson(value) AS output`,
-            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+            { nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: new Date().toISOString(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
           if(removeExistingRelation.length < 1){
             return badRequest('Node Does Not Exist In Hierarchy');
           }
@@ -77,7 +76,7 @@ export const addNode = async (event) => {
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel
             SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
-          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: new Date().toISOString(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
       }
     } else {
@@ -168,7 +167,7 @@ export const addDuplicateNode = async (event) => {
                 'CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel) RETURN rel',
                 {a:a, b:b, startDate:$startDate, relN:$rel}) YIELD value
               RETURN apoc.convert.toJson(value) AS output`,
-            { newNodeId: newNodeId, parentId: queryParams.parentId, startDate: moment().format(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+            { newNodeId: newNodeId, parentId: queryParams.parentId, startDate: new Date().toISOString(), rel: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
           return successResponse('Node Added Successfully In Hierarchy', [{addRelation:JSON.parse(addRelation[0].toString())}]);
       } else {
         console.log("--------------Node Does Not Exist In Hierarchy---------------------");
@@ -180,7 +179,7 @@ export const addDuplicateNode = async (event) => {
               WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(b[k]) = $parentId)
             CALL apoc.create.relationship(a, $relN, {isActive:true, startDate:$startDate, endDate:""}, b) YIELD rel SET rel.rIndex = id(rel)
             RETURN apoc.convert.toJson(rel) AS output
-          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: moment().format(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
+          `,{ nodeId: queryParams.nodeId, parentId: queryParams.parentId, startDate: new Date().toISOString(), relN: queryParams.relationName }).then(result => result.records.map(i => i.get('output'))));
         return successResponse('Node Added Successfully In Hierarchy', [{addNewRelation: JSON.parse(addNewRelation.toString())}]);
       }
     } else {
@@ -225,7 +224,7 @@ export const deleteNode = async (event) => {
             {a:a, b:b, startDate:$startDate, relN:$relation}) YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format(), startDate: moment().format(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
+        { nodeId: queryParams.nodeId, endDate: new Date().toISOString(), startDate: new Date().toISOString(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }
@@ -242,7 +241,7 @@ export const deleteNode = async (event) => {
           YIELD value
           RETURN apoc.convert.toJson(value) AS output
         `,
-        { nodeId: queryParams.nodeId, endDate: moment().format(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
+        { nodeId: queryParams.nodeId, endDate: new Date().toISOString(), relation: queryParams.relationName }).then(result => result.records.map(i => i.get('output')));
         if(resp.length < 1){
           return badRequest('Invalid Node Found');
         }

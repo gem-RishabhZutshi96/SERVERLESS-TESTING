@@ -5,7 +5,6 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
-import moment from "moment";
 import { teamModel } from "../../../utilities/dbModels/team";
 import { projectModel } from "../../../utilities/dbModels/project";
 import { employeeMasterModel } from "../../../utilities/dbModels/employeeMaster";
@@ -24,8 +23,11 @@ export const createOrUpdateView = async(event) => {
         return auth;
       }
       if(event.body.viewId){
+        // if(event.body.type == null || event.body.name == null || event.body.relationName == null || event.body.rootId == null){
+        //   return badRequest("Body parameters cannot be null");
+        // }
         if(!event.body.updatedAt && !event.body.updatedBy){
-          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let updateObj = Object.assign(event.body, {'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail});
           let result = await viewModel.findOneAndUpdate(
             {
               viewId: event.body.viewId
@@ -76,7 +78,7 @@ export const createOrUpdateView = async(event) => {
           relationName: event.body.relationName,
           viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
           isActive: true,
-          createdAt: moment().format(),
+          createdAt: new Date().toISOString(),
           createdBy: auth.userEmail,
           updatedAt: "",
           updatedBy: ""

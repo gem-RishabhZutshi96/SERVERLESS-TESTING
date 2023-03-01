@@ -4,7 +4,6 @@ import { internalServer, successResponse, failResponse } from "../../../utilitie
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
-import moment from "moment";
 export const deleteView = async(event) => {
     try{
       devLogger("deleteView", event, "event");
@@ -22,7 +21,7 @@ export const deleteView = async(event) => {
       const viewId = event.path.id;
       const obj = await viewModel.findOneAndUpdate(
         { viewId: { $eq: viewId } },
-        { $set: { "isActive" : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        { $set: { "isActive" : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
         {upsert: false}
       );
       if (obj) {

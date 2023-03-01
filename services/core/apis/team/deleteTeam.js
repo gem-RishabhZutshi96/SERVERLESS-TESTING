@@ -5,7 +5,6 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
-import moment from "moment";
 export const deleteTeam = async(event) => {
     try{
       devLogger("deleteTeam", event, "event");
@@ -23,7 +22,7 @@ export const deleteTeam = async(event) => {
       const teamId = event.path.id;
       const obj = await teamModel.findOneAndUpdate(
         { teamId: { $eq: teamId } },
-        { $set: { 'isActive' : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
         {upsert: false}
       );
       if (obj) {
@@ -31,7 +30,7 @@ export const deleteTeam = async(event) => {
           actionType: 'deleteTeamNeo4j',
           node: {
             'id': teamId,
-            'updatedAt': moment().format(),
+            'updatedAt': new Date().toISOString(),
             'updatedBy': auth.userEmail,
           }
         });

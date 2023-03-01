@@ -6,7 +6,6 @@ import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import cryptoRandomString from 'crypto-random-string';
 import { main } from "../../neo4j-handler/index";
-import moment from "moment";
 export const createOrUpdateTeam = async(event) => {
     try{
       devLogger("createOrUpdateTeam", event, "event");
@@ -23,7 +22,7 @@ export const createOrUpdateTeam = async(event) => {
       }
       if(event.body.teamId){
         if(!event.body.updatedAt && !event.body.updatedBy){
-          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let updateObj = Object.assign(event.body, {'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail});
           let result = await teamModel.findOneAndUpdate(
             {
               teamId: event.body.teamId
@@ -42,7 +41,7 @@ export const createOrUpdateTeam = async(event) => {
                 'description': event.body.description ? event.body.description : result.description,
                 'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
                 'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
-                'updatedAt': moment().format(),
+                'updatedAt': new Date().toISOString(),
                 'updatedBy': auth.userEmail
               }
             });
@@ -61,7 +60,7 @@ export const createOrUpdateTeam = async(event) => {
           description: event.body.description,
           teamId: 'T_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
           isActive: true,
-          createdAt: moment().format(),
+          createdAt: new Date().toISOString(),
           createdBy: auth.userEmail,
           updatedAt: "",
           updatedBy: ""
@@ -73,7 +72,7 @@ export const createOrUpdateTeam = async(event) => {
             'name': event.body.name,
             'description': event.body.description,
             'isActive': true,
-            'createdAt': moment().format(),
+            'createdAt': new Date().toISOString(),
             'createdBy': auth.userEmail,
             'updatedAt': "",
             'updatedBy': ""

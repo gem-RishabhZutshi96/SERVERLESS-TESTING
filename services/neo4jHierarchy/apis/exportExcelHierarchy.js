@@ -5,7 +5,6 @@ import { devLogger, errorLogger } from "../utils/log-helper";
 import { exportHierarchyExcel } from "../utils/exportExcel";
 import { makeDBConnection } from "../../utilities/db/mongo";
 import { viewModel } from "../../utilities/dbModels/view";
-import moment from 'moment';
 export const exportExcelHierarchy = async (event) => {
     try {
         devLogger("exportExcelHierarchy", event, "event");
@@ -23,7 +22,7 @@ export const exportExcelHierarchy = async (event) => {
         let source = event.path.source || event.pathParameters.source;
         const sourceViews = await viewModel.find({ 'name': { '$regex': source, '$options': 'i' } });
         if(sourceViews.length >= 1){
-            let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+            let timestamp = new Date().toISOString();
             const resp = await exportHierarchyExcel({'fileName': 'hierarchyExcels' + '/' + timestamp + '--' +`${sourceViews[0].name}.xlsx`, 'relationName': sourceViews[0].relationName});
             return resp;
         } else {

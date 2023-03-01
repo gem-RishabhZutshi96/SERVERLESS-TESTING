@@ -6,7 +6,6 @@ import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
 import cryptoRandomString from 'crypto-random-string';
-import moment from "moment";
 export const createOrUpdateProject = async(event) => {
     try{
       devLogger("createOrUpdateProject", event, "event");
@@ -23,7 +22,7 @@ export const createOrUpdateProject = async(event) => {
       }
       if(event.body.projectId){
         if(!event.body.updatedAt && !event.body.updatedBy){
-          let updateObj = Object.assign(event.body, {'updatedAt': moment().format(), 'updatedBy': auth.userEmail});
+          let updateObj = Object.assign(event.body, {'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail});
           let result = await projectModel.findOneAndUpdate(
             { projectId: { $eq: event.body.projectId },
               isActive: true,
@@ -42,7 +41,7 @@ export const createOrUpdateProject = async(event) => {
                 'description': event.body.description ? event.body.description : result.description,
                 'createdAt': event.body.createdAt ? event.body.createdAt : result.createdAt,
                 'createdBy': event.body.createdBy ? event.body.createdBy : result.createdBy,
-                'updatedAt': moment().format(),
+                'updatedAt': new Date().toISOString(),
                 'updatedBy': auth.userEmail
               }
             });
@@ -61,7 +60,7 @@ export const createOrUpdateProject = async(event) => {
           description: event.body.description,
           projectId: 'P_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
           isActive: true,
-          createdAt: moment().format(),
+          createdAt: new Date().toISOString(),
           createdBy: auth.userEmail,
           updatedAt: "",
           updatedBy: ""
@@ -73,7 +72,7 @@ export const createOrUpdateProject = async(event) => {
             'name': event.body.name,
             'description': event.body.description,
             'isActive': true,
-            'createdAt': moment().format(),
+            'createdAt': new Date().toISOString(),
             'createdBy': auth.userEmail,
             'updatedAt': "",
             'updatedBy': ""

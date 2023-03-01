@@ -7,7 +7,6 @@ import { devLogger, errorLogger } from "../utils/log-helper";
 import * as json2xls from 'json2xls';
 import AWS from 'aws-sdk';
 import { parameterStore } from "../../utilities/config/commonData";
-import moment from 'moment';
 const s3 = new AWS.S3();
 export const exportExcelOfEmployees = async (event) => {
     try {
@@ -28,7 +27,7 @@ export const exportExcelOfEmployees = async (event) => {
             region: parameterStore[process.env.stage].s3Params.region,
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
-        let timestamp = moment().format('DD-MM-YYYY_HH:mm:ss');
+        let timestamp = new Date().toISOString();
         const excelFilePath = await exportExcelDataOfEmployees('excels',  'excels' + '/' + timestamp + '--' +`hierarchy-downloaded.xlsx`);
         return successResponse("👍👍Excel Exported Successfully", excelFilePath);
     } catch (err) {

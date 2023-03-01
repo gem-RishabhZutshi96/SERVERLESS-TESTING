@@ -5,7 +5,6 @@ import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
 import { main } from "../../neo4j-handler/index";
-import moment from "moment";
 export const deleteProject = async(event) => {
     try{
       devLogger("deleteProject", event, "event");
@@ -23,7 +22,7 @@ export const deleteProject = async(event) => {
       const projectId = event.path.id;
       const obj = await projectModel.findOneAndUpdate(
         { projectId: { $eq: projectId } },
-        { $set: { 'isActive' : false, 'updatedAt': moment().format(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
         {upsert: false}
       );
       if (obj) {
@@ -31,7 +30,7 @@ export const deleteProject = async(event) => {
           actionType: 'deleteProjectNeo4j',
           node: {
             'id': projectId,
-            'updatedAt': moment().format(),
+            'updatedAt': new Date().toISOString(),
             'updatedBy': auth.userEmail,
           }
         });
