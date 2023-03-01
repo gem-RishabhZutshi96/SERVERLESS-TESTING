@@ -8,7 +8,7 @@ export const readExcelData = async (event) => {
         const jsonRows = XLSX.utils.sheet_to_json(
           workbook.Sheets[workbook.SheetNames[0]]
         );
-        const response = jsonRows.map(async emp => {
+        const response = jsonRows.map(emp => {
            return getNodeObject(emp);
         });
         const nodes = await Promise.all(response);
