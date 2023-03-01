@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import { parameterStore } from "../config/commonData";
 export const s3SignedUrlForDocuments = async(s3Case, data) => {
     const s3 = new AWS.S3();
-    const sowBucket = parameterStore[process.env.stage].s3Params.sowBucket;
+    const orgchartS3Bucket = parameterStore[process.env.stage].s3Params.orgchartS3Bucket;
     s3.config.update({
         accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
         secretAccessKey: parameterStore[process.env.stage].s3Params.secretAccessKey,
@@ -41,7 +41,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
                 s3Key = officialID + '-' + Name + '/' + fileName;
             }
             let params = {
-                Bucket: sowBucket,
+                Bucket: orgchartS3Bucket,
                 Key: s3Key,
                 Expires: 3000,
                 ContentType: type,
@@ -63,7 +63,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
         case 'getSignedUrlForRetrieve': {
             let { key } = data;
             let params = {
-                Bucket: sowBucket,
+                Bucket: orgchartS3Bucket,
                 Key: key
             };
             try {
@@ -81,7 +81,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
             let empObject = data;
             let key = empObject.Documents.path;
             let params = {
-                Bucket: sowBucket,
+                Bucket: orgchartS3Bucket,
                 Key: key
             };
             try {
@@ -104,7 +104,7 @@ export const s3SignedUrlForDocuments = async(s3Case, data) => {
             let Name = toPascalCase(name);
             let s3Key = officialID + '-' + Name + '/' + fileName;
             let params = {
-                Bucket: sowBucket,
+                Bucket: orgchartS3Bucket,
                 Key: s3Key,
                 Expires: 3000,
                 ContentType: type,

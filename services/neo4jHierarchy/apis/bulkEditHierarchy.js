@@ -33,7 +33,7 @@ export const bulkEditHierarchy = async(event) => {
           signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
       });
       const params = {
-        Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+        Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
         Key: key,
       };
       const file = await s3.getObject(params).promise();

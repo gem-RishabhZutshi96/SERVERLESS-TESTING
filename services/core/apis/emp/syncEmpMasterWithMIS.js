@@ -167,7 +167,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       // timestamp = new Date().toISOString();
       // fileName = `json/${timestamp}--createOrUpdateNode.json`;
       // data = {
-      //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
       //   Key: fileName,
       //   ContentType: 'application/json',
       //   Body: buf
@@ -176,7 +176,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       // await s3.upload(data).promise();
       // console.log("---- GETTING SIGNED URL FROM S3 ----");
       // let downloadURL = s3.getSignedUrl("getObject",{
-      //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
       //   Key: fileName,
       //   Expires: 3600
       // });
@@ -202,7 +202,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       // timestamp = new Date().toISOString();
       // fileName = `json/${timestamp}--deleteNode.json`;
       // data = {
-      //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
       //   Key: fileName,
       //   ContentType: 'application/json',
       //   Body: buf
@@ -211,7 +211,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       // await s3.upload(data).promise();
       // console.log("---- GETTING SIGNED URL FROM S3 ----");
       // let downloadURL = s3.getSignedUrl("getObject",{
-      //   Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
       //   Key: fileName,
       //   Expires: 3600
       // });

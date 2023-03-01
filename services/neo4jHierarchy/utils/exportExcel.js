@@ -38,13 +38,13 @@ export const exportHierarchyExcel = async (event) => {
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         await uploadToS3({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             Expires: 3600
         });

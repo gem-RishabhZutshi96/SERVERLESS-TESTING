@@ -19,13 +19,13 @@ export const exportExcelDataEmpMaster = async (fileName) => {
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         await uploadToS3({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             Expires: 3600
         });
@@ -50,13 +50,13 @@ export const exportExcelDataProjectMaster = async (fileName) => {
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         await uploadToS3({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             Expires: 3600
         });
@@ -81,13 +81,13 @@ export const exportExcelDataTeamMaster = async (fileName) => {
             signatureVersion: parameterStore[process.env.stage].s3Params.signatureVersion
         });
         await uploadToS3({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             Expires: 3600
         });

@@ -42,13 +42,13 @@ async function exportExcelDataOfEmployees(directory, fileName) {
         const xls = json2xls(employees.map(emp => getEmployeeJSONForExcel(emp)));
         const buffer = Buffer.from(xls, 'binary');
         await uploadToS3({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             ContentType: 'application/vnd.ms-excel',
             Body: buffer
         });
         let downloadURL = await getS3SignedUrl({
-            Bucket: parameterStore[process.env.stage].s3Params.sowBucket,
+            Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
             Key: fileName,
             Expires: 3600
         });
