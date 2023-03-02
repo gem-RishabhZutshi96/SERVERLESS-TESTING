@@ -12,6 +12,21 @@ export const verifyData = async (event) => {
       if(!nodeData || nodeData.length < 1){
         return badRequest("Invalid Data Recieved");
       }
+      let countOfROOT=0;
+      () => nodeData.map((emp) => {
+        if(emp.nodeID==='ROOT'){
+          return badRequest('Excel contains ROOT value in ID field');
+        }
+        if(emp.nodeParentID===emp.nodeID){
+          return badRequest('Node ID and Parent Node ID cannot be same');
+        }
+        if(emp.nodeParentID===event.rootNodeID){
+          countOfROOT++;
+        }
+      });
+      if(countOfROOT===0){
+        return badRequest('Excel does not contain ROOT in Parent ID field');
+      }
       const allNodeIds = await session.executeRead(async tx => {
         const result = await tx.run(`
           UNWIND $nodeData as emp
