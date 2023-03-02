@@ -123,7 +123,7 @@ export const addDuplicateNode = async (event) => {
         return result.records.map(record => record.get('r'));
       });
       if(duplicateRel.length >= 1){
-        return badRequest('An active relation of same type already exists between between current node and parent node');
+        return badRequest('An active relation of same type already exists between current node and parent node');
       }
       const nodeType = await session.executeRead(async tx => {
         const result = await tx.run(`
