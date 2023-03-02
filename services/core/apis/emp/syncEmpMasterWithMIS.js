@@ -125,11 +125,8 @@ export const syncEmpMasterWithMIS = async(event) => {
     });
     if(createArray.length >= 1){
       // const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
-      createArray.forEach(async emp => {
-        await employeeMasterModel.create(emp);
-      });
       // await bulk.execute();
-      // const resp = await employeeMasterModel.insertMany(createArray);
+      await employeeMasterModel.insertMany(createArray);
     }
     if(updateArray.length >= 1){
       updateArray.forEach(async emp => {
