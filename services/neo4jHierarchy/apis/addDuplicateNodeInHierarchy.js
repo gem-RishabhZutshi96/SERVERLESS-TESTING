@@ -26,6 +26,9 @@ export const addDuplicateNodeInHierarchy = async(event) => {
             const views = await viewModel.find({ 'name': { '$regex': event.body.view, '$options': 'i' } });
             if(views.length >= 1){
                 const { parentId, nodeId } = event.body;
+                if(nodeId===parentId){
+                    return badRequest('Node Id and Parent Id cannot be same');
+                }
                 response = await main({
                     actionType: 'addDuplicateNode',
                     queryParams: {
