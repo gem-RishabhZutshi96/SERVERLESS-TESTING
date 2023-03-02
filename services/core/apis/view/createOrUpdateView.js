@@ -46,7 +46,7 @@ export const createOrUpdateView = async(event) => {
           return badRequest("updatedAt or updatedBy fields are not allowed in request body");
         }
       } else if(!event.body.type || !event.body.name || !event.body.relationName || !event.body.rootId){
-        return badRequest("🤔🤔 Missing body parameters");
+        return badRequest("Missing body parameters");
       } else {
         const sourceViews = await viewModel.find();
         const doc = sourceViews.filter((el) => {

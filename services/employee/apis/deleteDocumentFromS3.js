@@ -19,7 +19,7 @@ export const deleteDocumentFromS3 = async (event) => {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
         if (!event.body.documentId) {
-            return badRequest("🤔🤔 Missing body parameters");
+            return badRequest("Missing body parameters");
         }
         const employeeID = event.path.id;
         const { documentId } = event.body;

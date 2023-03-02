@@ -35,7 +35,7 @@ export const createOrUpdateRole = async(event) => {
             return failResponse('No info found to updated', 404);
         }
       } else if(!(event.body.name || event.body.description)){
-        return badRequest("🤔🤔 Missing body parameters");
+        return badRequest("Missing body parameters");
       } else {
         const docToInsert = {
           name: event.body.name,

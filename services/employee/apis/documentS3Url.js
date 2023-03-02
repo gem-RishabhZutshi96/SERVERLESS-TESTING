@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { internalServer, badRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
@@ -16,10 +16,10 @@ export const documentS3Url = async (event) => {
         };
         let auth = await accessAllowed(authQuery);
         if ( !auth.success) {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+            return auth;
         }
         if (!(event.body.path || event.body.type || event.body.key)) {
-            return badRequest("🤔🤔 Missing body parameters");
+            return badRequest("Missing body parameters");
         }
         const { path, type, key } = event.body;
         const employeeID = event.path.id;

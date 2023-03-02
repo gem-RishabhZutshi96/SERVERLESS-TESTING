@@ -53,7 +53,7 @@ export const createOrUpdateTeam = async(event) => {
           return badRequest("updatedAt or updatedBy fields are not allowed in request body");
         }
       } else if(!(event.body.name || event.body.description)){
-        return badRequest("🤔🤔 Missing body parameters");
+        return badRequest("Missing body parameters");
       } else {
         const docToInsert = {
           name: event.body.name,

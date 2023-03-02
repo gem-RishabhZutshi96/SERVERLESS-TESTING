@@ -17,7 +17,7 @@ export const getSignedUrlForDocumentView = async (event) => {
             return auth;
         }
         if (!event.body.key) {
-            return badRequest("🤔🤔 Missing body parameters");
+            return badRequest("Missing body parameters");
         }
         const { key } = event.body;
         const response = await s3SignedUrlForDocuments('getSignedUrlForRetrieve', { key });

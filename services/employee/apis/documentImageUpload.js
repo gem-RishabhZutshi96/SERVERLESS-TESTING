@@ -17,7 +17,7 @@ export const documentImageUpload = async (event) => {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
         if (!(event.body.key)) {
-            return badRequest("🤔🤔 Missing body parameters");
+            return badRequest("Missing body parameters");
         }
         const { key } = event.body;
         const employeeID = event.path.id;

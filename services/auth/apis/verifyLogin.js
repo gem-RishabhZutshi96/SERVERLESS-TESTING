@@ -8,7 +8,7 @@ export const verifyLogin = async(event) => {
     try {
       devLogger("verifyLogin", event, "event");
       if(!(event.body.accessToken || event.body.email)){
-        return badRequest("🤔🤔 Missing body parameters");
+        return badRequest("Missing body parameters");
       } else {
         const { accessToken, email } = event.body;
         const response = await verifyUser(accessToken, email);
@@ -35,7 +35,7 @@ async function verifyUser(token, msalMail) {
         statusCode:200,
         data: { token, role },
         success: true,
-        message: '😎😎 Verification successful',
+        message: 'Verification successful',
       };
     } else {
       throw new Error('Invalid user');

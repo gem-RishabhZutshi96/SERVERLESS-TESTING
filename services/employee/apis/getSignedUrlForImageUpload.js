@@ -17,7 +17,7 @@ export const getSignedUrlForImageUpload = async (event) => {
             return auth;
         }
         if (!(event.body.type || event.body.key || event.body.officialID || event.body.name || event.body.pimcoId)) {
-            return badRequest("🤔🤔 Missing body parameters");
+            return badRequest("Missing body parameters");
         }
         const { type, key, officialID, name, pimcoId } = event.body;
         // console.log({ type, key, officialID, name, pimcoId });
