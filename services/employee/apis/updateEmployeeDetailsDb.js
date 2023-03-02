@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest } from "../../utilities/response/index";
+import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { updateEmployee } from "../../utilities/misc/updateEmployee";
@@ -13,8 +13,8 @@ export const updateEmployeeDetailsDb = async (event) => {
             allowedFor: ['management_su', 'hr_su']
         };
         let auth = await accessAllowed(authQuery);
-        if ( auth.access !== "allowed") {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+        if ( !auth.success) {
+            return auth;
         }
         const employeeID = event.path.id;
         const newEmployeeData = event.body;

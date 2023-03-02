@@ -15,7 +15,7 @@ export const deleteRoles = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
+      if( !auth.success){
         return auth;
       }
       const email = event.body.email;

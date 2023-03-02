@@ -17,7 +17,7 @@ export const importImages = async(event) => {
         allowedFor: ['management_su', 'hr_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
+      if( !auth.success){
         return auth;
       }
       const data = (await axios.get(`${parameterStore[process.env.stage].misapi.fetchImages}`)).data.Result;
