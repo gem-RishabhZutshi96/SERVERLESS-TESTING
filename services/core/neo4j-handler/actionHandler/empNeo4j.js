@@ -42,7 +42,7 @@ export const createOrUpdateEmpNeo4j = async (event) => {
         WITH emps
         MATCH (a:EMPLOYEE{EmployeeCode:emps.EmployeeCode})
         WITH a, emps
-        SET a.EmployeeName = emps.EmployeeName, 
+        SET a.name = emps.EmployeeName, 
             a.Designation = emps.Designation, 
             a.ImagePath = emps.ImagePath,
             a.ManagerCode = emps.ManagerCode,

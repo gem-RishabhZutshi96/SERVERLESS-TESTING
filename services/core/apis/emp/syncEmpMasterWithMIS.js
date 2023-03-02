@@ -45,7 +45,7 @@ export const syncEmpMasterWithMIS = async(event) => {
         createArray.push({
           "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
           "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
-          "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
+          "name": emp["EmployeeName"] ? emp["EmployeeName"] : "",
           "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
           "Designation": emp["Designation"] ? emp["Designation"] : "",
           "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
@@ -65,7 +65,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       }
       if(element.length >= 1
         && (emp.EmployeeCode != element[0].EmployeeCode ||
-        emp.EmployeeName != element[0].EmployeeName ||
+        emp.EmployeeName != element[0].name ||
         emp.Designation != element[0].Designation ||
         emp.ManagerCode != element[0].ManagerCode ||
         emp.ImagePath != element[0].ImagePath ||
@@ -73,7 +73,7 @@ export const syncEmpMasterWithMIS = async(event) => {
         emp.DCTech != element[0].DCTech)) {
         updateNode.push({
           "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
-          "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
+          "name": emp["EmployeeName"] ? emp["EmployeeName"] : "",
           "Designation": emp["Designation"] ? emp["Designation"] : "",
           "ManagerCode": emp["ManagerCode"] ? emp["ManagerCode"] : "",
           "ImagePath": emp["ImagePath"] ? emp["ImagePath"] : "",
@@ -86,7 +86,7 @@ export const syncEmpMasterWithMIS = async(event) => {
       }
       if(element.length >= 1
         && (emp.EmployeeCode != element[0].EmployeeCode ||
-        emp.EmployeeName != element[0].EmployeeName ||
+        emp.EmployeeName != element[0].name ||
         emp.DepartmentName != element[0].DepartmentName ||
         emp.Designation != element[0].Designation ||
         emp.ReportingManager != element[0].ReportingManager ||
@@ -100,7 +100,7 @@ export const syncEmpMasterWithMIS = async(event) => {
         updateArray.push({
           "EmailId": emp["EmailId"] ? emp["EmailId"] : "",
           "EmployeeCode": emp["EmployeeCode"] ? emp["EmployeeCode"] : "",
-          "EmployeeName": emp["EmployeeName"] ? emp["EmployeeName"] : "",
+          "name": emp["EmployeeName"] ? emp["EmployeeName"] : "",
           "DepartmentName": emp["DepartmentName"] ? emp["DepartmentName"] : "",
           "Designation": emp["Designation"] ? emp["Designation"] : "",
           "ReportingManager": emp["ReportingManager"] ? emp["ReportingManager"] : "",
@@ -138,7 +138,7 @@ export const syncEmpMasterWithMIS = async(event) => {
         const updateDoc = {
           $set: {
             EmployeeCode: emp.EmployeeCode,
-            EmployeeName: emp.EmployeeName,
+            name: emp.EmployeeName,
             DepartmentName: emp.DepartmentName,
             Designation: emp.Designation,
             ReportingManager: emp.ReportingManager,
