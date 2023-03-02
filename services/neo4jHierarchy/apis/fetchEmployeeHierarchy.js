@@ -23,7 +23,7 @@ export const fetchEmployeeHierarchy = async(event) => {
           Object.entries(resp.data.properties).forEach(([key, value]) => {
             Object.assign(obj, {[key]:value});
           });
-          Object.assign(obj, {id: resp.data.id, labels: resp.data.labels, children:[]});
+          Object.assign(obj, {id: resp.data.id, _type: resp.data.labels[0], children:[]});
           let response = {
             success: resp.success,
             message: resp.message,
@@ -53,7 +53,7 @@ export const fetchEmployeeHierarchy = async(event) => {
       return internalServer(`Error in DB `);
   }
 };
-const flatten = (array) => array.flatMap(({description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, name, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId, children}) => [
-  { description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, name, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId },
+const flatten = (array) => array.flatMap(({description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId, children}) => [
+  { description, name, Designation, DCTech, DepartmentName, ECTech, EmailId, EmployeeCode, Experience, ImagePath, Location, MobileNumber, ManagerCode, projectId, ReportingManager, teamId},
   ...flatten(children || [])
 ]);
