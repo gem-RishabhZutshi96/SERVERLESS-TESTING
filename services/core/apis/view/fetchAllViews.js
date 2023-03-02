@@ -24,7 +24,7 @@ export const fetchAllViews = async(event) => {
                     name: document.name,
                     type: document.type,
                     rootId: document.rootId,
-                    rootName : emp[0].EmployeeName,
+                    rootName : emp[0].name,
                     relationName: document.relationName,
                     viewId: document.viewId,
                     isActive: document.isActive,

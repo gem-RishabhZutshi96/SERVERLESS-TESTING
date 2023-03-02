@@ -103,7 +103,7 @@ function getEmpMasterJSON(emp) {
     const data = {
         'Email Id': emp.EmailId,
         'Employee Code': emp.EmployeeCode,
-        'Employee Name': emp.EmployeeName,
+        'Employee Name': emp.name,
         'Department Name': emp.DepartmentName,
         'Designation': emp.Designation,
         'Reporting Manager': emp.ReportingManager,
