@@ -6,6 +6,7 @@ import { devLogger, errorLogger } from "../utils/log-helper";
 import { readExcelData } from "../utils/importExcel";
 import { main } from "../neo4j-handler/index";
 import { parameterStore } from "../../utilities/config/commonData";
+import { viewModel } from "../../utilities/dbModels/view";
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 export const createHierarchy = async(event) => {
@@ -19,12 +20,16 @@ export const createHierarchy = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
+      if( !auth.success){
         return auth;
       }
       const { key } = event.body;
       if(!key){
         return badRequest('Missing Query Parameters');
+      }
+      const sourceView = await viewModel.find({ 'relationName': { '$regex': event.path.relationName, '$options': 'i' } });
+      if(sourceView.length < 1){
+        return badRequest('View does exist for given relation');
       }
       s3.config.update({
           accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,
@@ -47,7 +52,8 @@ export const createHierarchy = async(event) => {
       const resp = await main({
         actionType: 'createHierarchyForExcel',
         nodeData: result,
-        relationName: event.path.relation
+        relationName: event.path.relation,
+        rootNodeID: sourceView[0].rootId
       });
       return resp;
     } catch(err) {
