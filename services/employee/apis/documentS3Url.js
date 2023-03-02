@@ -15,7 +15,7 @@ export const documentS3Url = async (event) => {
             allowedFor: ['management_su', 'hr_su']
         };
         let auth = await accessAllowed(authQuery);
-        if ( auth.access !== "allowed") {
+        if ( !auth.success) {
             return forbiddenRequest("❌❌User is not allowed to access the data");
         }
         if (!(event.body.path || event.body.type || event.body.key)) {

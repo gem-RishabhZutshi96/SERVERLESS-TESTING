@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest, successResponse } from "../../utilities/response/index";
+import { internalServer, successResponse } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
@@ -18,8 +18,8 @@ export const exportExcelOfEmployees = async (event) => {
             allowedFor: ['management_su']
         };
         let auth = await accessAllowed(authQuery);
-        if ( auth.access !== "allowed") {
-            return forbiddenRequest("❌❌  User is not allowed to access the data");
+        if ( !auth.success) {
+            return auth;
         }
         s3.config.update({
             accessKeyId: parameterStore[process.env.stage].s3Params.accessKeyId,

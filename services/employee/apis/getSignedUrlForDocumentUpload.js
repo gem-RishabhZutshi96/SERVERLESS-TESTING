@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest } from "../../utilities/response/index";
+import { internalServer } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { s3SignedUrlForDocuments } from "../../utilities/s3Utils/s3SignedUrlForDocuments";
@@ -13,8 +13,8 @@ export const getSignedUrlForDocumentUpload = async (event) => {
             allowedFor: ['management_su', 'hr_su']
         };
         let auth = await accessAllowed(authQuery);
-        if ( auth.access !== "allowed") {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+        if ( !auth.success) {
+            return auth;
         }
         const { type, key, officialID, name, pimcoId } = event.query || event.queryStringParameters;
         // console.log({ type, key, officialID, name, pimcoId });

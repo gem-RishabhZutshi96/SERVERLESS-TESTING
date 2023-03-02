@@ -1,5 +1,5 @@
 import { parameterStore } from "../../utilities/config/commonData";
-import { internalServer, successResponse, forbiddenRequest } from "../../utilities/response/index";
+import { internalServer, successResponse } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { EmployeeModel } from  "../../utilities/dbModels/employee";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
@@ -15,8 +15,8 @@ export const getEmployeeForDirectoryById = async(event) => {
         allowedFor:['management_su', 'hr_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
-        return forbiddenRequest("❌❌User is not allowed to access the data");
+      if( !auth.success){
+        return auth;
       }
       let employeeID = event.path.id;
       const response = await getEmployeeForDirectoryFromId( employeeID );

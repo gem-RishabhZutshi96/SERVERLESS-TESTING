@@ -17,7 +17,7 @@ export const addDuplicateNodeInHierarchy = async(event) => {
           allowedFor:['management_su']
         };
         let auth= await accessAllowed(authQuery);
-        if( auth.access !=="allowed"){
+        if( !auth.success){
             return auth;
         }
         if(!(event.body.parentId || event.body.nodeId || event.body.view)){

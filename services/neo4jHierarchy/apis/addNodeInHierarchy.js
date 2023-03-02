@@ -17,7 +17,7 @@ export const addNodeInHierarchy = async(event) => {
           allowedFor:['management_su']
         };
         let auth= await accessAllowed(authQuery);
-        if( auth.access !=="allowed"){
+        if( !auth.success){
             return auth;
         }
         if(!(event.body.parentId || event.body.nodeId || event.body.view)){
@@ -26,6 +26,9 @@ export const addNodeInHierarchy = async(event) => {
             const views = await viewModel.find({ 'name': { '$regex': event.body.view, '$options': 'i' } });
             if(views.length >= 1){
                 const { parentId, nodeId } = event.body;
+                if(nodeId===parentId){
+                    return badRequest('Node Id and Parent Id cannot be same');
+                }
                 response = await main({
                     actionType: 'addNode',
                     queryParams: {

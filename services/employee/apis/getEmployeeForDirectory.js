@@ -17,7 +17,7 @@ export const getEmployeeForDirectory = async(event) => {
         deniedSources:['gemini']
       };
       const auth = await accessDeniedToSource(authQuery);
-      if( auth.access !=="denied"){
+      if( auth.success){
         let pageNo = String(event.query.pageNo);
         let perPage = String(event.query.perPage);
         let pattern = String(event.query.pattern);

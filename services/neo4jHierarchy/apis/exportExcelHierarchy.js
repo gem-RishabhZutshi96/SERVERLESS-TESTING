@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { internalServer, badRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../utils/log-helper";
@@ -16,8 +16,8 @@ export const exportExcelHierarchy = async (event) => {
             allowedFor: ['management_su']
         };
         let auth = await accessAllowed(authQuery);
-        if ( auth.access !== "allowed") {
-            return forbiddenRequest("❌❌  User is not allowed to access the data");
+        if ( !auth.success) {
+            return auth;
         }
         let source = event.path.source || event.pathParameters.source;
         const sourceViews = await viewModel.find({ 'name': { '$regex': source, '$options': 'i' } });

@@ -19,7 +19,7 @@ export const bulkEditHierarchy = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
+      if( !auth.success){
         return auth;
       }
       const { key } = event.body;
