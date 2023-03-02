@@ -10,7 +10,7 @@ export const createHierarchyForExcel = async (event) => {
     try {
       devLogger("createHierarchyForExcel", event, "event");
       const nodeData = event.nodeData;
-      const resp = await verifyData({nodeData: nodeData});
+      const resp = await verifyData({nodeData: nodeData, rootNodeID: event.rootNodeID});
       if(resp.success){
         const addRel = await createHierarchyInDB({nodeData: nodeData, relationName: event.relationName});
         return addRel;
