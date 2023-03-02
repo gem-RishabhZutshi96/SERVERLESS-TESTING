@@ -50,7 +50,7 @@ export const createOrUpdateView = async(event) => {
       } else {
         const sourceViews = await viewModel.find();
         const doc = sourceViews.filter((el) => {
-          return generateRegex(el.relationName).test(event.body.relationName) || generateRegex(el.name).test(event.body.name);
+          return el.relationName.toLowerCase()===event.body.relationName.toLowerCase();
         });
         if(doc.length >= 1){
           return badRequest(`Invalid view name or relation name in body parameters. Only unique view name or relation name are allowed.`);
