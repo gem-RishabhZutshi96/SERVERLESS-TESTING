@@ -1,6 +1,7 @@
 import * as jwt from "jsonwebtoken";
 import { getUserRole } from "../misc/getRole";
 import { parameterStore } from "../config/commonData";
+import { successResponse, forbiddenRequest } from "../response";
 export const accessAllowed = async (event) => {
   try {
     const key =  parameterStore[process.env.stage].JWT_SECRET;
@@ -8,15 +9,9 @@ export const accessAllowed = async (event) => {
     let allowedFor = event.allowedFor;
     let userRole = await getUserRole(decode.email);
     if (allowedFor.includes(userRole)) {
-      return {
-        access: "allowed",
-        userEmail: decode.email
-      };
+      return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
     } else {
-      return {
-        access: "denied",
-        userEmail: decode.email
-      };
+      return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
     }
   } catch (err) {
     console.log(err);
@@ -35,16 +30,10 @@ export const accessDeniedToSource = async(event) => {
     let role = await getUserRole(decode.email);
     if ((event.deniedSources).includes(source)) {
       if((event.deniedRoles).includes(role)){
-        return {
-          access: "denied",
-          userEmail: decode.email
-        };
+        return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
       }
     }
-    return {
-      access: "allowed",
-      userEmail: decode.email
-    };
+    return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
   } catch (err) {
     console.log(err);
   }
@@ -62,16 +51,10 @@ export const accessAllowedToSource = async (event) => {
     let role = await getUserRole(decode.email);
     if (event.allowedSources.includes(source)) {
       if(event.allowedRoles.includes(role)){
-        return {
-          access: "allowed",
-          userEmail: decode.email
-        };
+        return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
       }
     }
-    return {
-      access: "denied",
-      userEmail: decode.email
-    };
+    return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
   } catch (err) {
     console.log(err);
   }
