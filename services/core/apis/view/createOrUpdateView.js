@@ -19,7 +19,7 @@ export const createOrUpdateView = async(event) => {
         allowedFor:['management_su']
       };
       let auth= await accessAllowed(authQuery);
-      if( auth.access !=="allowed"){
+      if( !auth.success){
         return auth;
       }
       if(event.body.viewId){
