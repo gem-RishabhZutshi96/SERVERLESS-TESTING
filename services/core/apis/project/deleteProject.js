@@ -1,6 +1,6 @@
 import { makeDBConnection } from "../../../utilities/db/mongo";
 import { projectModel } from "../../../utilities/dbModels/project";
-import { internalServer, failResponse, successResponse } from "../../../utilities/response/index";
+import { internalServer, failResponse } from "../../../utilities/response/index";
 import { accessAllowed } from "../../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../../utilities/validateToken/getUserToken";
 import { devLogger, errorLogger } from "../../utils/log-helper";
@@ -22,19 +22,19 @@ export const deleteProject = async(event) => {
       const projectId = event.path.id;
       const obj = await projectModel.findOneAndUpdate(
         { projectId: { $eq: projectId } },
-        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.data[0].userEmail } },
         {upsert: false}
       );
       if (obj) {
-        await main({
+        const neo4jDBQueryResp = await main({
           actionType: 'deleteProjectNeo4j',
           node: {
             'id': projectId,
             'updatedAt': new Date().toISOString(),
-            'updatedBy': auth.userEmail,
+            'updatedBy': auth.data[0].userEmail,
           }
         });
-        return successResponse('Project Deleted Successfully');
+        return neo4jDBQueryResp;
       } else {
         return failResponse(`Project Not Found`, 404);
       }

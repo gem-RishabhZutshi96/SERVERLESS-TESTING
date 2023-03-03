@@ -29,10 +29,10 @@ export const createOrUpdateRole = async(event) => {
             upsert: false
           }
         );
-        if(result){
-            return successResponse('Role Updated Successfully');
+        if(!result){
+          return failResponse('No info found to updated', 404);
         } else{
-            return failResponse('No info found to updated', 404);
+          return successResponse('Role Updated Successfully');
         }
       } else if(!(event.body.name || event.body.description)){
         return badRequest("Missing body parameters");

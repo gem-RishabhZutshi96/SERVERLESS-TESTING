@@ -65,12 +65,6 @@ export const saveViewToS3 = async (event) => {
                   }
                 });
             });
-            // console.log("---- GETTING SIGNED URL FROM S3 ----");
-            // let downloadURL = s3.getSignedUrl("getObject",{
-            //     Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
-            //     Key: fileName,
-            //     Expires: 3600
-            // });
             return successResponse("Current view hierarchy uploded successfully to S3");
         }
         return badRequest("Invalid relation name");

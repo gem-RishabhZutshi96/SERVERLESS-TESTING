@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { internalServer,  badRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { EmployeeModel } from "../../utilities/dbModels/employee";
@@ -16,7 +16,7 @@ export const deleteDocumentFromS3 = async (event) => {
         };
         let auth = await accessAllowed(authQuery);
         if ( !auth.success) {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+            return auth;
         }
         if (!event.body.documentId) {
             return badRequest("Missing body parameters");
@@ -26,7 +26,6 @@ export const deleteDocumentFromS3 = async (event) => {
         const empObject = await getEmployeeObjectForS3DocumentDelete(documentId);
         await s3SignedUrlForDocuments('deleteDoc', empObject[0]);
         const finalResponse = await deleteEmployeeDocument( employeeID, documentId );
-        // console.log("Deleted from S3", finalResponse);
         return finalResponse;
     } catch (err) {
         errorLogger("deleteDocumentFromS3", err, "Error db call");

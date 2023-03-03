@@ -21,7 +21,7 @@ export const deleteView = async(event) => {
       const viewId = event.path.id;
       const obj = await viewModel.findOneAndUpdate(
         { viewId: { $eq: viewId } },
-        { $set: { "isActive" : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
+        { $set: { "isActive" : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.data[0].userEmail } },
         {upsert: false}
       );
       if (obj) {

@@ -19,7 +19,7 @@ export const getEmployeesForSource = async(event) => {
       let source = event.path.source || event.pathParameters.source;
       const auth = await accessDeniedToSource(authQuery);
       if( auth.success){
-        console.log(`👍👍Find employees for ${ source } hierarchy`);
+        console.log(`Find employees for ${ source } hierarchy`);
         const { id, parentId } = parameterStore[process.env.stage].sourceIds[source];
         const findQueries = {
           employees: {
@@ -55,7 +55,7 @@ export const getEmployeesForSource = async(event) => {
         const root = getEmployeeResponseObject(rootData.toObject(), id, parentId);
         return { Result: { employees, root }};
       } else {
-        return "❌❌User is not authorized to access this resource";
+        return auth;
       }
     } catch(err) {
       errorLogger("getEmployeesForSource", err, "Error db call");

@@ -18,9 +18,9 @@ export const createOrUpdateProjectNeo4j = async (event) => {
         await session.run(`
           CREATE (n:PROJECT {
             projectId:"${event.node.id}", 
-            name:"${event.node.name}", 
+            name:"${event.node.name}",
             description:"${event.node.description}",
-            isActive: "${event.node.isActive}",
+            isActive: true,
             createdAt: "${event.node.createdAt}", 
             createdBy: "${event.node.createdBy}",
             updatedAt: "",
@@ -28,20 +28,18 @@ export const createOrUpdateProjectNeo4j = async (event) => {
           })
           RETURN n
         `);
-        return successResponse('Node Created Successfully');
+        return successResponse('Project Created Successfully');
       } else {
         await session.run(`
-        MATCH (n:PROJECT {projectId:"${event.node.id}"})
-        WITH n
-        SET n.name = "${event.node.name}",
-            n.description ="${event.node.description}"
-            n.createdAt = "${event.node.createdAt}", 
-            n.createdBy = "${event.node.createdBy}",
-            n.updatedAt = "${event.node.updatedAt}",
-            n.updatedBy = "${event.node.updatedBy}"
-        RETURN n
+          MATCH (n:PROJECT {projectId:"${event.node.id}"})
+          WITH n
+          SET n.name = "${event.node.name}",
+              n.description ="${event.node.description}",
+              n.updatedAt = "${event.node.updatedAt}",
+              n.updatedBy = "${event.node.updatedBy}"
+          RETURN n
         `);
-        return successResponse('Node Updated Successfully');
+        return successResponse('Project Updated Successfully');
       }
     } catch (err) {
       errorLogger("createOrUpdateProjectNeo4j ", err);
@@ -60,10 +58,8 @@ export const deleteProjectNeo4j = async (event) => {
       WITH n, r
       SET n.isActive = false,
           n.updatedAt = "${event.node.updatedAt}",
-          n.updatedBy = "${event.node.updatedBy}",
-          r.isActive = false,
-          r.endDate = "${event.node.updatedAt}"`);
-    return successResponse('Node Deleted Successfully');
+          n.updatedBy = "${event.node.updatedBy}"`);
+    return successResponse('Project Deleted Successfully');
   } catch (err) {
     errorLogger("deleteProjectNeo4j ",err);
     throw internalServer(`Error in Deleting Node `);

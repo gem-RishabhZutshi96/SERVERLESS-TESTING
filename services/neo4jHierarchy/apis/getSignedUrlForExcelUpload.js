@@ -1,4 +1,4 @@
-import { internalServer, forbiddenRequest, badRequest } from "../../utilities/response/index";
+import { internalServer, badRequest } from "../../utilities/response/index";
 import { accessAllowed } from "../../utilities/validateToken/authorizer";
 import { getUserToken } from "../../utilities/validateToken/getUserToken";
 import { s3SignedUrlForDocuments } from "../../utilities/s3Utils/s3SignedUrlForDocuments";
@@ -14,7 +14,7 @@ export const getSignedUrlForExcelUpload = async (event) => {
         };
         let auth = await accessAllowed(authQuery);
         if ( !auth.success) {
-            return forbiddenRequest("❌❌User is not allowed to access the data");
+            return auth;
         }
         const { type, key } = event.query || event.queryStringParameters;
         if(!type || !key){

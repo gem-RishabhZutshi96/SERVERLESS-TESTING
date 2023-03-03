@@ -17,7 +17,6 @@ export const getSignedUrlForDocumentUpload = async (event) => {
             return auth;
         }
         const { type, key, officialID, name, pimcoId } = event.query || event.queryStringParameters;
-        // console.log({ type, key, officialID, name, pimcoId });
         const response = await s3SignedUrlForDocuments('getSignedUrlForUpload', { type, key, officialID, name, pimcoId });
         return response;
     } catch (err) {

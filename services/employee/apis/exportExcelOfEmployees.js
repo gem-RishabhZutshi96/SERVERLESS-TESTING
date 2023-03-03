@@ -29,7 +29,7 @@ export const exportExcelOfEmployees = async (event) => {
         });
         let timestamp = new Date().toISOString();
         const excelFilePath = await exportExcelDataOfEmployees('excels', `excels/${timestamp}__hierarchy-downloaded.xlsx`);
-        return successResponse("👍👍Excel Exported Successfully", excelFilePath);
+        return successResponse("Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelOfEmployees", err, "Error db call");
         return internalServer(`Error in DB `);

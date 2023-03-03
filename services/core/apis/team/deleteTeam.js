@@ -22,7 +22,7 @@ export const deleteTeam = async(event) => {
       const teamId = event.path.id;
       const obj = await teamModel.findOneAndUpdate(
         { teamId: { $eq: teamId } },
-        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.data[0].userEmail } },
         {upsert: false}
       );
       if (obj) {
@@ -31,7 +31,7 @@ export const deleteTeam = async(event) => {
           node: {
             'id': teamId,
             'updatedAt': new Date().toISOString(),
-            'updatedBy': auth.userEmail,
+            'updatedBy': auth.data[0].userEmail,
           }
         });
         return successResponse('Team Deleted Successfully');

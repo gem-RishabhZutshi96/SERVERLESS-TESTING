@@ -23,11 +23,10 @@ export const getEmployeeForDirectory = async(event) => {
         let pattern = String(event.query.pattern);
         let sort = String(event.query.sort);
         let source = String(event.query.source);
-        // let query = {pageNo,perPage,pattern,source,sort };
         const response = await getEmployeeForDirectoryResponse({pageNo,perPage,pattern,source,sort});
         return response;
       } else {
-        return "❌❌User is not authorized to access this resource";
+        return auth;
       }
     } catch(err) {
       errorLogger("getEmployeeForDirectory", err, "Error db call");
@@ -35,7 +34,7 @@ export const getEmployeeForDirectory = async(event) => {
     }
 };
 async function getEmployeeForDirectoryResponse(query) {
-    console.log(`👍👍Find employees for ${query.source} directory`);
+    console.log(`Find employees for ${query.source} directory`);
     const { id, parentId, searchFields } = parameterStore[process.env.stage].sourceIds[query.source];
     const limit = +query.perPage;
     const skip = (+query.pageNo - 1) * limit;
@@ -57,7 +56,6 @@ async function getEmployeeForDirectoryResponse(query) {
       emp.Documents =
         emp.Documents &&
         emp.Documents.map(doc => {
-          // doc.path = resolveURL(parameterStore[process.env.stage].domain, doc.path);
           return doc;
         });
       if (emp.Image && !emp.Image.startsWith('http'))

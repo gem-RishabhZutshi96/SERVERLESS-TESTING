@@ -23,11 +23,8 @@ export const createOrUpdateView = async(event) => {
         return auth;
       }
       if(event.body.viewId){
-        // if(event.body.type == null || event.body.name == null || event.body.relationName == null || event.body.rootId == null){
-        //   return badRequest("Body parameters cannot be null");
-        // }
         if(!event.body.updatedAt && !event.body.updatedBy){
-          let updateObj = Object.assign(event.body, {'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail});
+          let updateObj = Object.assign(event.body, {'updatedAt': new Date().toISOString(), 'updatedBy': auth.data[0].userEmail});
           let result = await viewModel.findOneAndUpdate(
             {
               viewId: event.body.viewId
@@ -37,10 +34,10 @@ export const createOrUpdateView = async(event) => {
               upsert: false
             }
           );
-          if(result){
-            return successResponse('View Updated Successfully');
-          } else{
+          if(!result){
             return failResponse('No info found to updated', 404);
+          } else{
+            return successResponse('View Updated Successfully');
           }
         } else {
           return badRequest("updatedAt or updatedBy fields are not allowed in request body");
@@ -79,7 +76,7 @@ export const createOrUpdateView = async(event) => {
           viewId: 'V_'.concat(cryptoRandomString({length: 6, type: 'url-safe'})),
           isActive: true,
           createdAt: new Date().toISOString(),
-          createdBy: auth.userEmail,
+          createdBy: auth.data[0].userEmail,
           updatedAt: "",
           updatedBy: ""
         };

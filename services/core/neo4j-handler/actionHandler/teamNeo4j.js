@@ -28,20 +28,18 @@ export const createOrUpdateTeamNeo4j = async (event) => {
           })
           RETURN n
         `);
-        return successResponse('Node Created Successfully');
+        return successResponse('Team Created Successfully');
       } else {
         await session.run(`
           MATCH (n:TEAM {teamId:"${event.node.id}"})
           WITH n
           SET n.name = "${event.node.name}",
               n.description = "${event.node.description}",
-              n.createdAt = "${event.node.createdAt}", 
-              n.createdBy = "${event.node.createdBy}",
               n.updatedAt = "${event.node.updatedAt}",
               n.updatedBy = "${event.node.updatedBy}"
           RETURN n
         `);
-        return successResponse('Node Updated Successfully');
+        return successResponse('Team Updated Successfully');
       }
     } catch (err) {
       errorLogger("createOrUpdateTeamNeo4j:::", err);
@@ -60,10 +58,8 @@ export const deleteTeamNeo4j = async (event) => {
       WITH n, r
       SET n.isActive = false,
           n.updatedAt = "${event.node.updatedAt}",
-          n.updatedBy = "${event.node.updatedBy}",
-          r.isActive = false,
-          r.endDate = "${event.node.updatedAt}"`);
-      return successResponse('Node Updated Successfully');
+          n.updatedBy = "${event.node.updatedBy}"`);
+      return successResponse('Team Updated Successfully');
   } catch (err) {
     errorLogger("deleteTeamNeo4j ", err);
     throw internalServer(`Error in Deleting Node `);

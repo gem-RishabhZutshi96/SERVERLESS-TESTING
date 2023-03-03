@@ -20,7 +20,6 @@ export const getSignedUrlForImageUpload = async (event) => {
             return badRequest("Missing body parameters");
         }
         const { type, key, officialID, name, pimcoId } = event.body;
-        // console.log({ type, key, officialID, name, pimcoId });
         const response = await s3SignedUrlForDocuments('getSignedUrlForImageUpload', { type, key, officialID, name, pimcoId });
         return response;
     } catch (err) {

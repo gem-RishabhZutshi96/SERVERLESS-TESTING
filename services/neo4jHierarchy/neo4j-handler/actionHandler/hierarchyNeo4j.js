@@ -38,21 +38,6 @@ export const fetchHierarchy = async (event) => {
     });
     if(checkRelation.length > 1){
       const tree = await session.executeRead(async tx => {
-      //   const result = await tx.run(`
-      //   MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
-      //   CALL {
-      //     MATCH p=(a)<-[:${view.relation}*]-()
-      //         WHERE apoc.coll.duplicates(NODES(p)) = []
-      //     WITH p ORDER BY length(p) DESC
-      //     WITH COLLECT(DISTINCT p) AS ps
-      //     RETURN ps
-      //   }
-      //   WITH ps
-      //   CALL apoc.convert.toTree(ps)
-      //   YIELD value
-      //   RETURN apoc.convert.toJson(value)
-      // `,{rootId: view.rootId});
-      // return result.records.map(record => record.get('apoc.convert.toJson(value)'))[0];
       const result = await tx.run(`
         MATCH (a) WHERE ANY(k IN ['teamId', 'projectId', 'EmployeeCode'] WHERE toString(a[k]) = $rootId)
         CALL apoc.path.expandConfig(a, {
