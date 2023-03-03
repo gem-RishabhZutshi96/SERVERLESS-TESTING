@@ -18,7 +18,7 @@ export const exportExcelTeamMaster = async (event) => {
         }
         let timestamp = new Date().toISOString();
         const excelFilePath = await exportExcelDataTeamMaster(`excels/${timestamp}__EmpMasterTable.xlsx`);
-        return successResponse("👍👍Excel Exported Successfully", excelFilePath);
+        return successResponse("Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelTeamMaster", err, "Error db call");
         return internalServer(`Error in DB `);

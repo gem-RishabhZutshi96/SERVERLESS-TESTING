@@ -18,7 +18,7 @@ export const exportExcelProjectMaster = async (event) => {
         }
         let timestamp = new Date().toISOString();
         const excelFilePath = await exportExcelDataProjectMaster(`excels/${timestamp}__ProjectMasterTable.xlsx`);
-        return successResponse("👍👍Excel Exported Successfully", excelFilePath);
+        return successResponse("Excel Exported Successfully", excelFilePath);
     } catch (err) {
         errorLogger("exportExcelProjectMaster", err, "Error db call");
         return internalServer(`Error in DB `);
