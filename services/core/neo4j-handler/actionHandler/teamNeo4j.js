@@ -54,11 +54,13 @@ export const deleteTeamNeo4j = async (event) => {
     let driver = await makeNeo4jDBConnection();
     let session = driver.session({ database });
     await session.run(`
-      MATCH (n:TEAM {teamId:"${event.node.id}"})-[r]-()
+      MATCH (n:PROJECT{projectId:"${event.node.id}"})-[r]-()
       WITH n, r
       SET n.isActive = false,
           n.updatedAt = "${event.node.updatedAt}",
-          n.updatedBy = "${event.node.updatedBy}"`);
+          n.updatedBy = "${event.node.updatedBy}",
+          r.isActive = false,
+          r.endDate = "${event.node.updatedAt}"`);
       return successResponse('Team Updated Successfully');
   } catch (err) {
     errorLogger("deleteTeamNeo4j ", err);

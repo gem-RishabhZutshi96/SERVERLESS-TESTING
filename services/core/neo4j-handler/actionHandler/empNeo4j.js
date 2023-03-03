@@ -49,8 +49,12 @@ export const deleteEmpNeo4j = async (event) => {
     await session.run(
       `CALL apoc.load.json("${event.deleteUrl}") YIELD value
       UNWIND value.deleteNode as emp
-      MATCH (n:EMPLOYEE {EmployeeCode: emp})
-      DETACH DELETE n`);
+      MATCH (n:EMPLOYEE {EmployeeCode: emp})-[r]-()
+      SET n.isActive = false,
+          n.updatedAt = "${event.node.updatedAt}",
+          n.updatedBy = "${event.node.updatedBy}",
+          r.isActive = false,
+          r.endDate = "${event.node.updatedAt}"`);
     return successResponse('Node Deleted Successfully');
   } catch (err) {
     errorLogger("deleteEmpNeo4j ", err);
