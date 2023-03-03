@@ -6,6 +6,13 @@ import { devLogger, errorLogger } from "./log-helper";
 import { parameterStore } from "../../utilities/config/commonData";
 import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
+
+/**
+ * @description Fetches all the documents in employee master collection with isActive flag true
+ * and converts it into binary excel file and uploads to S3
+ * @param  fileName file name of excel to be stored in S3
+ * @yields url to download to excel file from S3
+ */
 export const exportExcelDataEmpMaster = async (fileName) => {
     try {
         devLogger("exportExcelDataEmpMaster", fileName, "event");
@@ -36,7 +43,12 @@ export const exportExcelDataEmpMaster = async (fileName) => {
     }
 };
 
-
+/**
+ * @description Fetches all the documents in project master collection with isActive flag true
+ * and converts it into binary excel file and uploads to S3
+ * @param  fileName file name of excel to be stored in S3
+ * @yields url to download to excel file from S3
+ */
 export const exportExcelDataProjectMaster = async (fileName) => {
     try {
         devLogger("exportExcelDataProjectMaster", fileName, "event");
@@ -67,7 +79,12 @@ export const exportExcelDataProjectMaster = async (fileName) => {
     }
 };
 
-
+/**
+ * @description Fetches all the documents in team master collection with isActive flag true
+ * and converts it into binary excel file and uploads to S3
+ * @param  fileName file name of excel to be stored in S3
+ * @yields url to download to excel file from S3
+ */
 export const exportExcelDataTeamMaster = async (fileName) => {
     try {
         devLogger("exportExcelDataTeamMaster", fileName, "event");
@@ -98,7 +115,11 @@ export const exportExcelDataTeamMaster = async (fileName) => {
     }
 };
 
-
+/**
+ * @description Converts a single document in employee master collection to JSON object
+ * @param  emp document in employee master collection
+ * @yields JSON object of document in employee master collection
+ */
 function getEmpMasterJSON(emp) {
     const data = {
         'Email Id': emp.EmailId,
@@ -117,7 +138,11 @@ function getEmpMasterJSON(emp) {
     );
 }
 
-
+/**
+ * @description Converts a single document in project master collection to JSON object
+ * @param  emp document in project master collection
+ * @yields JSON object of document in project master collection
+ */
 function getProjectMasterJSON(prj) {
     const data = {
         'Name': prj.name,
@@ -129,7 +154,11 @@ function getProjectMasterJSON(prj) {
     );
 }
 
-
+/**
+ * @description Converts a single document in team master collection to JSON object
+ * @param  emp document in team master collection
+ * @yields JSON object of document in team master collection
+ */
 function getTeamMasterJSON(team) {
     const data = {
         'Name': team.name,
@@ -141,7 +170,11 @@ function getTeamMasterJSON(team) {
     );
 }
 
-
+/**
+ * @description Uploads binary data as a buffer to S3
+ * @param  s3Data buffer data to upload to S3
+ * @yields JSON object of document in team master collection
+ */
 async function uploadToS3(s3Data) {
     console.log("---- UPLODAING TO S3 ----",JSON.stringify(`${s3Data.Bucket} ${s3Data.Key}`, null, 2));
     try {
@@ -152,7 +185,11 @@ async function uploadToS3(s3Data) {
     }
 }
 
-
+/**
+ * Creates signed url to upload excel file to S3
+ * @param  params object containing bucket name, file name and expiration time of url
+ * @yields JSON object of document in team master collection
+ */
 async function getS3SignedUrl(params) {
     console.log("---- GETTING SIGNED URL FROM S3 ----", JSON.stringify(params, null, 2));
     try {
