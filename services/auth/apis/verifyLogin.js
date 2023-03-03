@@ -21,10 +21,11 @@ export const verifyLogin = async(event) => {
 };
 
 /**
- * Verify MSAl access token through function call and compare email of logged in user and user
+ * @description Verify MSAl access token through function call and compare email of logged in user and user
  * email from graph API
  * @param  token     MSAL access token
  * @param  msalMail  User email recieved from SSO object
+ * @yields success response on successfull SSO login
  */
 async function verifyUser(token, msalMail) {
     const { email, success } = await sendMicrosoftAuthenticationRequest(token);
@@ -42,9 +43,10 @@ async function verifyUser(token, msalMail) {
     }
 };
 
-  /**
- * Verify MSAl access token through graph API
+/**
+ * @description Verify MSAl access token through graph API
  * @param  token MSAL access token
+ * @yields success response on successfull msal access token verification
  */
 async function sendMicrosoftAuthenticationRequest(token) {
     const msalReqObj = {
@@ -67,6 +69,11 @@ async function sendMicrosoftAuthenticationRequest(token) {
       };
 };
 
+/**
+ * @description Generates token signed using the user email id
+ * @param email User Email ID
+ * @yields JWT token
+ */
 async function generateToken(email) {
     const today = new Date();
     const exp = new Date(today);
