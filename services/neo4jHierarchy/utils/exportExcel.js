@@ -48,7 +48,7 @@ export const exportHierarchyExcel = async (event) => {
             Key: fileName,
             Expires: 3600
         });
-        return successResponse("👍👍Excel Exported Successfully", downloadURL);
+        return successResponse("Excel Exported Successfully", downloadURL);
     } catch (e) {
         errorLogger('Error in exporting hierarchy in excel ', e);
         return internalServer(`Error in DB `);
