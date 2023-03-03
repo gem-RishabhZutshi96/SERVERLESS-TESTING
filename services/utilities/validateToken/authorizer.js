@@ -9,9 +9,9 @@ export const accessAllowed = async (event) => {
     let allowedFor = event.allowedFor;
     let userRole = await getUserRole(decode.email);
     if (allowedFor.includes(userRole)) {
-      return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
+      return successResponse('Access Allowed', [{ access: "allowed", userEmail: decode.email }]);
     } else {
-      return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
+      return forbiddenRequest("Access Denied",[{ access: "denied", userEmail: decode.email }]);
     }
   } catch (err) {
     console.log(err);
@@ -30,10 +30,10 @@ export const accessDeniedToSource = async(event) => {
     let role = await getUserRole(decode.email);
     if ((event.deniedSources).includes(source)) {
       if((event.deniedRoles).includes(role)){
-        return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
+        return forbiddenRequest("Access Denied",[{ access: "denied", userEmail: decode.email }]);
       }
     }
-    return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
+    return successResponse('Access Allowed', [{ access: "allowed", userEmail: decode.email }]);
   } catch (err) {
     console.log(err);
   }
@@ -51,10 +51,10 @@ export const accessAllowedToSource = async (event) => {
     let role = await getUserRole(decode.email);
     if (event.allowedSources.includes(source)) {
       if(event.allowedRoles.includes(role)){
-        return successResponse('Access Allowed', { access: "allowed", userEmail: decode.email });
+        return successResponse('Access Allowed', [{ access: "allowed", userEmail: decode.email }]);
       }
     }
-    return forbiddenRequest("Access Denied",{ access: "denied", userEmail: decode.email });
+    return forbiddenRequest("Access Denied",[{ access: "denied", userEmail: decode.email }]);
   } catch (err) {
     console.log(err);
   }
