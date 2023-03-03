@@ -19,10 +19,6 @@ export const syncEmpMasterWithMIS = async(event) => {
   try{
     devLogger("syncEmpMasterWithMIS", event, "event");
     let userToken =null;
-    // let buf;
-    // let data;
-    // let timestamp;
-    // let fileName;
     await makeDBConnection();
     userToken = getUserToken(event);
     let authQuery={
@@ -58,7 +54,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
           "createdAt": new Date().toISOString(),
-          "createdBy": auth.userEmail,
+          "createdBy": auth.data[0].userEmail,
           "updatedAt": "",
           "updatedBy": "",
         });
@@ -81,7 +77,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
           "updatedAt": new Date().toISOString(),
-          "updatedBy": auth.userEmail,
+          "updatedBy": auth.data[0].userEmail,
         });
       }
       if(element.length >= 1
@@ -113,7 +109,7 @@ export const syncEmpMasterWithMIS = async(event) => {
           "DCTech": emp["DCTech"] ? emp["DCTech"] : "",
           "isActive": true,
           "updatedAt": new Date().toISOString(),
-          "updatedBy": auth.userEmail,
+          "updatedBy": auth.data[0].userEmail,
         });
       }
     });
@@ -124,8 +120,6 @@ export const syncEmpMasterWithMIS = async(event) => {
       }
     });
     if(createArray.length >= 1){
-      // const bulk = employeeMasterModel.collection.initializeOrderedBulkOp();
-      // await bulk.execute();
       await employeeMasterModel.insertMany(createArray);
     }
     if(updateArray.length >= 1){
@@ -155,32 +149,6 @@ export const syncEmpMasterWithMIS = async(event) => {
       });
     }
     if(createArray.length >= 1 || updateNode.length >= 1){
-      // buf = Buffer.from(JSON.stringify(
-      //   {
-      //     'createNode': createArray,
-      //     'updateNode': updateNode
-      //   }
-      // ));
-      // timestamp = new Date().toISOString();
-      // fileName = `json/${timestamp}--createOrUpdateNode.json`;
-      // data = {
-      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
-      //   Key: fileName,
-      //   ContentType: 'application/json',
-      //   Body: buf
-      // };
-      // console.log("---- UPLODAING TO S3 ----");
-      // await s3.upload(data).promise();
-      // console.log("---- GETTING SIGNED URL FROM S3 ----");
-      // let downloadURL = s3.getSignedUrl("getObject",{
-      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
-      //   Key: fileName,
-      //   Expires: 3600
-      // });
-      // await main({
-      //   actionType: 'createOrUpdateEmpNeo4j',
-      //   s3JsonUrl: downloadURL
-      // });
       await main({
         actionType: 'createOrUpdateEmpNeo4j',
         createArray: createArray,
@@ -190,32 +158,9 @@ export const syncEmpMasterWithMIS = async(event) => {
     if(deleteArray.length >= 1) {
       await employeeMasterModel.remove.findOneAndUpdate(
         { EmailId: { $in: deleteArray } },
-        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.userEmail } },
+        { $set: { 'isActive' : false, 'updatedAt': new Date().toISOString(), 'updatedBy': auth.data[0].userEmail } },
         {upsert: false}
       );
-      // await employeeMasterModel.remove({ EmailId: { $in: deleteArray } });
-      // buf = Buffer.from(JSON.stringify(
-      //   {'deleteNode': deleteArray}));
-      // timestamp = new Date().toISOString();
-      // fileName = `json/${timestamp}--deleteNode.json`;
-      // data = {
-      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
-      //   Key: fileName,
-      //   ContentType: 'application/json',
-      //   Body: buf
-      // };
-      // console.log("---- UPLODAING TO S3 ----");
-      // await s3.upload(data).promise();
-      // console.log("---- GETTING SIGNED URL FROM S3 ----");
-      // let downloadURL = s3.getSignedUrl("getObject",{
-      //   Bucket: parameterStore[process.env.stage].s3Params.orgchartS3Bucket,
-      //   Key: fileName,
-      //   Expires: 3600
-      // });
-      // await main({
-      //   actionType: 'deleteEmpNeo4j',
-      //   deleteUrl: downloadURL
-      // });
       await main({
         actionType: 'createOrUpdateEmpNeo4j',
         deleteArray: deleteArray
